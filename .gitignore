@@ -1,0 +1,29 @@
+# データファイル（配布対象外）
+datasets/**/*.csv
+datasets/**/*.xml
+datasets/**/*.yaml
+datasets/**/*.json
+datasets/**/*.svg
+
+# ディレクトリ構造は保持、データファイルのみ除外
+!datasets/**/
+!datasets/**/index.php
+
+# 開発用ファイル
+.claude/
+*.log
+*.backup
+*.backup2
+*.bak
+*~
+.DS_Store
+*.swp
+*.tmp
+
+# IDEファイル
+.idea/
+.vscode/
+*.sublime-*
+
+# OS生成ファイル
+Thumbs.db

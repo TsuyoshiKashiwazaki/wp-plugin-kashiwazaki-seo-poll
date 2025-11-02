@@ -1,0 +1,208 @@
+/**
+ * Kashiwazaki SEO Poll Admin Styles
+ *
+ * @package KashiwazakiPoll
+ * @version 1.0.0
+ */
+
+/* admin.css: 管理画面用の最小限スタイル */
+
+#kashiwazaki_poll_options {
+    width: 100%;
+    max-width: 600px;
+    min-height: 120px;
+}
+
+/* poll一覧のカスタム列のスタイル */
+.column-dataset_keywords {
+    width: 180px;
+}
+
+.column-shortcode_usage {
+    width: 280px;
+}
+
+.poll-keywords {
+    display: inline-block;
+    background: #f0f4f8;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    line-height: 1.3;
+    color: #374151;
+    max-width: 160px;
+    word-wrap: break-word;
+}
+
+.poll-keywords-empty {
+    color: #9ca3af;
+    font-style: italic;
+    font-size: 12px;
+}
+
+/* 使用記事列のスタイル */
+.shortcode-usage-list {
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.usage-item {
+    margin-bottom: 6px;
+    padding: 3px 0;
+    border-bottom: 1px solid #f0f0f0;
+    max-width: 260px;
+}
+
+.usage-item:last-child {
+    border-bottom: none;
+}
+
+.usage-title-row {
+    margin-bottom: 2px;
+}
+
+.usage-edit-link {
+    text-decoration: none;
+    color: #0073aa;
+    display: inline;
+}
+
+.usage-edit-link:hover {
+    color: #005177;
+}
+
+.usage-title {
+    font-weight: 500;
+    display: inline;
+}
+
+.usage-status {
+    color: #d63638;
+    font-size: 11px;
+    font-weight: normal;
+}
+
+.usage-meta {
+    font-size: 11px;
+    color: #666;
+    margin-top: 1px;
+}
+
+.usage-type {
+    font-weight: 500;
+}
+
+.usage-date {
+    color: #999;
+}
+
+.usage-count {
+    color: #d63638;
+    font-weight: 500;
+}
+
+.usage-view-link {
+    color: #0073aa;
+    text-decoration: none;
+    font-size: 11px;
+}
+
+.usage-view-link:hover {
+    color: #005177;
+    text-decoration: underline;
+}
+
+.usage-more {
+    font-size: 11px;
+    color: #007cba;
+    font-style: italic;
+    margin-top: 4px;
+    padding: 2px 0;
+    border-top: 1px dashed #ddd;
+}
+
+.usage-empty,
+.usage-error {
+    color: #9ca3af;
+    font-style: italic;
+    font-size: 12px;
+}
+
+/* メタボックス内の使用記事一覧のスタイル */
+.usage-articles-list {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.usage-articles-list>div {
+    border-bottom: 1px solid #e9ecef;
+}
+
+.usage-articles-list>div:last-child {
+    border-bottom: none;
+}
+
+.usage-articles-list a {
+    color: #0073aa !important;
+    text-decoration: none;
+}
+
+.usage-articles-list a:hover {
+    color: #005177 !important;
+    text-decoration: underline;
+}
+
+.usage-articles-list .usage-status {
+    color: #d63638;
+    font-weight: 500;
+}
+
+.usage-articles-list .usage-count {
+    color: #d63638;
+    font-weight: 500;
+}
+
+.usage-articles-list .usage-meta {
+    color: #666;
+    font-size: 12px;
+}
+
+.usage-articles-list .usage-view-link {
+    color: #0073aa;
+    text-decoration: none;
+    font-size: 11px;
+}
+
+.usage-articles-list .usage-view-link:hover {
+    text-decoration: underline;
+}
+
+/* メタボックス全体のスタイル調整 */
+#kashiwazaki_poll_settings .inside {
+    padding: 12px;
+}
+
+/* レスポンシブ対応 */
+@media screen and (max-width: 782px) {
+
+    .column-dataset_keywords,
+    .column-shortcode_usage {
+        display: none;
+    }
+
+    .usage-articles-list {
+        max-height: 200px;
+    }
+
+    .usage-articles-list>div {
+        padding: 6px;
+    }
+
+    .usage-articles-list .usage-meta {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
