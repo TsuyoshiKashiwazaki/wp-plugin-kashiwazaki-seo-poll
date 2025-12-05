@@ -1,6 +1,6 @@
 # Kashiwazaki SEO Poll
 
-![Version](https://img.shields.io/badge/Version-1.0.0--dev-orange.svg)
+![Version](https://img.shields.io/badge/Version-1.0.1-blue.svg)
 ![WordPress](https://img.shields.io/badge/WordPress-5.0%2B-blue.svg)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-purple.svg)
 ![License](https://img.shields.io/badge/License-GPLv2-green.svg)
@@ -140,6 +140,7 @@ Google Dataset検索最適化対応の高機能データ収集プラグイン。
 
 | バージョン | リリース日 | 主な変更 |
 |-----------|----------|---------|
+| 1.0.1 | 2025-12-05 | 構造化データのurl/identifier修正 |
 | 1.0.0 | 2024-10-31 | 初回リリース |
 
 詳細は [CHANGELOG.md](CHANGELOG.md) を参照してください。

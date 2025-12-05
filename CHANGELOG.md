@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2025-12-05
+
+### Fixed
+- データセット詳細ページ（/datasets/detail-{id}/）の構造化データでurl/identifierがfalseになる問題を修正
+- kashiwazaki_poll_get_single_dataset_page_url()がfile_type='html'の場合に正しいURLを返すよう修正
+
 ## [1.0.0] - 2024-10-31
 
 ### Added
@@ -49,4 +55,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - データセットの期限設定機能
 - REST API エンドポイント
 
-[1.0.0]: https://github.com/TsuyoshiKashiwazaki/kashiwazaki-seo-poll/releases/tag/v1.0.0
+[1.0.1]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.1
+[1.0.0]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.0

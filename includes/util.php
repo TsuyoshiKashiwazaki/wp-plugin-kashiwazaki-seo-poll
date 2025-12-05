@@ -39,6 +39,9 @@ function kashiwazaki_poll_get_dataset_index_url() {
 }
 
 function kashiwazaki_poll_get_single_dataset_page_url( $poll_id, $file_type ) {
+    if ( $file_type === 'html' ) {
+        return home_url( "/datasets/detail-{$poll_id}/" );
+    }
     $allowed_types = ['csv', 'xml', 'yaml', 'json', 'svg'];
     if ( ! in_array( $file_type, $allowed_types ) ) {
         return false;
