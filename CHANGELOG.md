@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-01-02
+
+### Added
+- 調査期間表示機能を追加（最初の投票日〜最後の投票日）
+- `kashiwazaki_poll_get_survey_period()` ヘルパー関数を追加
+- データセット出力（CSV/XML/YAML/JSON）に調査期間フィールドを追加
+- 構造化データにtemporalCoverageを追加
+- 凡例テキスト省略機能（15文字以上で...表示）
+- 凡例ホバー時のツールチップ表示（全文表示）
+
 ## [1.0.1] - 2025-12-05
 
 ### Fixed
@@ -55,5 +65,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - データセットの期限設定機能
 - REST API エンドポイント
 
+[1.0.2]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.2
 [1.0.1]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.1
 [1.0.0]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.0

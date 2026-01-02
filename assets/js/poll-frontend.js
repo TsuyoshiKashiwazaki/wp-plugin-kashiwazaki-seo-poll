@@ -174,24 +174,47 @@
                         responsive: true, maintainAspectRatio: false,
                         plugins: {
                             legend: {
-                                display: !isPreview, position: "bottom", align: "center", labels: {
+                                display: !isPreview, position: "bottom", align: "center",
+                                labels: {
                                     boxWidth: 15, padding: 20, generateLabels: function (chart) {
                                         const data = chart.data;
                                         if (data.labels && data.labels.length && data.datasets.length) {
                                             const labels = data.labels; const dataset = data.datasets[0]; const counts = dataset.data; const backgroundColors = dataset.backgroundColor;
                                             const totalVotes = counts.reduce((sum, count) => sum + (Number(count) || 0), 0);
+                                            const maxLabelLength = 15;
                                             try {
                                                 return labels.map((label, index) => {
                                                     const voteCount = (counts && typeof counts[index] !== 'undefined') ? Number(counts[index]) : 0;
                                                     const percentage = totalVotes > 0 ? ((voteCount / totalVotes) * 100).toFixed(1) : '0.0';
                                                     const labelText = typeof label === 'string' ? label : `項目 ${index + 1}`;
-                                                    const text = `${labelText} (${voteCount}票 / ${percentage}%)`;
-                                                    return { text: text, fillStyle: backgroundColors[index % backgroundColors.length], strokeStyle: backgroundColors[index % backgroundColors.length], lineWidth: 0, hidden: !chart.getDataVisibility(index), index: index };
+                                                    const truncatedLabel = labelText.length > maxLabelLength ? labelText.substring(0, maxLabelLength) + '...' : labelText;
+                                                    const text = `${truncatedLabel} (${voteCount}票 / ${percentage}%)`;
+                                                    const fullText = `${labelText} (${voteCount}票 / ${percentage}%)`;
+                                                    return { text: text, fullText: fullText, fillStyle: backgroundColors[index % backgroundColors.length], strokeStyle: backgroundColors[index % backgroundColors.length], lineWidth: 0, hidden: !chart.getDataVisibility(index), index: index };
                                                 });
                                             } catch (mapError) { console.error(`${logPrefix} Error during legend labels map:`, mapError); return []; }
                                         }
                                         return [];
                                     }
+                                },
+                                onHover: function(event, legendItem) {
+                                    if (legendItem && legendItem.fullText && legendItem.fullText !== legendItem.text) {
+                                        let tooltip = document.getElementById('legend-tooltip');
+                                        if (!tooltip) {
+                                            tooltip = document.createElement('div');
+                                            tooltip.id = 'legend-tooltip';
+                                            tooltip.style.cssText = 'position:fixed;background:#333;color:#fff;padding:8px 12px;border-radius:4px;font-size:12px;z-index:10000;pointer-events:none;max-width:300px;word-wrap:break-word;box-shadow:0 2px 8px rgba(0,0,0,0.3);';
+                                            document.body.appendChild(tooltip);
+                                        }
+                                        tooltip.textContent = legendItem.fullText;
+                                        tooltip.style.display = 'block';
+                                        tooltip.style.left = (event.native.clientX + 10) + 'px';
+                                        tooltip.style.top = (event.native.clientY + 10) + 'px';
+                                    }
+                                },
+                                onLeave: function() {
+                                    const tooltip = document.getElementById('legend-tooltip');
+                                    if (tooltip) { tooltip.style.display = 'none'; }
                                 }
                             },
                             tooltip: { enabled: !isPreview },

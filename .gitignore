@@ -11,6 +11,7 @@ datasets/**/*.svg
 
 # 開発用ファイル
 .claude/
+.playwright-mcp/
 *.log
 *.backup
 *.backup2

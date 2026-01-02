@@ -70,6 +70,11 @@ function kashiwazaki_poll_generate_all_data_files( $poll_id, $counts ) {
     $last_updated_time = current_time( 'timestamp' );
     $last_updated_formatted = date_i18n( 'c', $last_updated_time );
 
+    // 調査期間を取得
+    $survey_period = kashiwazaki_poll_get_survey_period( $poll_id );
+    $survey_period_start = $survey_period ? date_i18n( 'c', $survey_period['start'] ) : null;
+    $survey_period_end = $survey_period ? date_i18n( 'c', $survey_period['end'] ) : null;
+
     $poll_license = get_post_meta( $poll_id, '_kashiwazaki_poll_license', true );
     if ( empty( $poll_license ) ) {
         $poll_license = 'https://creativecommons.org/licenses/by/4.0/';
@@ -90,6 +95,8 @@ function kashiwazaki_poll_generate_all_data_files( $poll_id, $counts ) {
         'poll_id' => $poll_id,
         'title' => $poll_title_sanitized,
         'last_updated' => $last_updated_formatted,
+        'survey_period_start' => $survey_period_start,
+        'survey_period_end' => $survey_period_end,
         'copyright' => $copyright_info,
         'license' => $poll_license_sanitized,
         'total_votes' => $total_votes,
@@ -104,8 +111,8 @@ function kashiwazaki_poll_generate_all_data_files( $poll_id, $counts ) {
         $options_data_list[] = $option_item;
     }
 
-    kashiwazaki_poll_generate_csv( $poll_id, $poll_title_sanitized, $total_votes, $options_data_list, $copyright_info, $poll_license_sanitized );
-    kashiwazaki_poll_generate_xml( $poll_id, $poll_title_sanitized, $last_updated_formatted, $total_votes, $options_data_list, $copyright_info, $poll_license_sanitized );
+    kashiwazaki_poll_generate_csv( $poll_id, $poll_title_sanitized, $total_votes, $options_data_list, $copyright_info, $poll_license_sanitized, $survey_period_start, $survey_period_end );
+    kashiwazaki_poll_generate_xml( $poll_id, $poll_title_sanitized, $last_updated_formatted, $total_votes, $options_data_list, $copyright_info, $poll_license_sanitized, $survey_period_start, $survey_period_end );
     kashiwazaki_poll_generate_yaml( $poll_id, $poll_data_for_export );
     kashiwazaki_poll_generate_json( $poll_id, $poll_data_for_export );
     kashiwazaki_poll_generate_svg_pie( $poll_id, $poll_title_sanitized, $total_votes, $options_data_list, $copyright_site_url, $poll_license_sanitized );
@@ -115,7 +122,7 @@ function kashiwazaki_poll_generate_all_data_files( $poll_id, $counts ) {
     return true;
 }
 
-function kashiwazaki_poll_generate_csv( $poll_id, $poll_title, $total_votes, $options_data, $copyright, $license ) {
+function kashiwazaki_poll_generate_csv( $poll_id, $poll_title, $total_votes, $options_data, $copyright, $license, $survey_period_start = null, $survey_period_end = null ) {
     $dir_path = KASHIWAZAKI_POLL_DIR . 'datasets/csv/';
     $file_path = $dir_path . $poll_id . '.csv';
     if ( ! file_exists( $dir_path ) && ! wp_mkdir_p( $dir_path ) ) { error_log("[Poll Data Gen CSV - ID:{$poll_id}] Failed to create directory: " . $dir_path); return; }
@@ -135,6 +142,11 @@ function kashiwazaki_poll_generate_csv( $poll_id, $poll_title, $total_votes, $op
     fwrite($fp, "\n");
     fputcsv($fp, ["Total Votes:", $total_votes]);
 
+    // 調査期間を出力
+    if ( $survey_period_start && $survey_period_end ) {
+        fputcsv($fp, ["Survey Period:", $survey_period_start . " - " . $survey_period_end]);
+    }
+
     fwrite($fp, "\n");
     $copyright_clean = str_replace(["\r", "\n"], ' ', $copyright);
     $license_clean = str_replace(["\r", "\n"], ' ', $license);
@@ -144,7 +156,7 @@ function kashiwazaki_poll_generate_csv( $poll_id, $poll_title, $total_votes, $op
     fclose( $fp );
 }
 
-function kashiwazaki_poll_generate_xml( $poll_id, $poll_title, $last_updated, $total_votes, $options_data, $copyright, $license ) {
+function kashiwazaki_poll_generate_xml( $poll_id, $poll_title, $last_updated, $total_votes, $options_data, $copyright, $license, $survey_period_start = null, $survey_period_end = null ) {
     $dir_path = KASHIWAZAKI_POLL_DIR . 'datasets/xml/';
     $file_path = $dir_path . $poll_id . '.xml';
     if ( ! file_exists( $dir_path ) && ! wp_mkdir_p( $dir_path ) ) { error_log("[Poll Data Gen XML - ID:{$poll_id}] Failed to create directory: " . $dir_path); return; }
@@ -166,6 +178,14 @@ function kashiwazaki_poll_generate_xml( $poll_id, $poll_title, $last_updated, $t
 
     $lastUpdatedElement = $dom->createElement('last_updated', $last_updated);
     $metadataElement->appendChild($lastUpdatedElement);
+
+    // 調査期間を追加
+    if ( $survey_period_start && $survey_period_end ) {
+        $surveyPeriodStartElement = $dom->createElement('survey_period_start', $survey_period_start);
+        $metadataElement->appendChild($surveyPeriodStartElement);
+        $surveyPeriodEndElement = $dom->createElement('survey_period_end', $survey_period_end);
+        $metadataElement->appendChild($surveyPeriodEndElement);
+    }
 
     $copyrightElement = $dom->createElement('copyright');
     $copyrightElement->appendChild($dom->createTextNode($copyright));

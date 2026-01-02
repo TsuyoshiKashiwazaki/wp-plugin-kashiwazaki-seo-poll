@@ -418,10 +418,17 @@ function kashiwazaki_poll_output_google_dataset_search_meta($data) {
         }
     }
 
-    // 時間的範囲（投稿日から現在まで）
-    $poll_date = get_the_date('Y-m-d', $poll_post);
-    $current_date = current_time('Y-m-d');
-    echo '<meta itemprop="temporalCoverage" content="' . esc_attr($poll_date . '/' . $current_date) . '">' . "\n";
+    // 時間的範囲（調査期間）
+    $survey_period = kashiwazaki_poll_get_survey_period($data['poll_id']);
+    if ($survey_period) {
+        $survey_start = date('Y-m-d', $survey_period['start']);
+        $survey_end = date('Y-m-d', $survey_period['end']);
+        echo '<meta itemprop="temporalCoverage" content="' . esc_attr($survey_start . '/' . $survey_end) . '">' . "\n";
+    } else {
+        $poll_date = get_the_date('Y-m-d', $poll_post);
+        $current_date = current_time('Y-m-d');
+        echo '<meta itemprop="temporalCoverage" content="' . esc_attr($poll_date . '/' . $current_date) . '">' . "\n";
+    }
 
     // 地理的範囲
     $default_spatial = '日本';
@@ -1998,6 +2005,11 @@ function kashiwazaki_poll_get_single_dataset_structured_data( $poll_id, $file_ty
     $last_updated_time = file_exists(kashiwazaki_poll_get_dataset_file_path($poll_id, $file_type)) ? filemtime(kashiwazaki_poll_get_dataset_file_path($poll_id, $file_type)) : current_time('timestamp');
     $dateModified = date_i18n( 'c', $last_updated_time );
 
+    // 調査期間を取得
+    $survey_period = kashiwazaki_poll_get_survey_period( $poll_id );
+    $survey_period_start = $survey_period ? date_i18n( 'Y-m-d', $survey_period['start'] ) : null;
+    $survey_period_end = $survey_period ? date_i18n( 'Y-m-d', $survey_period['end'] ) : null;
+
     $poll_license = get_post_meta( $poll_id, '_kashiwazaki_poll_license', true );
     if ( empty( $poll_license ) ) {
         $poll_license = 'https://creativecommons.org/licenses/by/4.0/';
@@ -2132,7 +2144,7 @@ function kashiwazaki_poll_get_single_dataset_structured_data( $poll_id, $file_ty
         "license" => $poll_license,
         "isAccessibleForFree" => true,
         "spatialCoverage" => "Japan",
-        "temporalCoverage" => $datePublished . "/" . $dateModified,
+        "temporalCoverage" => $survey_period_start && $survey_period_end ? $survey_period_start . "/" . $survey_period_end : $datePublished . "/" . $dateModified,
         "measurementTechnique" => "Survey polling",
         "version" => "1.0",
         "includedInDataCatalog" => [
@@ -2297,212 +2309,6 @@ function kashiwazaki_poll_prepare_dataset_page_data($poll_id, $file_type) {
         'dataset_data' => $dataset_data,
         'page_url' => $page_url
     );
-}
-
-function kashiwazaki_poll_output_dataset_content($data) {
-    // Enqueue required scripts and styles
-    wp_enqueue_script('chart-js');
-    wp_enqueue_script('chartjs-plugin-datalabels');
-    wp_enqueue_script('kashiwazaki-poll-frontend-js');
-    wp_enqueue_style('kashiwazaki-front-css');
-
-    // カラーテーマ設定を取得
-    $settings = get_option( 'kashiwazaki_poll_settings', array( 'dataset_color_theme' => 'minimal' ) );
-    $color_theme = $settings['dataset_color_theme'];
-
-    // カラーテーマ定義
-    $themes = array(
-        'minimal' => array(
-            'body_bg' => '#ffffff',
-            'body_color' => '#333333',
-            'header_bg' => '#f8f9fa',
-            'header_color' => '#333333',
-            'accent_color' => '#6c757d',
-            'button_primary' => '#6c757d',
-            'button_secondary' => '#e9ecef'
-        ),
-        'blue' => array(
-            'body_bg' => '#ffffff',
-            'body_color' => '#333333',
-            'header_bg' => '#0073aa',
-            'header_color' => '#ffffff',
-            'accent_color' => '#0073aa',
-            'button_primary' => '#0073aa',
-            'button_secondary' => '#e9ecef'
-        ),
-        'green' => array(
-            'body_bg' => '#ffffff',
-            'body_color' => '#333333',
-            'header_bg' => '#28a745',
-            'header_color' => '#ffffff',
-            'accent_color' => '#28a745',
-            'button_primary' => '#28a745',
-            'button_secondary' => '#e9ecef'
-        ),
-        'orange' => array(
-            'body_bg' => '#ffffff',
-            'body_color' => '#333333',
-            'header_bg' => '#fd7e14',
-            'header_color' => '#ffffff',
-            'accent_color' => '#fd7e14',
-            'button_primary' => '#fd7e14',
-            'button_secondary' => '#e9ecef'
-        ),
-        'purple' => array(
-            'body_bg' => '#ffffff',
-            'body_color' => '#333333',
-            'header_bg' => '#6f42c1',
-            'header_color' => '#ffffff',
-            'accent_color' => '#6f42c1',
-            'button_primary' => '#6f42c1',
-            'button_secondary' => '#e9ecef'
-        ),
-        'dark' => array(
-            'body_bg' => '#2c3e50',
-            'body_color' => '#ecf0f1',
-            'header_bg' => '#34495e',
-            'header_color' => '#ecf0f1',
-            'accent_color' => '#3498db',
-            'button_primary' => '#3498db',
-            'button_secondary' => '#34495e'
-        )
-    );
-
-    $current_theme = $themes[$color_theme];
-
-    $site_name = get_bloginfo('name');
-    $file_ext_upper = strtoupper($data['file_type']);
-    ?>
-
-    <!-- 構造化データ出力 -->
-    <script type="application/ld+json">
-    <?php echo json_encode($data['breadcrumb_data'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT); ?>
-    </script>
-    <script type="application/ld+json">
-    <?php echo json_encode($data['dataset_data'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT); ?>
-    </script>
-
-    <div class="kashiwazaki-dataset-page">
-        <h1><?php echo esc_html($data['poll_title']); ?> - <?php echo $file_ext_upper; ?> データセット</h1>
-        <p><?php echo esc_html($data['poll_description']); ?></p>
-
-        <div class="dataset-meta">
-            <p><strong>最終更新:</strong> <?php
-                // 最新投票時刻を取得（リストページと同じロジック）
-                $voted_ips = get_post_meta($data['poll_id'], '_kashiwazaki_poll_voted_ips', true);
-                $last_vote_time = 0;
-                if (is_array($voted_ips) && !empty($voted_ips)) {
-                    $last_vote_time = max($voted_ips);
-                }
-
-                if ($last_vote_time > 0) {
-                    echo date_i18n('Y/m/d H:i:s', $last_vote_time);
-                } else {
-                    echo '投票待ち';
-                }
-            ?></p>
-            <p><strong>総投票数:</strong> <?php echo $data['total_votes']; ?>票</p>
-        </div>
-
-        <?php if ($data['total_votes'] > 0): ?>
-        <div id="kashiwazaki-poll-result-<?php echo $data['poll_id']; ?>" class="kashiwazaki-poll-result-container">
-            <h2>投票結果グラフ</h2>
-        </div>
-        <?php endif; ?>
-
-        <h2><?php echo $file_ext_upper; ?> データ</h2>
-        <?php if ($data['file_type'] === 'svg'): ?>
-            <div class="svg-content"><?php echo $data['file_content']; ?></div>
-        <?php else: ?>
-            <pre><?php echo esc_html($data['file_content']); ?></pre>
-        <?php endif; ?>
-
-        <div class="dataset-actions">
-            <a href="<?php echo esc_url(kashiwazaki_poll_get_dataset_file_url($data['poll_id'], $data['file_type'])); ?>"
-               download class="download-btn">ダウンロード</a>
-            <a href="<?php echo esc_url(home_url('/datasets/' . $data['file_type'] . '/')); ?>" class="back-btn"><?php echo strtoupper($data['file_type']); ?>一覧に戻る</a>
-        </div>
-    </div>
-
-    <script>
-    // Poll data for chart rendering
-    var kashiwazakiPollAllData = window.kashiwazakiPollAllData || {};
-    kashiwazakiPollAllData[<?php echo $data['poll_id']; ?>] = {
-        pollId: <?php echo $data['poll_id']; ?>,
-        alreadyVoted: true,
-        hasData: <?php echo $data['total_votes'] > 0 ? 'true' : 'false'; ?>,
-        siteName: "<?php echo esc_js($site_name); ?>",
-        pollQuestion: "<?php echo esc_js($data['poll_title']); ?>",
-        ajaxUrl: "<?php echo esc_url(admin_url('admin-ajax.php')); ?>",
-        nonce: "<?php echo wp_create_nonce('kashiwazaki_poll_vote_' . $data['poll_id']); ?>"
-    };
-    </script>
-
-    <style>
-    .kashiwazaki-dataset-page {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 0 20px 20px 20px;
-        background-color: <?php echo $current_theme['body_bg']; ?>;
-        color: <?php echo $current_theme['body_color']; ?>;
-    }
-    .dataset-meta {
-        background: <?php echo $color_theme === 'dark' ? '#34495e' : '#f9f9f9'; ?>;
-        padding: 15px;
-        border-radius: 5px;
-        margin: 20px 0;
-        border-left: 4px solid <?php echo $current_theme['accent_color']; ?>;
-    }
-    .svg-content { text-align: center; margin: 20px 0; }
-    .dataset-actions { margin-top: 30px; text-align: center; }
-    .download-btn, .back-btn {
-        display: inline-block;
-        margin: 0 10px;
-        padding: 12px 24px;
-        text-decoration: none;
-        border-radius: 6px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        border: 2px solid transparent;
-    }
-    .download-btn {
-        background: <?php echo $current_theme['button_primary']; ?>;
-        color: white;
-        border-color: <?php echo $current_theme['button_primary']; ?>;
-    }
-    .download-btn:hover {
-        background: transparent;
-        color: <?php echo $current_theme['button_primary']; ?>;
-        border-color: <?php echo $current_theme['button_primary']; ?>;
-        text-decoration: none;
-    }
-    .back-btn {
-        background: <?php echo $current_theme['button_secondary']; ?>;
-        color: <?php echo $color_theme === 'dark' ? '#ecf0f1' : '#333333'; ?>;
-        border-color: <?php echo $current_theme['button_secondary']; ?>;
-    }
-    .back-btn:hover {
-        background: <?php echo $current_theme['accent_color']; ?>;
-        border-color: <?php echo $current_theme['accent_color']; ?>;
-        color: white;
-        text-decoration: none;
-    }
-    pre {
-        background: <?php echo $color_theme === 'dark' ? '#34495e' : '#f4f4f4'; ?>;
-        color: <?php echo $current_theme['body_color']; ?>;
-        padding: 15px;
-        border-radius: 5px;
-        overflow-x: auto;
-    }
-    h1, h2 {
-        color: <?php echo $current_theme['body_color']; ?>;
-    }
-    h1 {
-        border-bottom: 3px solid <?php echo $current_theme['accent_color']; ?>;
-        padding-bottom: 10px;
-    }
-    </style>
-    <?php
 }
 
 function kashiwazaki_poll_output_standalone_dataset_page($data) {
@@ -2743,6 +2549,17 @@ function kashiwazaki_poll_output_standalone_dataset_page($data) {
             <p><?php echo esc_html($data['poll_description']); ?></p>
 
             <div class="dataset-meta">
+                <?php
+                // 調査期間を取得
+                $survey_period = kashiwazaki_poll_get_survey_period($data['poll_id']);
+                if ($survey_period) {
+                    $survey_start = date_i18n('Y年m月d日', $survey_period['start']);
+                    $survey_end = date_i18n('Y年m月d日', $survey_period['end']);
+                    echo '<p><strong>調査期間:</strong> ' . esc_html($survey_start) . '〜' . esc_html($survey_end) . '</p>';
+                } else {
+                    echo '<p><strong>調査期間:</strong> まだ投票がありません</p>';
+                }
+                ?>
                 <p><strong>最終更新:</strong> <?php
                 // 最新投票時刻を取得（リストページと同じロジック）
                 $voted_ips = get_post_meta($data['poll_id'], '_kashiwazaki_poll_voted_ips', true);
@@ -2977,15 +2794,19 @@ function kashiwazaki_poll_output_standalone_dataset_page($data) {
                                         const counts = dataset.data;
                                         const backgroundColors = dataset.backgroundColor;
                                         const totalVotes = counts.reduce((sum, count) => sum + (Number(count) || 0), 0);
+                                        const maxLabelLength = 15;
 
                                         try {
                                             return labels.map((label, index) => {
                                                 const voteCount = (counts && typeof counts[index] !== 'undefined') ? Number(counts[index]) : 0;
                                                 const percentage = totalVotes > 0 ? ((voteCount / totalVotes) * 100).toFixed(1) : '0.0';
                                                 const labelText = typeof label === 'string' ? label : `項目 ${index + 1}`;
-                                                const text = `${labelText} (${voteCount}票 / ${percentage}%)`;
+                                                const truncatedLabel = labelText.length > maxLabelLength ? labelText.substring(0, maxLabelLength) + '...' : labelText;
+                                                const text = `${truncatedLabel} (${voteCount}票 / ${percentage}%)`;
+                                                const fullText = `${labelText} (${voteCount}票 / ${percentage}%)`;
                                                 return {
                                                     text: text,
+                                                    fullText: fullText,
                                                     fillStyle: backgroundColors[index % backgroundColors.length],
                                                     strokeStyle: backgroundColors[index % backgroundColors.length],
                                                     lineWidth: 0,
@@ -3000,6 +2821,25 @@ function kashiwazaki_poll_output_standalone_dataset_page($data) {
                                     }
                                     return [];
                                 }
+                            },
+                            onHover: function(event, legendItem) {
+                                if (legendItem && legendItem.fullText && legendItem.fullText !== legendItem.text) {
+                                    let tooltip = document.getElementById('legend-tooltip');
+                                    if (!tooltip) {
+                                        tooltip = document.createElement('div');
+                                        tooltip.id = 'legend-tooltip';
+                                        tooltip.style.cssText = 'position:fixed;background:#333;color:#fff;padding:8px 12px;border-radius:4px;font-size:12px;z-index:10000;pointer-events:none;max-width:300px;word-wrap:break-word;box-shadow:0 2px 8px rgba(0,0,0,0.3);';
+                                        document.body.appendChild(tooltip);
+                                    }
+                                    tooltip.textContent = legendItem.fullText;
+                                    tooltip.style.display = 'block';
+                                    tooltip.style.left = (event.native.clientX + 10) + 'px';
+                                    tooltip.style.top = (event.native.clientY + 10) + 'px';
+                                }
+                            },
+                            onLeave: function() {
+                                const tooltip = document.getElementById('legend-tooltip');
+                                if (tooltip) { tooltip.style.display = 'none'; }
                             }
                         },
                         tooltip: { enabled: true },

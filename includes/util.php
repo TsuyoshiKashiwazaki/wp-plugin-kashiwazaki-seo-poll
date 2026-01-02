@@ -18,6 +18,23 @@ function kashiwazaki_poll_is_already_voted( $poll_id, $ip, $cookie_key ) {
     return false;
 }
 
+/**
+ * アンケートの調査期間（最初の投票日と最後の投票日）を取得
+ *
+ * @param int $poll_id アンケートID
+ * @return array|null 調査期間の配列 ['start' => timestamp, 'end' => timestamp] または投票がない場合はnull
+ */
+function kashiwazaki_poll_get_survey_period( $poll_id ) {
+    $voted_ips = get_post_meta( $poll_id, '_kashiwazaki_poll_voted_ips', true );
+    if ( ! is_array( $voted_ips ) || empty( $voted_ips ) ) {
+        return null;
+    }
+    return array(
+        'start' => min( $voted_ips ),
+        'end'   => max( $voted_ips ),
+    );
+}
+
 function kashiwazaki_poll_get_dataset_file_path( $poll_id, $file_type ) {
     $allowed_types = ['csv', 'xml', 'yaml', 'json', 'svg'];
     if ( ! in_array( $file_type, $allowed_types ) ) {

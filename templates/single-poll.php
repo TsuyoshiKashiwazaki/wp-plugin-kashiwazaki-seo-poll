@@ -53,6 +53,7 @@ get_header(); ?>
                 <?php
                 $post_date = get_the_date('Y年m月d日');
                 $post_modified = get_the_modified_date('Y年m月d日');
+                $survey_period = function_exists('kashiwazaki_poll_get_survey_period') ? kashiwazaki_poll_get_survey_period(get_the_ID()) : null;
                 ?>
                 <time datetime="<?php echo get_the_date('c'); ?>" class="meta-badge date-badge">
                     投稿 <?php echo $post_date; ?>
@@ -60,6 +61,15 @@ get_header(); ?>
                 <time datetime="<?php echo get_the_modified_date('c'); ?>" class="meta-badge modified-badge">
                     更新 <?php echo $post_modified; ?>
                 </time>
+                <?php if ($survey_period) : ?>
+                <span class="meta-badge survey-period-badge">
+                    調査期間 <?php echo date_i18n('Y年m月d日', $survey_period['start']); ?>〜<?php echo date_i18n('Y年m月d日', $survey_period['end']); ?>
+                </span>
+                <?php else : ?>
+                <span class="meta-badge survey-period-badge no-votes">
+                    まだ投票がありません
+                </span>
+                <?php endif; ?>
                 <span class="meta-badge author-badge">
                     <?php echo get_the_author(); ?>
                 </span>
