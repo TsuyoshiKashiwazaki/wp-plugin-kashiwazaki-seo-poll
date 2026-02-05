@@ -3,7 +3,7 @@ Contributors: kashiwazaki
 Tags: poll, survey, dataset, google-dataset, structured-data, seo, data-collection
 Requires at least: 5.0
 Tested up to: 6.7
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -142,6 +142,11 @@ IPアドレスとCookieの二重チェックで重複投票を防止します。
 
 == Changelog ==
 
+= 1.0.3 - 2026-02-05 =
+* 修正: 編集画面から公開できない問題を修正
+* 修正: 投票済みユーザーが再度投票できる問題を修正
+* 修正: 初期データなし時のプレビュー表示問題を修正
+
 = 1.0.2 - 2026-01-02 =
 * 追加: 調査期間表示機能（最初の投票日〜最後の投票日）
 * 追加: 凡例テキスト省略機能（15文字以上で...表示、ホバーで全文表示）
@@ -161,6 +166,9 @@ IPアドレスとCookieの二重チェックで重複投票を防止します。
 * データセット専用URL構造実装
 
 == Upgrade Notice ==
+
+= 1.0.3 =
+投票フォーム関連の重要なバグ修正。編集画面からの公開問題と投票済み判定の問題を修正しました。
 
 = 1.0.2 =
 調査期間表示機能と凡例テキスト省略機能を追加。データセットの情報がより充実しました。

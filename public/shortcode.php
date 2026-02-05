@@ -63,25 +63,26 @@ function kashiwazaki_poll_shortcode( $atts ) {
 
     echo '<div class="kashiwazaki-poll-block" data-poll-id="' . $poll_id . '">';
     echo '<div class="kashiwazaki-poll-title">' . $question_esc . '</div>';
-    echo '<div id="kashiwazaki-poll-view-result-area-'. $poll_id .'" class="kashiwazaki-poll-view-result-trigger-area" style="'. ($has_data && !$already_voted ? '' : 'display: none;') .'">';
+    echo '<div id="kashiwazaki-poll-view-result-area-'. $poll_id .'" class="kashiwazaki-poll-view-result-trigger-area" style="'. (!$already_voted ? '' : 'display: none;') .'">';
     echo '<button type="button" class="kashiwazaki-poll-view-result" data-pollid="' . $poll_id . '">集計データを拡大</button>';
     echo '</div>';
     echo '<div id="kashiwazaki-poll-result-' . $poll_id . '" class="kashiwazaki-poll-result-container"></div>';
-    echo '<div id="kashiwazaki-poll-preview-' . $poll_id . '" class="kashiwazaki-poll-preview-container" style="'. ($has_data && !$already_voted ? '' : 'display: none;') .'"></div>';
-    echo '<form class="kashiwazaki-poll-form" data-pollid="' . $poll_id . '">';
-    echo wp_nonce_field( 'kashiwazaki_poll_vote_' . $poll_id, '_wpnonce', true, false );
-    echo '<input type="hidden" name="poll_id" value="' . $poll_id . '">';
-    echo '<input type="hidden" name="poll_type" value="' . $poll_type . '">';
-    echo '<button type="button" id="kashiwazaki-poll-submit-top-' . $poll_id . '" class="kashiwazaki-poll-submit">投票する</button>';
-    foreach ( $options as $i => $opt ) {
-        $opt_esc = esc_html( $opt );
-        $input_type = ($poll_type === 'multiple') ? 'checkbox' : 'radio';
-        echo '<div><label><input type="'.$input_type.'" name="poll_options[]" value="' . $i . '"> ' . $opt_esc . '</label></div>';
-    }
-    echo '<button type="button" id="kashiwazaki-poll-submit-bottom-' . $poll_id . '" class="kashiwazaki-poll-submit">投票する</button>';
-    echo '</form>';
+    echo '<div id="kashiwazaki-poll-preview-' . $poll_id . '" class="kashiwazaki-poll-preview-container" style="'. (!$already_voted ? '' : 'display: none;') .'"></div>';
 
-    if ( $already_voted ) {
+    if ( ! $already_voted ) {
+        echo '<form class="kashiwazaki-poll-form" data-pollid="' . $poll_id . '">';
+        echo wp_nonce_field( 'kashiwazaki_poll_vote_' . $poll_id, '_wpnonce', true, false );
+        echo '<input type="hidden" name="poll_id" value="' . $poll_id . '">';
+        echo '<input type="hidden" name="poll_type" value="' . $poll_type . '">';
+        echo '<button type="button" id="kashiwazaki-poll-submit-top-' . $poll_id . '" class="kashiwazaki-poll-submit">投票する</button>';
+        foreach ( $options as $i => $opt ) {
+            $opt_esc = esc_html( $opt );
+            $input_type = ($poll_type === 'multiple') ? 'checkbox' : 'radio';
+            echo '<div><label><input type="'.$input_type.'" name="poll_options[]" value="' . $i . '"> ' . $opt_esc . '</label></div>';
+        }
+        echo '<button type="button" id="kashiwazaki-poll-submit-bottom-' . $poll_id . '" class="kashiwazaki-poll-submit">投票する</button>';
+        echo '</form>';
+    } else {
         echo '<p class="voted-msg">既に投票しています</p>';
         echo '<form class="kashiwazaki-poll-form kashiwazaki-poll-form-disabled" data-pollid="' . $poll_id . '" style="display: none;">';
         foreach ( $options as $i => $opt ) {

@@ -308,12 +308,12 @@
                     if (previewContainer) { previewContainer.style.display = 'none'; }
                     if (chartInstance) { try { chartInstance.destroy(); } catch (e) { } chartInstance = null; }
                     if (form) form.style.display = 'block';
-                    if (!alreadyVoted && hasData && viewResultArea) {
+                    if (!alreadyVoted && viewResultArea) {
                         viewResultArea.style.display = 'block';
                     } else if (viewResultArea) { viewResultArea.style.display = 'none'; }
-                    if (!alreadyVoted && hasData) {
+                    if (!alreadyVoted) {
                         fetchAndShowResults(false);
-                    } else if (previewContainer) { previewContainer.style.display = 'none'; }
+                    }
                     const backBtn = pollBlock.querySelector('.kashiwazaki-poll-back-to-vote'); if (backBtn) backBtn.remove(); const downloadBtn = pollBlock.querySelector('.kashiwazaki-poll-download-btn'); if (downloadBtn) downloadBtn.remove();
                 } else if (target && target.classList.contains('kashiwazaki-poll-download-btn')) {
                     e.preventDefault();
@@ -341,7 +341,7 @@
                     return;
                 }
                 if (alreadyVoted) { fetchAndShowResults(true); }
-                else if (hasData) { fetchAndShowResults(false); }
+                else { fetchAndShowResults(false); }
             };
 
             // 初期化実行

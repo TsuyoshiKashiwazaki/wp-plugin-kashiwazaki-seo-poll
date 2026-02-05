@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-02-05
+
+### Fixed
+- 編集画面から公開できない問題を修正（publishパラメータが送信されない問題）
+- 投票済みユーザーが再度投票できる問題を修正（投票フォームの表示制御）
+- 初期データなし時のプレビュー表示問題を修正
+
 ## [1.0.2] - 2026-01-02
 
 ### Added
@@ -65,6 +72,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - データセットの期限設定機能
 - REST API エンドポイント
 
+[1.0.3]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.3
 [1.0.2]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.2
 [1.0.1]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.1
 [1.0.0]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.0

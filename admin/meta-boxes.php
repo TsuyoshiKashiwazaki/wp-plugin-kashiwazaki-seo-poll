@@ -366,7 +366,8 @@ if ( ! function_exists( 'kashiwazaki_poll_reset_data_metabox' ) ) {
         echo '<p>現在の総投票数 (延べ): ' . esc_html( $total_votes ) . ' 票</p>';
         echo '<p>現在の投票者数 (IP基準): ' . esc_html( $voter_count ) . ' 人</p>';
         echo '<p>このボタンを押すと、これまでの投票データ（票数と投票者IP）が完全にリセットされます。<br><strong>この操作は元に戻せません。</strong></p>';
-        echo '<p><input type="submit" name="kashiwazaki_poll_reset_data_submit" value="集計データを全削除する" class="button button-secondary delete" onclick="return confirm(\'本当にこの集計データをすべて削除してもよろしいですか？\\n\\nこの操作は元に戻せません。\');"></p>';
+        echo '<input type="hidden" name="kashiwazaki_poll_reset_data_action" value="0" id="kashiwazaki_poll_reset_action_field">';
+        echo '<p><button type="button" class="button button-secondary delete" onclick="if(confirm(\'本当にこの集計データをすべて削除してもよろしいですか？\\n\\nこの操作は元に戻せません。\')){document.getElementById(\'kashiwazaki_poll_reset_action_field\').value=\'1\';document.getElementById(\'kashiwazaki_poll_reset_action_field\').name=\'kashiwazaki_poll_reset_data_submit\';document.getElementById(\'post\').submit();}">集計データを全削除する</button></p>';
     }
 }
 
@@ -449,5 +450,45 @@ add_action('admin_notices', function() {
             から変更できます。
         </p>
     </div>
+    <?php
+});
+
+// 公開ボタンクリック時にpublishパラメータを追加（JavaScript経由でフォーム送信される場合の対策）
+add_action('admin_footer-post.php', function() {
+    global $post_type;
+    if ($post_type !== 'poll') return;
+    ?>
+    <script>
+    jQuery(document).ready(function($) {
+        $('#publish').on('click.kashiwazakiPoll', function(e) {
+            if (!$('input[name="publish"][type="hidden"]').length) {
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'publish',
+                    value: '公開'
+                }).appendTo('#post');
+            }
+        });
+    });
+    </script>
+    <?php
+});
+add_action('admin_footer-post-new.php', function() {
+    global $post_type;
+    if ($post_type !== 'poll') return;
+    ?>
+    <script>
+    jQuery(document).ready(function($) {
+        $('#publish').on('click.kashiwazakiPoll', function(e) {
+            if (!$('input[name="publish"][type="hidden"]').length) {
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'publish',
+                    value: '公開'
+                }).appendTo('#post');
+            }
+        });
+    });
+    </script>
     <?php
 });
