@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.4] - 2026-02-18
+
+### Changed
+- フォーマット別データセットページ（CSV/XML/YAML/JSON/SVG）のcanonical URLを中央の詳細ページ（/datasets/detail-{ID}/）に集約
+- SEOクラスタリングの改善：5つのフォーマットページが1つの正規URLに統合
+
 ## [1.0.3] - 2026-02-05
 
 ### Fixed
@@ -72,6 +78,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - データセットの期限設定機能
 - REST API エンドポイント
 
+[1.0.4]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.4
 [1.0.3]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.3
 [1.0.2]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.2
 [1.0.1]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.1

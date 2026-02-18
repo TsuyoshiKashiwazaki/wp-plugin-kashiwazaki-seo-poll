@@ -2342,13 +2342,8 @@ function kashiwazaki_poll_output_standalone_dataset_page($data) {
         ?>
         <meta name="robots" content="index, follow">
         <?php
-        // 使用ページがある場合は最初の使用ページにcanonical設定
-        $usage_posts = kashiwazaki_poll_get_shortcode_usage($data['poll_id']);
-        if (!empty($usage_posts)) {
-            $canonical_url = get_permalink($usage_posts[0]->ID);
-        } else {
-            $canonical_url = $data['page_url'];
-        }
+        // フォーマット別ページのcanonicalを中央のデータセット詳細ページに集約
+        $canonical_url = home_url( "/datasets/detail-{$data['poll_id']}/" );
         ?>
         <link rel="canonical" href="<?php echo esc_url($canonical_url); ?>">
 

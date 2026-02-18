@@ -1,6 +1,6 @@
 # Kashiwazaki SEO Poll
 
-![Version](https://img.shields.io/badge/Version-1.0.3-blue.svg)
+![Version](https://img.shields.io/badge/Version-1.0.4-blue.svg)
 ![WordPress](https://img.shields.io/badge/WordPress-5.0%2B-blue.svg)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-purple.svg)
 ![License](https://img.shields.io/badge/License-GPLv2-green.svg)

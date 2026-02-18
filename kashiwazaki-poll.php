@@ -3,7 +3,7 @@
  * Plugin Name: Kashiwazaki SEO Poll
  * Plugin URI:  https://www.tsuyoshikashiwazaki.jp/
  * Description: WordPressで複数のアンケートを作成・管理できる投票プラグインです。ショートコード [tk_poll id=123] を任意の投稿や固定ページに挿入することでアンケートフォームを簡単に設置できます。単一選択・複数選択に対応しており、投票結果はChart.jsを利用したグラフでリアルタイム表示されます。また、IPアドレスとCookieを利用した重複投票防止機能や、SEO向けの構造化データ（Dataset）の自動生成機能も備えています。
- * Version:     1.0.3
+ * Version:     1.0.4
  * Author:      柏崎剛
  * Author URI:  https://www.tsuyoshikashiwazaki.jp/
  * License:     GPLv2 or later
