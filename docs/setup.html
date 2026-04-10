@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>インストール・初期設定 - Kashiwazaki SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css?v=1">
+</head>
+<body>
+    <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2 style="color:#fff;">SEO Poll</h2>
+            <span class="version">v1.0.4</span>
+            <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
+        </div>
+        <ul>
+            <li><a href="index.html">概要</a></li>
+            <li><a href="setup.html">インストール・初期設定</a></li>
+            <li><a href="poll-usage.html">アンケート作成・表示</a></li>
+            <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+        </ul>
+    </nav>
+    <main class="content">
+        <h1>インストール・初期設定</h1>
+
+        <p class="lead">プラグインのインストールから初期設定まで、ステップバイステップで解説します。</p>
+
+        <h2>インストール手順</h2>
+
+        <div class="step">
+            <span class="step-number">1</span>
+            <div class="step-body">
+                <p>プラグインファイルを <code>/wp-content/plugins/kashiwazaki-seo-poll/</code> にアップロード</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">2</span>
+            <div class="step-body">
+                <p>WordPress管理画面「プラグイン」から有効化</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">3</span>
+            <div class="step-body">
+                <p>左メニューに「アンケート」カスタム投稿タイプが追加される</p>
+            </div>
+        </div>
+
+        <figure class="screenshot">
+            <img src="images/screenshots/00-menu-location.png" alt="管理画面メニューの位置" class="lightbox-trigger">
+            <figcaption>管理画面の左メニューにプラグインが追加されます</figcaption>
+        </figure>
+
+        <div class="step">
+            <span class="step-number">4</span>
+            <div class="step-body">
+                <p>管理画面サイドバーの「Kashiwazaki SEO Poll」→「基本設定」で初期設定を確認・変更する</p>
+            </div>
+        </div>
+
+        <div class="callout callout-tip">
+            <p>有効化時にカスタム投稿タイプ「poll」と「dataset」が自動登録されます。パーマリンク設定を保存し直すことで、アンケートページのURLが正しく動作するようになります。</p>
+        </div>
+
+        <h2>設定ページ</h2>
+
+        <p>設定ページではアンケートの基本動作を設定できます。</p>
+
+        <h2>カスタム投稿タイプ</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:35%;">投稿タイプ</th>
+                    <th>説明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>poll</td>
+                    <td>アンケート（投票）の本体。質問文・選択肢・投票結果を管理</td>
+                </tr>
+                <tr>
+                    <td>dataset</td>
+                    <td>アンケートデータのデータセット。CSV/XML/JSON/YAML形式で自動生成</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>構造化データ出力</h2>
+
+        <p>本プラグインは以下の構造化データを自動出力します。</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:35%;">出力種類</th>
+                    <th>説明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Dataset JSON-LD</td>
+                    <td>アンケートデータをDatasetスキーマとして構造化データ出力</td>
+                </tr>
+                <tr>
+                    <td>DC.type metaタグ</td>
+                    <td>Dublin Coreメタデータとしてデータセットタイプを宣言</td>
+                </tr>
+                <tr>
+                    <td>BreadcrumbList JSON-LD</td>
+                    <td>パンくずナビゲーションの構造化データ</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-note">
+            <p>Rank Mathプラグインがインストールされている場合、Rank Mathとの連携が自動的に有効になります。</p>
+        </div>
+
+        <h2>重複投票防止</h2>
+
+        <p>投票の重複防止はIPアドレスとCookieの組み合わせで実現しています。</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:35%;">防止方法</th>
+                    <th>説明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>IPアドレス</td>
+                    <td>同一IPからの重複投票を検出</td>
+                </tr>
+                <tr>
+                    <td>Cookie</td>
+                    <td>ブラウザに投票済み情報を記録</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <nav class="page-nav">
+            <a href="index.html" class="prev">&laquo; 概要</a>
+            <a href="poll-usage.html" class="next">アンケート作成・表示 &raquo;</a>
+        </nav>
+
+        <footer class="manual-footer">
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/profile/" target="_blank" rel="noopener">柏崎剛（Tsuyoshi Kashiwazaki）</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.4</p>
+        </footer>
+    </main>
+
+    <div class="lightbox"></div>
+
+    <script src="js/manual.js?v=1"></script>
+</body>
+</html>

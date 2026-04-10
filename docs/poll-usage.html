@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アンケート作成・表示 - Kashiwazaki SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css?v=1">
+</head>
+<body>
+    <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2 style="color:#fff;">SEO Poll</h2>
+            <span class="version">v1.0.4</span>
+            <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
+        </div>
+        <ul>
+            <li><a href="index.html">概要</a></li>
+            <li><a href="setup.html">インストール・初期設定</a></li>
+            <li><a href="poll-usage.html">アンケート作成・表示</a></li>
+            <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+        </ul>
+    </nav>
+    <main class="content">
+        <h1>アンケート作成・表示</h1>
+
+        <p class="lead">カスタム投稿タイプでアンケートを作成し、ショートコードで任意のページに埋め込む方法を解説します。Chart.jsによるグラフ表示とデータセット出力についても説明します。</p>
+
+        <h2>アンケートの作成</h2>
+
+        <figure class="screenshot">
+            <img src="images/screenshots/02-poll-detail.png" alt="アンケート設定" class="lightbox-trigger">
+            <figcaption>アンケートの設定画面</figcaption>
+        </figure>
+
+        <div class="step">
+            <span class="step-number">1</span>
+            <div class="step-body">
+                <p>管理画面左メニュー「アンケート」→「新規追加」をクリック</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">2</span>
+            <div class="step-body">
+                <p>アンケートのタイトル（質問文）を入力</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">3</span>
+            <div class="step-body">
+                <p>選択肢を追加（単一選択または複数選択を設定）</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">4</span>
+            <div class="step-body">
+                <p>グラフの種類（円グラフ・棒グラフ・ドーナツチャート）を選択</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">5</span>
+            <div class="step-body">
+                <p>「公開」をクリックしてアンケートを保存</p>
+            </div>
+        </div>
+
+        <div class="callout callout-tip">
+            <p>アンケートの投稿IDは公開後にURL欄やショートコード表示エリアで確認できます。</p>
+        </div>
+
+        <h2>ショートコードでの埋め込み</h2>
+
+        <p>作成したアンケートは以下のショートコードで任意の投稿・固定ページに埋め込めます。</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:35%;">ショートコード</th>
+                    <th>説明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>[tk_poll id=123]</code></td>
+                    <td>IDが123のアンケートを表示。idにはアンケートの投稿IDを指定</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="step">
+            <span class="step-number">1</span>
+            <div class="step-body">
+                <p>投稿または固定ページの編集画面を開く</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">2</span>
+            <div class="step-body">
+                <p>ショートコードブロックを追加し、<code>[tk_poll id=123]</code> を入力（123を実際のIDに置き換え）</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">3</span>
+            <div class="step-body">
+                <p>ページを公開・更新してフロントエンドで表示を確認</p>
+            </div>
+        </div>
+
+        <h2>Chart.jsによるグラフ表示</h2>
+
+        <p>投票結果は以下のグラフ形式でリアルタイム表示されます。</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:35%;">グラフ種類</th>
+                    <th>説明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>円グラフ (Pie)</td>
+                    <td>各選択肢の割合を円形で表示</td>
+                </tr>
+                <tr>
+                    <td>棒グラフ (Bar)</td>
+                    <td>各選択肢の投票数を棒グラフで表示</td>
+                </tr>
+                <tr>
+                    <td>ドーナツチャート (Doughnut)</td>
+                    <td>円グラフの中央を空けた形式で割合を表示</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-note">
+            <p>Chart.jsは外部CDN（jsdelivr.net）から読み込まれます。投票後、グラフはAJAXでリアルタイムに更新されます。</p>
+        </div>
+
+        <h2>データセット出力</h2>
+
+        <p>アンケート結果は以下の形式でデータセットファイルとして自動生成されます。</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:35%;">形式</th>
+                    <th>説明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>CSV</td>
+                    <td>カンマ区切りテキスト。スプレッドシートやBIツールでの分析に最適</td>
+                </tr>
+                <tr>
+                    <td>XML</td>
+                    <td>構造化マークアップ。システム間のデータ連携に利用</td>
+                </tr>
+                <tr>
+                    <td>JSON</td>
+                    <td>軽量データ交換形式。Webアプリケーションでの利用に最適</td>
+                </tr>
+                <tr>
+                    <td>YAML</td>
+                    <td>人間が読みやすい形式。設定ファイルやドキュメントに利用</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-tip">
+            <p>データセットファイルはDatasetスキーマJSON-LDと連動しており、JSON-LD内のdistribution要素からファイルURLが参照されます。Google Dataset Searchでの発見可能性を高めます。</p>
+        </div>
+
+        <nav class="page-nav">
+            <a href="setup.html" class="prev">&laquo; インストール・初期設定</a>
+            <a href="troubleshooting.html" class="next">トラブルシューティング &raquo;</a>
+        </nav>
+
+        <footer class="manual-footer">
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/profile/" target="_blank" rel="noopener">柏崎剛（Tsuyoshi Kashiwazaki）</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.4</p>
+        </footer>
+    </main>
+
+    <div class="lightbox"></div>
+
+    <script src="js/manual.js?v=1"></script>
+</body>
+</html>

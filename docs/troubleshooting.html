@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>トラブルシューティング - Kashiwazaki SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css?v=1">
+</head>
+<body>
+    <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2 style="color:#fff;">SEO Poll</h2>
+            <span class="version">v1.0.4</span>
+            <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
+        </div>
+        <ul>
+            <li><a href="index.html">概要</a></li>
+            <li><a href="setup.html">インストール・初期設定</a></li>
+            <li><a href="poll-usage.html">アンケート作成・表示</a></li>
+            <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+        </ul>
+    </nav>
+    <main class="content">
+        <h1>トラブルシューティング</h1>
+
+        <p class="lead">よくある問題とその解決方法をまとめています。</p>
+
+        <h2>よくある問題と解決策</h2>
+
+        <h3>アンケートが表示されない</h3>
+
+        <p>原因: ショートコードのIDが正しくないか、アンケートが公開されていない可能性があります。</p>
+
+        <div class="step">
+            <span class="step-number">1</span>
+            <div class="step-body">
+                <p>ショートコードの <code>id</code> パラメータが正しいアンケートの投稿IDか確認する</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">2</span>
+            <div class="step-body">
+                <p>アンケートのステータスが「公開済み」になっているか確認する</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">3</span>
+            <div class="step-body">
+                <p>ブラウザのコンソール（F12キー）でJavaScriptエラーがないか確認する</p>
+            </div>
+        </div>
+
+        <div class="callout callout-tip">
+            <p>アンケートの投稿IDは管理画面「アンケート」一覧でマウスオーバーすると確認できます。</p>
+        </div>
+
+        <h3>グラフが表示されない</h3>
+
+        <p>原因: Chart.jsライブラリの読み込み失敗が考えられます。</p>
+
+        <div class="step">
+            <span class="step-number">1</span>
+            <div class="step-body">
+                <p>ブラウザのコンソールでChart.jsの読み込みエラーがないか確認する</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">2</span>
+            <div class="step-body">
+                <p>CDN（<code>jsdelivr.net</code>）へのアクセスが遮断されていないか確認する</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">3</span>
+            <div class="step-body">
+                <p>他のプラグインやテーマがChart.jsと競合していないか確認する</p>
+            </div>
+        </div>
+
+        <div class="callout callout-note">
+            <p>Chart.jsは外部CDN（jsdelivr.net）から読み込まれます。社内ネットワーク等でCDNへのアクセスが制限されている場合、グラフは表示できません。</p>
+        </div>
+
+        <h3>投票できない（重複投票エラー）</h3>
+
+        <p>原因: 同一IPアドレスまたはCookieにより、既に投票済みと判定されています。</p>
+
+        <div class="step">
+            <span class="step-number">1</span>
+            <div class="step-body">
+                <p>ブラウザのCookieをクリアして再度投票を試みる</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">2</span>
+            <div class="step-body">
+                <p>共有IPアドレス環境（社内LAN等）の場合、他のユーザーが既に投票している可能性がある</p>
+            </div>
+        </div>
+
+        <div class="callout callout-warning">
+            <p>重複投票防止はIPアドレスとCookieの組み合わせで実現しています。VPNやプロキシ環境では正確に動作しない場合があります。</p>
+        </div>
+
+        <h3>JSON-LDが出力されない</h3>
+
+        <p>原因: アンケートページ以外のページではJSON-LDは出力されません。</p>
+
+        <div class="step">
+            <span class="step-number">1</span>
+            <div class="step-body">
+                <p>アンケートのカスタム投稿タイプページ、またはショートコードを含むページのソースコードを確認する</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">2</span>
+            <div class="step-body">
+                <p>ページのHTMLソース内で <code>&lt;script type="application/ld+json"&gt;</code> を検索する</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">3</span>
+            <div class="step-body">
+                <p>Google リッチリザルトテストでJSON-LDの検証を行う</p>
+            </div>
+        </div>
+
+        <h3>データセットファイルが生成されない</h3>
+
+        <p>原因: アンケートの投票データがないか、ファイル書き込み権限の問題です。</p>
+
+        <div class="step">
+            <span class="step-number">1</span>
+            <div class="step-body">
+                <p>アンケートに1件以上の投票があることを確認する</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">2</span>
+            <div class="step-body">
+                <p>データセットの保存先ディレクトリに書き込み権限があるか確認する</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">3</span>
+            <div class="step-body">
+                <p>サーバーのディスク容量が不足していないか確認する</p>
+            </div>
+        </div>
+
+        <h2>動作要件</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:35%;">項目</th>
+                    <th>要件</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>WordPress</td>
+                    <td>6.0 以上</td>
+                </tr>
+                <tr>
+                    <td>PHP</td>
+                    <td>7.4 以上</td>
+                </tr>
+                <tr>
+                    <td>ブラウザ</td>
+                    <td>Chrome, Firefox, Safari, Edge（最新版）</td>
+                </tr>
+                <tr>
+                    <td>外部ライブラリ</td>
+                    <td>Chart.js（CDN: jsdelivr.net から自動読み込み）</td>
+                </tr>
+                <tr>
+                    <td>権限</td>
+                    <td>管理者（アンケート管理）、閲覧者（投票・閲覧）</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>技術仕様</h2>
+
+        <ul>
+            <li><strong>データ保存:</strong> wp_options (<code>kashiwazaki_poll_settings</code>等)</li>
+            <li><strong>カスタム投稿タイプ:</strong> poll + dataset</li>
+            <li><strong>カスタムテーブル:</strong> なし</li>
+            <li><strong>外部通信:</strong> Chart.js CDN (jsdelivr.net)</li>
+            <li><strong>Cron:</strong> なし</li>
+            <li><strong>メール:</strong> なし</li>
+            <li><strong>AJAXハンドラー:</strong> 3個</li>
+            <li><strong>フロントエンド出力:</strong> CSS 20KB、JS 32KB、JSON-LD (Dataset, BreadcrumbList)、DC.type metaタグ</li>
+            <li><strong>ショートコード:</strong> <code>[tk_poll id=123]</code></li>
+            <li><strong>重複投票防止:</strong> IP + Cookie</li>
+            <li><strong>データセット出力:</strong> CSV / XML / JSON / YAML</li>
+            <li><strong>セキュリティ:</strong> nonce検証、capability チェック</li>
+        </ul>
+
+        <figure class="infographic">
+            <img src="images/infographics/architecture.png" alt="プラグインのアーキテクチャ" class="lightbox-trigger">
+            <figcaption>図: プラグインのアーキテクチャ</figcaption>
+        </figure>
+
+        <nav class="page-nav">
+            <a href="poll-usage.html" class="prev">&laquo; アンケート作成・表示</a>
+            <span></span>
+        </nav>
+
+        <footer class="manual-footer">
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/profile/" target="_blank" rel="noopener">柏崎剛（Tsuyoshi Kashiwazaki）</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.4</p>
+        </footer>
+    </main>
+
+    <div class="lightbox"></div>
+
+    <script src="js/manual.js?v=1"></script>
+</body>
+</html>

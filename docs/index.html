@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>概要 - Kashiwazaki SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css?v=1">
+</head>
+<body>
+    <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2 style="color:#fff;">SEO Poll</h2>
+            <span class="version">v1.0.4</span>
+            <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
+        </div>
+        <ul>
+            <li><a href="index.html">概要</a></li>
+            <li><a href="setup.html">インストール・初期設定</a></li>
+            <li><a href="poll-usage.html">アンケート作成・表示</a></li>
+            <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+        </ul>
+    </nav>
+    <main class="content">
+        <h1>Kashiwazaki SEO Poll マニュアル</h1>
+
+        <img src="images/main-visual.png" alt="Kashiwazaki SEO Poll メインビジュアル" style="width:100%; border-radius:8px; margin-bottom:24px;">
+
+        <p class="lead">WordPressでアンケート（投票）を作成し、Chart.jsによるリアルタイムチャート表示、DatasetスキーマJSON-LD生成、データセットファイル（CSV/XML/JSON/YAML）の自動出力を行うプラグインです。ショートコード <code>[tk_poll id=123]</code> で任意のページにアンケートを埋め込めます。</p>
+
+        <p>本プラグインはカスタム投稿タイプ「poll」でアンケートを管理し、フロントエンドにChart.jsによるグラフ表示と投票フォームを出力します。DatasetスキーマJSON-LDとDC.type metaタグを自動生成し、BreadcrumbListスキーマとRank Math連携にも対応しています。フロントエンド出力: CSS 20KB、JS 32KB。</p>
+
+        <section>
+            <h2>主要機能</h2>
+            <div class="feature-cards">
+                <div class="feature-card">
+                    <h3>アンケート作成</h3>
+                    <p>カスタム投稿タイプで単一・複数選択のアンケートを簡単作成</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Chart.js表示</h3>
+                    <p>円グラフ・棒グラフ・ドーナツチャートで投票結果をリアルタイム表示</p>
+                </div>
+                <div class="feature-card">
+                    <h3>構造化データ</h3>
+                    <p>DatasetスキーマJSON-LDとデータセットファイル(CSV/XML/JSON/YAML)を自動生成</p>
+                </div>
+            </div>
+        </section>
+
+        <figure class="infographic">
+            <img src="images/infographics/overview-flow.png" alt="プラグインの全体ワークフロー" class="lightbox-trigger">
+            <figcaption>図: プラグインの全体ワークフロー</figcaption>
+        </figure>
+
+        <section>
+            <h2>目次</h2>
+            <ul>
+                <li><a href="index.html">概要</a> - プラグインの概要と主要機能の紹介</li>
+                <li><a href="setup.html">インストール・初期設定</a> - インストール手順と初期設定の方法</li>
+                <li><a href="poll-usage.html">アンケート作成・表示</a> - アンケートの作成方法とChart.js表示</li>
+                <li><a href="troubleshooting.html">トラブルシューティング</a> - よくある問題と解決方法</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>SEO / GEO における強み</h2>
+
+            <p>本プラグインはDatasetスキーマJSON-LDとDC.type metaタグを出力し、構造化データを通じてSEOおよびGEO（Generative Engine Optimization）に直接貢献します。</p>
+
+            <h3>DatasetスキーマによるSEO強化</h3>
+            <p>DatasetスキーマJSON-LDにより、アンケートデータが構造化データとして検索エンジンに認識されます。これにより、アンケート結果がGoogle Dataset Searchなどの専門検索で発見可能になります。</p>
+
+            <h3>BreadcrumbListスキーマ</h3>
+            <p>BreadcrumbListスキーマにより、パンくずナビゲーションが構造化データとして検索結果に表示される可能性があります。これはサイトナビゲーションの理解向上に貢献します。</p>
+
+            <h3>ユーザーエンゲージメントの向上</h3>
+            <p>Chart.jsによるインタラクティブなグラフ表示は、ユーザーのエンゲージメントと滞在時間の向上に貢献します。投票参加とリアルタイムの結果表示により、ページの価値を高めます。</p>
+
+            <h3>データセットファイルの活用</h3>
+            <p>CSV/XML/JSON/YAML形式のデータセットファイルが自動生成されます。これらのファイルはデータの再利用性と引用可能性を高め、学術的な参照や外部からのリンク獲得にも寄与します。</p>
+
+            <h3>GEOへの応用可能性</h3>
+            <p>GEO（Generative Engine Optimization）の観点では、構造化されたデータセット情報はAIが具体的なアンケート結果を参照する際に活用されます。Datasetスキーマとデータセットファイルにより、AIによる引用の精度と可能性が向上します。</p>
+        </section>
+
+        <section>
+            <h2>動作要件</h2>
+            <ul>
+                <li>WordPress 6.0 以上</li>
+                <li>PHP 7.4 以上</li>
+            </ul>
+        </section>
+
+        <nav class="page-nav">
+            <span></span>
+            <a href="setup.html" class="next">インストール・初期設定 &raquo;</a>
+        </nav>
+
+        <footer class="manual-footer">
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/profile/" target="_blank" rel="noopener">柏崎剛（Tsuyoshi Kashiwazaki）</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.4</p>
+        </footer>
+    </main>
+
+    <div class="lightbox"></div>
+
+    <script src="js/manual.js?v=1"></script>
+</body>
+</html>
