@@ -32,7 +32,7 @@ function _kashiwazaki_poll_yaml_quote_string($value) {
     return $value;
 }
 
-function kashiwazaki_poll_generate_all_data_files( $poll_id, $counts ) {
+function kashiwazaki_poll_generate_all_data_files( $poll_id, $counts, $skip_sitemap = false ) {
     $poll_id = intval( $poll_id );
     if ( ! $poll_id ) {
         error_log( "[Poll Data Gen] Invalid poll ID provided: " . $poll_id );
@@ -117,7 +117,11 @@ function kashiwazaki_poll_generate_all_data_files( $poll_id, $counts ) {
     kashiwazaki_poll_generate_json( $poll_id, $poll_data_for_export );
     kashiwazaki_poll_generate_svg_pie( $poll_id, $poll_title_sanitized, $total_votes, $options_data_list, $copyright_site_url, $poll_license_sanitized );
 
-    kashiwazaki_poll_generate_sitemap_poll();
+    // 一括再生成など多数の poll をまとめて処理する呼び出し元は $skip_sitemap=true を渡し、
+    // ループ内での毎回のサイトマップ再生成（O(N^2) 化）を避けてループ完了後に一度だけ呼ぶ。
+    if ( ! $skip_sitemap ) {
+        kashiwazaki_poll_generate_sitemap_poll();
+    }
 
     return true;
 }

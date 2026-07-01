@@ -3,7 +3,7 @@ Contributors: kashiwazaki
 Tags: poll, survey, dataset, google-dataset, structured-data, seo, data-collection
 Requires at least: 5.0
 Tested up to: 6.7
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -141,6 +141,9 @@ IPアドレスとCookieの二重チェックで重複投票を防止します。
 6. 管理画面 - 基本設定ページ
 
 == Changelog ==
+
+= 1.0.6 - 2026-07-01 =
+* 修正: 1.0.5 以前からの更新時に集計データファイルが再生成されず、データセットページやダウンロードが 404（ソフト404含む）になる問題を修正。更新後、DBに残る投票データから全公開分のデータファイルとサイトマップを自動的に再生成します（バックグラウンドと管理画面アクセス時の両経路で復旧。投票データには影響しません）
 
 = 1.0.5 - 2026-07-01 =
 * セキュリティ: 構造化データ（JSON-LD）とスクリプトへの出力をエスケープ強化し、クロスサイトスクリプティング（XSS）を防止

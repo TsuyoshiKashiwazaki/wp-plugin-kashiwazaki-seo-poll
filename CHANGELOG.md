@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.6] - 2026-07-01
+
+### Fixed
+- 1.0.5 以前からの更新時に集計データファイルが再生成されず、データセットページやダウンロードが 404（ソフト404含む）になる問題を修正。旧版（1.0.4 以前）はデータファイルをプラグインフォルダ内に保存していたため、WordPress の更新（旧フォルダ削除）でファイルが失われ、1.0.5 の「コピー移行」方式では復旧できなかった。更新後、DB に残る投票データから全公開分のデータファイルと専用サイトマップを自動的に再生成する方式に変更（バックグラウンド実行と管理画面アクセス時の実行の両経路で復旧。全形式が揃うまで一定間隔で再試行。投票データには影響しない）
+
 ## [1.0.5] - 2026-07-01
 
 ### Security
@@ -102,6 +107,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - データセットの期限設定機能
 - REST API エンドポイント
 
+[1.0.6]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.6
 [1.0.5]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.5
 [1.0.4]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.4
 [1.0.3]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.3
