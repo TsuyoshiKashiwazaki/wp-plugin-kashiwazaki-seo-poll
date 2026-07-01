@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基本設定ガイド - SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2 style="color:#fff;">SEO Poll</h2>
+            <span class="version">v1.0.5</span>
+            <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
+        </div>
+        <ul>
+            <li><a href="index.html">概要</a></li>
+            <li><a href="setup.html">インストール・初期設定</a></li>
+            <li><a href="create-poll.html">アンケートの作成</a></li>
+            <li><a href="settings.html">基本設定ガイド</a></li>
+            <li><a href="voting.html">表示と投票のしくみ</a></li>
+            <li><a href="chart.html">グラフ機能</a></li>
+            <li><a href="datasets.html">データセット公開</a></li>
+            <li><a href="seo.html">SEO・構造化データ</a></li>
+            <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <h1>基本設定ガイド</h1>
+        <p class="lead">左メニューの「Kashiwazaki SEO Poll」を開くと、すべてのアンケートに共通する設定と、便利な管理ツールがまとまっています。ここでは各項目を、初期値のままで良いものも含めて丁寧に説明します。</p>
+
+        <section>
+            <h2>構造化データ設定</h2>
+            <p>この一群の設定は、Google データセット検索向けの構造化データ（誰が作ったデータか、どんな地域のデータか等）に反映されます。</p>
+            <figure class="screenshot">
+                <img src="images/screenshots/01-settings-structured-data.png" alt="構造化データ設定の各項目（パンくずリスト・作者情報・Creator設定・ページタイトル・カラーテーマ・地理的範囲）" class="lightbox-trigger">
+                <figcaption>図: 構造化データ設定。作者情報やカラーテーマをここで指定します</figcaption>
+            </figure>
+
+            <h3>パンくずリスト構造化データ</h3>
+            <p>データセットページにパンくずリスト（BreadcrumbList）の構造化データを出力するかどうかです。初期値は OFF。他のプラグイン（Yoast SEO など）でパンくずを管理している場合は、重複を避けるため OFF のままにしてください。</p>
+
+            <h3>プラグイン作者情報（provider）</h3>
+            <p>構造化データに、プラグイン開発者の情報を <code>provider</code>（提供者）として含めるかどうかです。オンにすると、Dataset の provider に開発者情報が明記されます。</p>
+
+            <h3>Creator 設定</h3>
+            <p>データの作成者（creator）として、誰を明示するかを選びます。</p>
+            <ul>
+                <li><strong>Organization のみ</strong>（初期値）：組織名だけを creator にします。</li>
+                <li><strong>Person のみ</strong>：個人名だけを creator にします。</li>
+                <li><strong>両方</strong>：個人と組織の両方を creator にします。</li>
+            </ul>
+            <p>選んだ種類に応じて、下に「Person の名前・URL」「Organization の名前・URL・メールアドレス」の入力欄が表示されます。組織名・URL・メールアドレスの初期値には、サイトの名称・URL・管理者メールが自動で入ります。</p>
+
+            <h3>データセットページタイトル</h3>
+            <p><code>/datasets/</code> の一覧ページに表示されるタイトルです（初期値は「集計データ一覧」）。パンくずやページ見出しに使われます。</p>
+
+            <h3>データセットページ カラーテーマ</h3>
+            <p>データセット詳細ページ（SVG 画像や一覧の配色）の色合いを、6種類から選べます。</p>
+            <ul>
+                <li><strong>ミニマル</strong>（初期値・白ベース、グレーのアクセント）</li>
+                <li><strong>ブルー</strong>（青ヘッダー、白背景）</li>
+                <li><strong>グリーン</strong>（緑ヘッダー、白背景）</li>
+                <li><strong>オレンジ</strong>（オレンジヘッダー、白背景）</li>
+                <li><strong>パープル</strong>（紫ヘッダー、白背景）</li>
+                <li><strong>ダーク</strong>（黒背景、白文字）</li>
+            </ul>
+
+            <h3>データセット地理的範囲</h3>
+            <p>データが対象とする地理的範囲を入力します（初期値は「日本」）。構造化データの <code>spatialCoverage</code> に反映されます。例：日本、東京都、全世界 など。</p>
+        </section>
+
+        <section>
+            <h2>管理ツール</h2>
+            <p>設定ページの下部には、運用に役立つ3つのツールがあります。</p>
+            <figure class="screenshot">
+                <img src="images/screenshots/02-settings-tools.png" alt="投票制限の解除・サイトマップ再生成・データセット一括生成の3つのツール" class="lightbox-trigger">
+                <figcaption>図: 投票制限の解除・サイトマップ・データセット一括生成</figcaption>
+            </figure>
+
+            <h3>投票制限の解除</h3>
+            <p>「リセット日時を現在に更新」を押すと、<strong>これまで投票した人も、もう一度投票できるようになります</strong>。過去の投票データ自体は消えずに残ります。定期アンケート（毎月同じ質問をとる等）で、全員に再投票してもらいたいときに使います。現在のリセット日時も表示されます。</p>
+            <div class="callout callout-note">
+                <p>特定の1つのアンケートだけをリセットしたい場合は、この共通ツールではなく、各アンケート編集画面の「投票データリセット」を使います（<a href="create-poll.html">アンケートの作成</a>参照）。</p>
+            </div>
+
+            <h3>サイトマップ</h3>
+            <p>データセット専用サイトマップ <code>sitemap-poll-datasets.xml</code> の URL と、ファイルの存在状況が表示されます。サイトマップは投票時やデータ一括生成時に自動更新されますが、「サイトマップを再生成する」で手動更新もできます。Google Search Console には、この URL を登録してください。</p>
+
+            <h3>データセット一括生成</h3>
+            <p>「データファイルを一括生成する」を押すと、公開中のすべてのアンケートについて、最新の集計結果をもとに5形式（CSV・XML・YAML・JSON・SVG）のデータファイルとサイトマップをまとめて生成・更新します。プラグイン導入直後や、大量のデータを一度に作り直したいときに便利です。データ数が多い場合は処理に時間がかかることがあります。</p>
+        </section>
+
+        <nav class="page-nav">
+            <a href="create-poll.html" class="prev">&laquo; アンケートの作成</a>
+            <a href="voting.html" class="next">表示と投票のしくみ &raquo;</a>
+        </nav>
+
+        <footer class="manual-footer">
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.5 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+        </footer>
+    </main>
+
+    <div class="lightbox"></div>
+    <script src="js/manual.js"></script>
+</body>
+</html>

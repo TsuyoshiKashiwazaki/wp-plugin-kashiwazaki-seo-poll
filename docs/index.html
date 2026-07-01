@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>概要 - Kashiwazaki SEO Poll マニュアル</title>
-    <link rel="stylesheet" href="css/style.css?v=1">
+    <title>概要 - SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
@@ -17,78 +17,81 @@
         <ul>
             <li><a href="index.html">概要</a></li>
             <li><a href="setup.html">インストール・初期設定</a></li>
-            <li><a href="poll-usage.html">アンケート作成・表示</a></li>
+            <li><a href="create-poll.html">アンケートの作成</a></li>
+            <li><a href="settings.html">基本設定ガイド</a></li>
+            <li><a href="voting.html">表示と投票のしくみ</a></li>
+            <li><a href="chart.html">グラフ機能</a></li>
+            <li><a href="datasets.html">データセット公開</a></li>
+            <li><a href="seo.html">SEO・構造化データ</a></li>
             <li><a href="troubleshooting.html">トラブルシューティング</a></li>
         </ul>
     </nav>
+
     <main class="content">
         <h1>Kashiwazaki SEO Poll マニュアル</h1>
+        <p class="lead">WordPress でアンケート（投票）を作成・設置し、集計結果を円グラフで表示できるプラグインです。さらに、集めたデータを CSV・XML・YAML・JSON・SVG の5形式で自動生成し、Google データセット検索に対応した構造化データとして公開できます。このマニュアルは、はじめての方でも迷わないよう、画面付きで一つずつ手順を解説します。</p>
 
-        <img src="images/main-visual.png" alt="Kashiwazaki SEO Poll メインビジュアル" style="width:100%; border-radius:8px; margin-bottom:24px;">
-
-        <p class="lead">WordPressでアンケート（投票）を作成し、Chart.jsによるリアルタイムチャート表示、DatasetスキーマJSON-LD生成、データセットファイル（CSV/XML/JSON/YAML）の自動出力を行うプラグインです。ショートコード <code>[tk_poll id=123]</code> で任意のページにアンケートを埋め込めます。</p>
-
-        <p>本プラグインはカスタム投稿タイプ「poll」でアンケートを管理し、フロントエンドにChart.jsによるグラフ表示と投票フォームを出力します。DatasetスキーマJSON-LDとDC.type metaタグを自動生成し、BreadcrumbListスキーマとRank Math連携にも対応しています。フロントエンド出力: CSS 20KB、JS 32KB。</p>
+        <div class="callout callout-tip">
+            <p class="callout-title">このマニュアルの読み方</p>
+            <p>上から順に読み進めれば、インストール → アンケート作成 → 表示 → データ公開まで一通り理解できる構成になっています。特定の機能だけ知りたい場合は、左のメニューから該当ページへ直接お進みください。</p>
+        </div>
 
         <section>
             <h2>主要機能</h2>
             <div class="feature-cards">
                 <div class="feature-card">
-                    <h3>アンケート作成</h3>
-                    <p>カスタム投稿タイプで単一・複数選択のアンケートを簡単作成</p>
+                    <h3>アンケート投票</h3>
+                    <p>単一選択・複数選択のアンケートを作成し、ショートコード <code>[tk_poll id="123"]</code> で任意の記事・固定ページに設置。投票結果は Chart.js の円グラフでリアルタイムに表示されます。IP アドレスと Cookie による重複投票防止付き。</p>
                 </div>
                 <div class="feature-card">
-                    <h3>Chart.js表示</h3>
-                    <p>円グラフ・棒グラフ・ドーナツチャートで投票結果をリアルタイム表示</p>
+                    <h3>5形式のデータ自動生成</h3>
+                    <p>投票が入るたびに、集計データを CSV・XML・YAML・JSON・SVG の5つのファイル形式で自動生成。<code>/datasets/</code> 配下の専用ページから閲覧・ダウンロードできます。</p>
                 </div>
                 <div class="feature-card">
-                    <h3>構造化データ</h3>
-                    <p>DatasetスキーマJSON-LDとデータセットファイル(CSV/XML/JSON/YAML)を自動生成</p>
+                    <h3>SEO 構造化データ</h3>
+                    <p>Schema.org の Dataset 型 JSON-LD、Dublin Core メタタグ、パンくずリスト構造化データ、専用サイトマップを自動出力。Google データセット検索での発見性を高めます。</p>
                 </div>
             </div>
         </section>
 
         <figure class="infographic">
-            <img src="images/infographics/overview-flow.png" alt="プラグインの全体ワークフロー" class="lightbox-trigger">
-            <figcaption>図: プラグインの全体ワークフロー</figcaption>
+            <img src="images/infographics/overview-flow.png" alt="アンケート作成から集計・データ公開までの全体の流れ">
+            <figcaption>図: アンケート作成から集計・データ公開までの全体の流れ</figcaption>
         </figure>
+
+        <section>
+            <h2>このプラグインでできること</h2>
+            <ul>
+                <li>記事・固定ページにアンケートフォームを設置し、来訪者に投票してもらう</li>
+                <li>投票結果を円グラフ（割合ラベル・凡例付き）で見せる</li>
+                <li>同じ人による重複投票を、IP アドレスと Cookie の組み合わせで抑制する</li>
+                <li>集計データを5つのファイル形式（CSV / XML / YAML / JSON / SVG）で配布する</li>
+                <li>Google データセット検索に必要な構造化データ・専用サイトマップを自動生成する</li>
+                <li>どの記事にアンケートを設置したかを管理画面で自動追跡する</li>
+            </ul>
+        </section>
 
         <section>
             <h2>目次</h2>
             <ul>
                 <li><a href="index.html">概要</a> - プラグインの概要と主要機能の紹介</li>
-                <li><a href="setup.html">インストール・初期設定</a> - インストール手順と初期設定の方法</li>
-                <li><a href="poll-usage.html">アンケート作成・表示</a> - アンケートの作成方法とChart.js表示</li>
-                <li><a href="troubleshooting.html">トラブルシューティング</a> - よくある問題と解決方法</li>
+                <li><a href="setup.html">インストール・初期設定</a> - インストール手順と最初のアンケート作成まで</li>
+                <li><a href="create-poll.html">アンケートの作成</a> - 投票形式・選択肢・ライセンスなど作成画面の全項目</li>
+                <li><a href="settings.html">基本設定ガイド</a> - 構造化データ設定・カラーテーマ・一括生成などの管理ツール</li>
+                <li><a href="voting.html">表示と投票のしくみ</a> - ショートコードの設置、投票フォーム、重複投票防止</li>
+                <li><a href="chart.html">グラフ機能</a> - 円グラフ・凡例・画像ダウンロード・プレビュー</li>
+                <li><a href="datasets.html">データセット公開</a> - 5形式のデータ生成と専用ページ・URL 構造</li>
+                <li><a href="seo.html">SEO・構造化データ</a> - Dataset JSON-LD・サイトマップ・GEO への応用</li>
+                <li><a href="troubleshooting.html">トラブルシューティング</a> - よくある問題と解決方法・動作要件</li>
             </ul>
-        </section>
-
-        <section>
-            <h2>SEO / GEO における強み</h2>
-
-            <p>本プラグインはDatasetスキーマJSON-LDとDC.type metaタグを出力し、構造化データを通じてSEOおよびGEO（Generative Engine Optimization）に直接貢献します。</p>
-
-            <h3>DatasetスキーマによるSEO強化</h3>
-            <p>DatasetスキーマJSON-LDにより、アンケートデータが構造化データとして検索エンジンに認識されます。これにより、アンケート結果がGoogle Dataset Searchなどの専門検索で発見可能になります。</p>
-
-            <h3>BreadcrumbListスキーマ</h3>
-            <p>BreadcrumbListスキーマにより、パンくずナビゲーションが構造化データとして検索結果に表示される可能性があります。これはサイトナビゲーションの理解向上に貢献します。</p>
-
-            <h3>ユーザーエンゲージメントの向上</h3>
-            <p>Chart.jsによるインタラクティブなグラフ表示は、ユーザーのエンゲージメントと滞在時間の向上に貢献します。投票参加とリアルタイムの結果表示により、ページの価値を高めます。</p>
-
-            <h3>データセットファイルの活用</h3>
-            <p>CSV/XML/JSON/YAML形式のデータセットファイルが自動生成されます。これらのファイルはデータの再利用性と引用可能性を高め、学術的な参照や外部からのリンク獲得にも寄与します。</p>
-
-            <h3>GEOへの応用可能性</h3>
-            <p>GEO（Generative Engine Optimization）の観点では、構造化されたデータセット情報はAIが具体的なアンケート結果を参照する際に活用されます。Datasetスキーマとデータセットファイルにより、AIによる引用の精度と可能性が向上します。</p>
         </section>
 
         <section>
             <h2>動作要件</h2>
             <ul>
-                <li>WordPress 6.0 以上</li>
+                <li>WordPress 5.0 以上</li>
                 <li>PHP 7.4 以上</li>
+                <li>グラフ表示に Chart.js 4.4.8 / chartjs-plugin-datalabels 2.2.0（CDN 経由で自動読み込み）</li>
             </ul>
         </section>
 
@@ -98,13 +101,12 @@
         </nav>
 
         <footer class="manual-footer">
-            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/profile/" target="_blank" rel="noopener">柏崎剛（Tsuyoshi Kashiwazaki）</a></p>
-            <p>プラグイン: Kashiwazaki SEO Poll v1.0.5</p>
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.5 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
         </footer>
     </main>
 
     <div class="lightbox"></div>
-
-    <script src="js/manual.js?v=1"></script>
+    <script src="js/manual.js"></script>
 </body>
 </html>

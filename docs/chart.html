@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>グラフ機能 - SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2 style="color:#fff;">SEO Poll</h2>
+            <span class="version">v1.0.5</span>
+            <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
+        </div>
+        <ul>
+            <li><a href="index.html">概要</a></li>
+            <li><a href="setup.html">インストール・初期設定</a></li>
+            <li><a href="create-poll.html">アンケートの作成</a></li>
+            <li><a href="settings.html">基本設定ガイド</a></li>
+            <li><a href="voting.html">表示と投票のしくみ</a></li>
+            <li><a href="chart.html">グラフ機能</a></li>
+            <li><a href="datasets.html">データセット公開</a></li>
+            <li><a href="seo.html">SEO・構造化データ</a></li>
+            <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <h1>グラフ機能</h1>
+        <p class="lead">投票結果は Chart.js による円グラフで表示されます。ここでは、グラフの見方と、画像として保存する方法を解説します。</p>
+
+        <section>
+            <h2>集計結果の円グラフ</h2>
+            <p>投票すると、または「集計データを拡大」を開くと、結果が円グラフで表示されます。各扇には割合（パーセント）のラベルが表示され、下の凡例では「選択肢名（得票数票 / 割合）」を確認できます。</p>
+            <figure class="screenshot">
+                <img src="images/screenshots/08-chart-pie.png" alt="割合ラベル付きの円グラフと、得票数・割合を示した凡例" class="lightbox-trigger">
+                <figcaption>図: 集計結果の円グラフ。割合ラベルと凡例、投票総数が表示されます</figcaption>
+            </figure>
+            <div class="callout callout-note">
+                <p>グラフの種類は<strong>円グラフ</strong>です。棒グラフやドーナツグラフへの切り替え機能はありません。</p>
+            </div>
+            <ul>
+                <li>凡例のラベルが長い場合（15文字を超える場合）は省略表示され、マウスを乗せるとツールチップで全文が表示されます。</li>
+                <li>グラフには投票総数と、サイト名・年のコピーライトも描画されます。</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>集計表</h2>
+            <p>「集計データを拡大」で開く画面には、円グラフに加えて、選択肢ごとの得票数と割合をまとめた集計表も表示されます。数字を正確に把握したいときに便利です。</p>
+            <figure class="screenshot">
+                <img src="images/screenshots/10-result-table.png" alt="選択肢・得票数・割合と総投票数をまとめた集計表" class="lightbox-trigger">
+                <figcaption>図: 集計表。選択肢ごとの得票数・割合と、総投票数・集計時点を表示します</figcaption>
+            </figure>
+        </section>
+
+        <section>
+            <h2>投票前のプレビュー表示</h2>
+            <p>まだ投票していない来訪者にも、現在の傾向がうっすら分かるプレビューの円グラフが表示されます。プレビューでは、割合ラベルや凡例、ツールチップは控えめに（非表示に）なり、投票を促しつつ結果の雰囲気を伝えます。</p>
+        </section>
+
+        <section>
+            <h2>グラフを画像として保存する</h2>
+            <p>拡大表示の画面にある「グラフをダウンロード」ボタンを押すと、表示中の円グラフを <strong>PNG 画像</strong>としてダウンロードできます。ファイル名にはサイト名が含まれ、資料やレポートへの貼り付けに使えます。</p>
+            <div class="callout callout-tip">
+                <p>ダウンロードされる画像形式は PNG です。透過なしの高画質画像なので、そのままスライドや記事に貼り付けられます。</p>
+            </div>
+        </section>
+
+        <nav class="page-nav">
+            <a href="voting.html" class="prev">&laquo; 表示と投票のしくみ</a>
+            <a href="datasets.html" class="next">データセット公開 &raquo;</a>
+        </nav>
+
+        <footer class="manual-footer">
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.5 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+        </footer>
+    </main>
+
+    <div class="lightbox"></div>
+    <script src="js/manual.js"></script>
+</body>
+</html>

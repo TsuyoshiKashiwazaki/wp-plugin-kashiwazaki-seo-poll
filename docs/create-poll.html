@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アンケートの作成 - SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2 style="color:#fff;">SEO Poll</h2>
+            <span class="version">v1.0.5</span>
+            <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
+        </div>
+        <ul>
+            <li><a href="index.html">概要</a></li>
+            <li><a href="setup.html">インストール・初期設定</a></li>
+            <li><a href="create-poll.html">アンケートの作成</a></li>
+            <li><a href="settings.html">基本設定ガイド</a></li>
+            <li><a href="voting.html">表示と投票のしくみ</a></li>
+            <li><a href="chart.html">グラフ機能</a></li>
+            <li><a href="datasets.html">データセット公開</a></li>
+            <li><a href="seo.html">SEO・構造化データ</a></li>
+            <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <h1>アンケートの作成</h1>
+        <p class="lead">「データセット」→「新規追加」で開く編集画面には、投票の中身を決める「投票設定」メタボックスがあります。ここでは各項目の意味と、初心者がつまずきやすいポイントを一つずつ解説します。</p>
+
+        <section>
+            <h2>質問文（タイトル）</h2>
+            <p>編集画面の一番上の<strong>タイトル欄が、そのままアンケートの質問文</strong>になります。「あなたはSEO対策をしていますか？」のように、来訪者にそのまま見せる文章を入力してください。</p>
+        </section>
+
+        <section>
+            <h2>投票設定メタボックスの全項目</h2>
+            <figure class="screenshot">
+                <img src="images/screenshots/03-poll-settings.png" alt="投票設定メタボックスの各項目（投票形式・選択肢・詳細な説明・ライセンス・見出しレベル・バージョン・キーワード）" class="lightbox-trigger">
+                <figcaption>図: 投票設定メタボックス。上から順に各項目を設定します</figcaption>
+            </figure>
+
+            <h3>投票形式</h3>
+            <p>回答者の選び方を決めます。</p>
+            <ul>
+                <li><strong>複数選択</strong>（初期値）：回答者は複数の選択肢を同時に選べます。「あてはまるものをすべて選択」といった質問に向いています。フォームはチェックボックスで表示されます。</li>
+                <li><strong>単一選択</strong>：回答者は1つの選択肢だけ選べます。「最も近いものを1つ選択」といった質問に向いています。フォームはラジオボタンで表示されます。</li>
+            </ul>
+
+            <h3>選択肢（1行につき1つ）</h3>
+            <p>投票の選択肢を、1行に1つずつ入力します。改行で区切るだけで、そのまま選択肢になります。あとから選択肢を追加・削除・並べ替えしても、既存の得票数は選択肢のテキストを手がかりに、できるだけ引き継がれます。</p>
+            <div class="callout callout-note">
+                <p>選択肢の文言を大きく書き換えると、その選択肢は「別の選択肢」とみなされ、得票数がリセットされる場合があります。公開後の文言変更は慎重に行ってください。</p>
+            </div>
+
+            <h3>詳細な説明（description）</h3>
+            <p>このアンケート（データセット）が何を目的とした調査なのかを説明する文章です。ここに入力した内容は、構造化データ（Dataset）の <code>description</code> として出力され、Google データセット検索での説明文になります。</p>
+            <div class="callout callout-warning">
+                <p><strong>150文字以上の入力が必要です。</strong>150文字未満のまま保存しようとすると、保存が拒否されます。調査の目的・対象・活用方法などを具体的に書くと、構造化データとしての質も上がります。</p>
+            </div>
+
+            <h3>ライセンス</h3>
+            <p>公開するデータに適用するライセンスを選びます。クリエイティブ・コモンズを中心に、次の10種類から選択できます（初期値は CC BY 4.0）。</p>
+            <ul>
+                <li>CC BY 4.0（表示）</li>
+                <li>CC BY-SA 4.0（表示 - 継承）</li>
+                <li>CC BY-NC 4.0（表示 - 非営利）</li>
+                <li>CC0 1.0（パブリックドメイン）</li>
+                <li>CC BY-NC-SA 4.0 / CC BY-ND 4.0 / CC BY-NC-ND 4.0</li>
+                <li>Public Domain Mark 1.0 / CC BY 3.0 / CC BY 2.0</li>
+            </ul>
+            <p>選んだライセンスは、構造化データやダウンロードファイルのメタ情報に自動反映されます。</p>
+
+            <h3>見出しレベル（Heading Level）</h3>
+            <p>質問文を、フロント側でどの見出しタグ（<code>h1</code>〜<code>h6</code>）で出力するかを選びます（初期値は <code>h3</code>）。記事の見出し構造に合わせて選ぶと、アクセシビリティと SEO の両面で自然な階層になります。</p>
+
+            <h3>データセットバージョン</h3>
+            <p>データセットの版数を入力します（初期値は <code>1.0</code>）。調査をやり直したり選択肢を大きく変えたりしたときに更新すると、構造化データの <code>version</code> に反映されます。</p>
+
+            <h3>データセットキーワード</h3>
+            <p>データセットに関連するキーワードをカンマ区切りで入力します（例：<code>マーケティング,消費者行動,統計</code>）。構造化データの <code>keywords</code> に反映され、検索での発見性を高めます。</p>
+        </section>
+
+        <section>
+            <h2>ショートコードと掲載中ページ</h2>
+            <p>公開後、投票設定メタボックスの下部にショートコードが表示されます。「コピー」ボタンでコピーして、記事や固定ページに貼り付けてください。</p>
+            <figure class="screenshot">
+                <img src="images/screenshots/04-shortcode-usage.png" alt="ショートコードのコピー欄と、掲載中のページ一覧" class="lightbox-trigger">
+                <figcaption>図: ショートコード（コピー可能）と、そのアンケートが掲載されている記事の一覧</figcaption>
+            </figure>
+            <p>「掲載中のページ」には、このアンケートのショートコードを実際に使っている記事が自動で一覧表示されます。どの記事に貼ったか分からなくなったときに便利です。表示が古い場合は「キャッシュ更新」で最新化できます。</p>
+        </section>
+
+        <section>
+            <h2>投票データのリセット</h2>
+            <p>編集画面のサイドに「投票データリセット」ボックスがあります。ここでは、現在の総投票数（延べ）と投票者数（IP 基準）を確認できます。</p>
+            <figure class="screenshot">
+                <img src="images/screenshots/05-reset-data.png" alt="投票データリセットのメタボックス。総投票数と投票者数が表示される" class="lightbox-trigger">
+                <figcaption>図: 投票データリセット。このアンケート単体の集計データを消去できます</figcaption>
+            </figure>
+            <div class="callout callout-warning">
+                <p>「集計データを全削除する」を押すと、<strong>このアンケートの得票数と投票者記録が完全に消去されます（元に戻せません）</strong>。テスト投票を消したいときなどに使ってください。なお、全アンケート共通で「もう一度みんなに投票してもらう」だけなら、削除ではなく基本設定ページの「投票制限の解除」が使えます（<a href="settings.html">基本設定ガイド</a>参照）。</p>
+            </div>
+        </section>
+
+        <nav class="page-nav">
+            <a href="setup.html" class="prev">&laquo; インストール・初期設定</a>
+            <a href="settings.html" class="next">基本設定ガイド &raquo;</a>
+        </nav>
+
+        <footer class="manual-footer">
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.5 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+        </footer>
+    </main>
+
+    <div class="lightbox"></div>
+    <script src="js/manual.js"></script>
+</body>
+</html>

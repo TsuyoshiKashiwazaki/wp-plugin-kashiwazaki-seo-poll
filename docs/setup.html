@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>インストール・初期設定 - Kashiwazaki SEO Poll マニュアル</title>
-    <link rel="stylesheet" href="css/style.css?v=1">
+    <title>インストール・初期設定 - SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
@@ -17,146 +17,109 @@
         <ul>
             <li><a href="index.html">概要</a></li>
             <li><a href="setup.html">インストール・初期設定</a></li>
-            <li><a href="poll-usage.html">アンケート作成・表示</a></li>
+            <li><a href="create-poll.html">アンケートの作成</a></li>
+            <li><a href="settings.html">基本設定ガイド</a></li>
+            <li><a href="voting.html">表示と投票のしくみ</a></li>
+            <li><a href="chart.html">グラフ機能</a></li>
+            <li><a href="datasets.html">データセット公開</a></li>
+            <li><a href="seo.html">SEO・構造化データ</a></li>
             <li><a href="troubleshooting.html">トラブルシューティング</a></li>
         </ul>
     </nav>
+
     <main class="content">
         <h1>インストール・初期設定</h1>
+        <p class="lead">プラグインのインストールから、はじめてのアンケートを公開するまでを、順を追って解説します。特別な準備は不要で、5分ほどで最初のアンケートを設置できます。</p>
 
-        <p class="lead">プラグインのインストールから初期設定まで、ステップバイステップで解説します。</p>
-
-        <h2>インストール手順</h2>
-
-        <div class="step">
-            <span class="step-number">1</span>
-            <div class="step-body">
-                <p>プラグインファイルを <code>/wp-content/plugins/kashiwazaki-seo-poll/</code> にアップロード</p>
+        <section>
+            <h2>インストール方法</h2>
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>プラグインをアップロード</h3>
+                    <p>プラグインフォルダ一式を <code>/wp-content/plugins/</code> にアップロードします。ZIP ファイルの場合は、管理画面の「プラグイン」→「新規プラグインを追加」→「プラグインのアップロード」からアップロードできます。</p>
+                </div>
             </div>
-        </div>
-
-        <div class="step">
-            <span class="step-number">2</span>
-            <div class="step-body">
-                <p>WordPress管理画面「プラグイン」から有効化</p>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>プラグインを有効化</h3>
+                    <p>WordPress 管理画面の「プラグイン」一覧で「Kashiwazaki SEO Poll」を探し、「有効化」をクリックします。</p>
+                </div>
             </div>
-        </div>
-
-        <div class="step">
-            <span class="step-number">3</span>
-            <div class="step-body">
-                <p>左メニューに「アンケート」カスタム投稿タイプが追加される</p>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>メニューを確認</h3>
+                    <p>有効化すると、左メニューに <strong>「データセット」</strong>（アンケートの作成・管理）と <strong>「Kashiwazaki SEO Poll」</strong>（基本設定）の2つが追加されます。</p>
+                </div>
             </div>
-        </div>
-
-        <figure class="screenshot">
-            <img src="images/screenshots/00-menu-location.png" alt="管理画面メニューの位置" class="lightbox-trigger">
-            <figcaption>管理画面の左メニューにプラグインが追加されます</figcaption>
-        </figure>
-
-        <div class="step">
-            <span class="step-number">4</span>
-            <div class="step-body">
-                <p>管理画面サイドバーの「Kashiwazaki SEO Poll」→「基本設定」で初期設定を確認・変更する</p>
+            <figure class="screenshot">
+                <img src="images/screenshots/00-menu-location.png" alt="管理画面の左メニューに追加された「データセット」と「Kashiwazaki SEO Poll」" class="lightbox-trigger">
+                <figcaption>図: 左メニューに追加される2つの項目（赤枠）。「データセット」でアンケートを作成し、「Kashiwazaki SEO Poll」で全体設定を行います</figcaption>
+            </figure>
+            <div class="callout callout-note">
+                <p class="callout-title">パーマリンクについて</p>
+                <p>このプラグインは <code>/datasets/</code> という専用 URL を使います。有効化後にデータセットページが表示されない場合は、「設定」→「パーマリンク」を開いて（何も変更せず）「変更を保存」を押すと、URL ルールが更新されて解決します。</p>
             </div>
-        </div>
+        </section>
 
-        <div class="callout callout-tip">
-            <p>有効化時にカスタム投稿タイプ「poll」と「dataset」が自動登録されます。パーマリンク設定を保存し直すことで、アンケートページのURLが正しく動作するようになります。</p>
-        </div>
+        <section>
+            <h2>最初のアンケートを作る（クイックスタート）</h2>
+            <p>インストールが終わったら、さっそく1つ目のアンケートを作ってみましょう。詳しい各項目の説明は「<a href="create-poll.html">アンケートの作成</a>」ページにありますが、まずは最短手順を示します。</p>
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>「データセット」→「新規追加」を開く</h3>
+                    <p>左メニューの「データセット」から「新規追加」を選びます。タイトル欄には、アンケートの<strong>質問文</strong>をそのまま入力します（例：「相互リンクについてどのくらい知っていますか？」）。</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>選択肢を入力する</h3>
+                    <p>「投票設定」欄で、投票形式（単一選択／複数選択）を選び、選択肢を1行に1つずつ入力します。</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>公開する</h3>
+                    <p>右上の「公開」ボタンで保存します。公開すると、投票設定欄にショートコード <code>[tk_poll id="123"]</code>（123 の部分は自動で採番された ID）が表示されます。</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>記事に貼り付ける</h3>
+                    <p>表示された「コピー」ボタンでショートコードをコピーし、アンケートを表示したい記事や固定ページの本文に貼り付けます。これで投票フォームが表示されます。</p>
+                </div>
+            </div>
+            <div class="callout callout-tip">
+                <p>アンケートページ（<code>/datasets/detail-123/</code>）はプラグインが自動で生成するため、記事に貼らなくても単体ページとして閲覧できます。ショートコードは「既存の記事の中にアンケートを埋め込みたい」ときに使います。</p>
+            </div>
+        </section>
 
-        <h2>設定ページ</h2>
-
-        <p>設定ページではアンケートの基本動作を設定できます。</p>
-
-        <h2>カスタム投稿タイプ</h2>
-
-        <table>
-            <thead>
-                <tr>
-                    <th style="width:35%;">投稿タイプ</th>
-                    <th>説明</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>poll</td>
-                    <td>アンケート（投票）の本体。質問文・選択肢・投票結果を管理</td>
-                </tr>
-                <tr>
-                    <td>dataset</td>
-                    <td>アンケートデータのデータセット。CSV/XML/JSON/YAML形式で自動生成</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h2>構造化データ出力</h2>
-
-        <p>本プラグインは以下の構造化データを自動出力します。</p>
-
-        <table>
-            <thead>
-                <tr>
-                    <th style="width:35%;">出力種類</th>
-                    <th>説明</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Dataset JSON-LD</td>
-                    <td>アンケートデータをDatasetスキーマとして構造化データ出力</td>
-                </tr>
-                <tr>
-                    <td>DC.type metaタグ</td>
-                    <td>Dublin Coreメタデータとしてデータセットタイプを宣言</td>
-                </tr>
-                <tr>
-                    <td>BreadcrumbList JSON-LD</td>
-                    <td>パンくずナビゲーションの構造化データ</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="callout callout-note">
-            <p>Rank Mathプラグインがインストールされている場合、Rank Mathとの連携が自動的に有効になります。</p>
-        </div>
-
-        <h2>重複投票防止</h2>
-
-        <p>投票の重複防止はIPアドレスとCookieの組み合わせで実現しています。</p>
-
-        <table>
-            <thead>
-                <tr>
-                    <th style="width:35%;">防止方法</th>
-                    <th>説明</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>IPアドレス</td>
-                    <td>同一IPからの重複投票を検出</td>
-                </tr>
-                <tr>
-                    <td>Cookie</td>
-                    <td>ブラウザに投票済み情報を記録</td>
-                </tr>
-            </tbody>
-        </table>
+        <section>
+            <h2>次のステップ</h2>
+            <ul>
+                <li>選択肢の設定・ライセンス・見出しレベルなど作成画面の全項目 → <a href="create-poll.html">アンケートの作成</a></li>
+                <li>作者情報・カラーテーマ・データ一括生成などの全体設定 → <a href="settings.html">基本設定ガイド</a></li>
+            </ul>
+        </section>
 
         <nav class="page-nav">
             <a href="index.html" class="prev">&laquo; 概要</a>
-            <a href="poll-usage.html" class="next">アンケート作成・表示 &raquo;</a>
+            <a href="create-poll.html" class="next">アンケートの作成 &raquo;</a>
         </nav>
 
         <footer class="manual-footer">
-            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/profile/" target="_blank" rel="noopener">柏崎剛（Tsuyoshi Kashiwazaki）</a></p>
-            <p>プラグイン: Kashiwazaki SEO Poll v1.0.5</p>
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.5 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
         </footer>
     </main>
 
     <div class="lightbox"></div>
-
-    <script src="js/manual.js?v=1"></script>
+    <script src="js/manual.js"></script>
 </body>
 </html>

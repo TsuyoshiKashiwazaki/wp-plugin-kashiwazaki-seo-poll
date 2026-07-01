@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>データセット公開 - SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2 style="color:#fff;">SEO Poll</h2>
+            <span class="version">v1.0.5</span>
+            <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
+        </div>
+        <ul>
+            <li><a href="index.html">概要</a></li>
+            <li><a href="setup.html">インストール・初期設定</a></li>
+            <li><a href="create-poll.html">アンケートの作成</a></li>
+            <li><a href="settings.html">基本設定ガイド</a></li>
+            <li><a href="voting.html">表示と投票のしくみ</a></li>
+            <li><a href="chart.html">グラフ機能</a></li>
+            <li><a href="datasets.html">データセット公開</a></li>
+            <li><a href="seo.html">SEO・構造化データ</a></li>
+            <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <h1>データセット公開</h1>
+        <p class="lead">このプラグインの大きな特徴は、集めた投票結果を「データセット」として5つのファイル形式で自動生成し、専用ページから公開できることです。ここでは各形式の用途と、公開ページの構造を解説します。</p>
+
+        <section>
+            <h2>5つのファイル形式</h2>
+            <p>投票が入るたびに、集計データが次の5形式で自動的に生成・更新されます（保存先はアップロードディレクトリ配下で、プラグイン更新でも消えません）。</p>
+            <figure class="screenshot">
+                <img src="images/screenshots/09-dataset-download.png" alt="CSV・XML・YAML・JSON・SVG の5つのダウンロードボタン" class="lightbox-trigger">
+                <figcaption>図: 各アンケートの下部に表示される、5形式のダウンロードリンク</figcaption>
+            </figure>
+            <table>
+                <thead>
+                    <tr>
+                        <th>形式</th>
+                        <th>主な用途</th>
+                        <th>特徴</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>CSV</td><td>Excel・表計算ソフト</td><td>BOM 付き。タイトル・選択肢・得票数・割合・調査期間・著作権/ライセンス情報を含む。数式インジェクション対策済み</td></tr>
+                    <tr><td>XML</td><td>システム間のデータ交換</td><td>メタデータ（タイトル・更新日時・調査期間・著作権・ライセンス）と集計を構造化</td></tr>
+                    <tr><td>YAML</td><td>設定ファイル・自動化</td><td>人が読みやすい形式。スカラー値と選択肢リスト</td></tr>
+                    <tr><td>JSON</td><td>API 連携・プログラム処理</td><td>ID・タイトル・調査期間・総投票数・選択肢配列などを整形出力（Unicode そのまま）</td></tr>
+                    <tr><td>SVG</td><td>ベクター画像・印刷</td><td>円グラフ画像。Dublin Core／CC のメタデータを埋め込み</td></tr>
+                </tbody>
+            </table>
+            <div class="callout callout-note">
+                <p>各形式には、割合（小数点2桁で丸め）や調査期間（最初の投票〜最後の投票）といった共通情報が含まれ、どの形式でも同じ集計内容を得られます。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>専用ページと URL 構造</h2>
+            <p>プラグインは <code>/datasets/</code> 配下に、閲覧用の専用ページを自動生成します。</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>URL</th>
+                        <th>内容</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>/datasets/</code></td><td>全データセットの一覧ページ</td></tr>
+                    <tr><td><code>/datasets/detail-123/</code></td><td>個別アンケートの詳細ページ（円グラフ・集計表・5形式のダウンロード）</td></tr>
+                    <tr><td><code>/datasets/csv/</code></td><td>CSV 形式のデータセット一覧（xml / yaml / json / svg も同様）</td></tr>
+                    <tr><td><code>/datasets/csv/detail-123/</code></td><td>個別データの形式別ページ</td></tr>
+                </tbody>
+            </table>
+            <p>形式別ページ（例：<code>/datasets/csv/detail-123/</code>）の正規 URL（canonical）は、中央の詳細ページ <code>/datasets/detail-123/</code> に集約されます。これにより、5形式のページが1つの正規 URL にまとまり、SEO 上の重複が避けられます。</p>
+        </section>
+
+        <section>
+            <h2>データセット一覧ページ</h2>
+            <p><code>/datasets/</code> には、公開中のアンケートがカード形式で並びます。各カードには質問文・説明・5形式へのリンク・掲載中の記事へのリンク・最終更新日時が表示されます。</p>
+            <figure class="screenshot">
+                <img src="images/screenshots/11-datasets-list.png" alt="データセット一覧ページ。各アンケートがカードで並び、5形式のリンクが付いている" class="lightbox-trigger">
+                <figcaption>図: データセット一覧ページ（/datasets/）</figcaption>
+            </figure>
+        </section>
+
+        <section>
+            <h2>データをまとめて生成する</h2>
+            <p>通常はアンケートに投票が入るたびに各ファイルが自動更新されますが、導入直後や大量のデータを一度に作り直したいときは、基本設定ページの「データセット一括生成」で、公開中の全アンケート分をまとめて生成できます（<a href="settings.html">基本設定ガイド</a>参照）。</p>
+        </section>
+
+        <nav class="page-nav">
+            <a href="chart.html" class="prev">&laquo; グラフ機能</a>
+            <a href="seo.html" class="next">SEO・構造化データ &raquo;</a>
+        </nav>
+
+        <footer class="manual-footer">
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.5 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+        </footer>
+    </main>
+
+    <div class="lightbox"></div>
+    <script src="js/manual.js"></script>
+</body>
+</html>

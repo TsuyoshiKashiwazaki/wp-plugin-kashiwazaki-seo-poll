@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>表示と投票のしくみ - SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2 style="color:#fff;">SEO Poll</h2>
+            <span class="version">v1.0.5</span>
+            <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
+        </div>
+        <ul>
+            <li><a href="index.html">概要</a></li>
+            <li><a href="setup.html">インストール・初期設定</a></li>
+            <li><a href="create-poll.html">アンケートの作成</a></li>
+            <li><a href="settings.html">基本設定ガイド</a></li>
+            <li><a href="voting.html">表示と投票のしくみ</a></li>
+            <li><a href="chart.html">グラフ機能</a></li>
+            <li><a href="datasets.html">データセット公開</a></li>
+            <li><a href="seo.html">SEO・構造化データ</a></li>
+            <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <h1>表示と投票のしくみ</h1>
+        <p class="lead">アンケートを記事に表示する方法と、来訪者が投票したときの動き、そして重複投票を防ぐしくみを解説します。</p>
+
+        <section>
+            <h2>ショートコードで設置する</h2>
+            <p>アンケートを記事や固定ページに表示するには、ショートコードを本文に貼り付けます。</p>
+            <p><code>[tk_poll id="123"]</code></p>
+            <p><code>id</code> には、表示したいアンケートの ID を指定します（編集画面の投票設定欄に表示されるものをコピーするのが確実です）。ブロックエディタなら「ショートコード」ブロック、クラシックエディタなら本文にそのまま貼り付ければ表示されます。</p>
+            <div class="callout callout-note">
+                <p>プラグインは各アンケートに専用ページ <code>/datasets/detail-123/</code> を自動生成します。単体ページで見せるだけならショートコードは不要で、既存記事の中に埋め込みたいときにショートコードを使います。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>投票フォームの表示</h2>
+            <p>ショートコードを設置すると、質問文・選択肢・「投票する」ボタンが表示されます。まだ投票していない来訪者には、<strong>投票前でも現在の傾向がうっすら分かるプレビューの円グラフ</strong>が一緒に表示されます。</p>
+            <figure class="screenshot">
+                <img src="images/screenshots/07-poll-frontend.png" alt="フロント側の投票フォーム。選択肢とプレビュー円グラフが表示されている" class="lightbox-trigger">
+                <figcaption>図: 投票フォーム。選択肢の右にプレビューの円グラフが表示されます</figcaption>
+            </figure>
+            <ul>
+                <li>複数選択のアンケートはチェックボックス、単一選択のアンケートはラジオボタンで表示されます。</li>
+                <li>選択して「投票する」を押すと、集計に反映され、結果の円グラフに切り替わります。</li>
+                <li>「集計データを拡大」から、大きな円グラフと集計表を開けます（詳しくは<a href="chart.html">グラフ機能</a>）。</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>重複投票を防ぐしくみ</h2>
+            <p>同じ人が何度も投票するのをできるだけ防ぐため、2つの方法を組み合わせています。</p>
+            <ul>
+                <li><strong>IP アドレス</strong>：投票した端末の IP アドレスを記録し、同じ IP からの再投票を制限します。</li>
+                <li><strong>Cookie</strong>：投票するとブラウザに Cookie を保存し、同じブラウザからの再投票を制限します。</li>
+            </ul>
+            <div class="callout callout-warning">
+                <p>重複投票防止は「完全」ではありません。VPN の利用、シークレットモード、複数端末などで回避されることは技術的に避けられません。厳密な本人確認が必要な用途には向きません。</p>
+            </div>
+            <p>全員にもう一度投票してもらいたいときは、基本設定ページの「投票制限の解除」でリセット日時を更新します（<a href="settings.html">基本設定ガイド</a>参照）。</p>
+        </section>
+
+        <section>
+            <h2>リバースプロキシ／CDN を使っている場合</h2>
+            <p>Cloudflare などの CDN やリバースプロキシを経由していると、すべてのアクセスがプロキシの IP アドレスに見えてしまい、<strong>全員が同一 IP と判定されて2人目以降が投票できなくなる</strong>ことがあります。</p>
+            <p>その場合は、<code>wp-config.php</code> に次の1行を追加して、プロキシが付与する実クライアント IP ヘッダー（X-Forwarded-For / CF-Connecting-IP）を信頼する設定を有効にしてください。</p>
+            <p><code>define( 'KASHIWAZAKI_POLL_TRUST_PROXY', true );</code></p>
+            <div class="callout callout-warning">
+                <p>この設定は、<strong>信頼できるリバースプロキシ／CDN を経由している環境でのみ</strong>有効にしてください。プロキシを経由していない環境で有効にすると、クライアントが送るヘッダーを偽装され、重複投票防止を回避される恐れがあります。</p>
+            </div>
+        </section>
+
+        <nav class="page-nav">
+            <a href="settings.html" class="prev">&laquo; 基本設定ガイド</a>
+            <a href="chart.html" class="next">グラフ機能 &raquo;</a>
+        </nav>
+
+        <footer class="manual-footer">
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.5 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+        </footer>
+    </main>
+
+    <div class="lightbox"></div>
+    <script src="js/manual.js"></script>
+</body>
+</html>

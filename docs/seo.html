@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO・構造化データ - SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2 style="color:#fff;">SEO Poll</h2>
+            <span class="version">v1.0.5</span>
+            <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
+        </div>
+        <ul>
+            <li><a href="index.html">概要</a></li>
+            <li><a href="setup.html">インストール・初期設定</a></li>
+            <li><a href="create-poll.html">アンケートの作成</a></li>
+            <li><a href="settings.html">基本設定ガイド</a></li>
+            <li><a href="voting.html">表示と投票のしくみ</a></li>
+            <li><a href="chart.html">グラフ機能</a></li>
+            <li><a href="datasets.html">データセット公開</a></li>
+            <li><a href="seo.html">SEO・構造化データ</a></li>
+            <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <h1>SEO・構造化データ</h1>
+        <p class="lead">このプラグインは、集めたアンケート結果を検索エンジンや生成 AI に「データセット」として正しく理解してもらうための構造化データを自動出力します。ここでは、その中身と設定のポイントを解説します。</p>
+
+        <section>
+            <h2>Schema.org Dataset 型 JSON-LD</h2>
+            <p>各アンケートのデータセットページには、Schema.org の <code>Dataset</code> 型 JSON-LD が自動で出力されます。これは Google データセット検索が読み取る、もっとも重要な構造化データです。主に次の情報が含まれます。</p>
+            <ul>
+                <li><strong>name / description</strong>：質問文と、作成画面で入力した「詳細な説明」（150文字以上）</li>
+                <li><strong>creator / publisher / provider</strong>：基本設定の Creator 設定・作者情報に基づく作成者・公開者・提供者</li>
+                <li><strong>license</strong>：作成画面で選んだクリエイティブ・コモンズ等のライセンス</li>
+                <li><strong>variableMeasured</strong>：各選択肢を測定変数として明示</li>
+                <li><strong>distribution</strong>：CSV / XML / YAML / JSON / SVG の配布形式（実在するファイルのみ）</li>
+                <li><strong>temporalCoverage</strong>：調査期間（最初の投票日〜最後の投票日）</li>
+                <li><strong>spatialCoverage</strong>：基本設定の地理的範囲（初期値「日本」）</li>
+            </ul>
+            <div class="callout callout-warning">
+                <p>構造化データを十分に機能させるには、<strong>作成画面の「詳細な説明」を150文字以上</strong>入力することが重要です。説明が短いと、データセットとしての情報が不足します。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>そのほかの構造化データ・メタタグ</h2>
+            <ul>
+                <li><strong>Dublin Core メタタグ</strong>：DC.title / DC.description / DC.type（Dataset）/ DC.format / DC.language / DC.subject などを出力します。</li>
+                <li><strong>パンくずリスト（BreadcrumbList）</strong>：基本設定でオンにした場合のみ出力します。他プラグインでパンくずを管理している場合は、重複を避けるためオフのままにしてください。</li>
+                <li><strong>DataCatalog</strong>：<code>/datasets/</code> 一覧ページに、データセットの目録（DataCatalog）としての構造化データを出力します。</li>
+                <li><strong>調査期間（temporalCoverage）</strong>：最初の投票日と最後の投票日から自動算出され、詳細ページの「調査期間」バッジや構造化データに反映されます。</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>専用サイトマップ</h2>
+            <p>データセット専用のサイトマップ <code>sitemap-poll-datasets.xml</code> が自動生成されます。投票時やデータ一括生成時に自動更新され、基本設定ページから手動再生成もできます。</p>
+            <div class="callout callout-tip">
+                <p>Google Search Console の「サイトマップ」に <code>https://（あなたのサイト）/sitemap-poll-datasets.xml</code> を登録すると、データセットページのインデックスが促進されます。URL は基本設定ページで確認できます。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>GEO（生成 AI 検索）への応用</h2>
+            <p>構造化データと5形式の機械可読なデータ配布は、従来の検索エンジンだけでなく、生成 AI が情報源として引用しやすい形にもつながります。独自に集めたアンケート結果は、他にはない一次データとして、記事の信頼性・独自性を高める材料になります。</p>
+            <ul>
+                <li>質問文・説明・キーワードを具体的に設定し、何のデータかを明確にする</li>
+                <li>ライセンスを明示し、引用・再利用の条件をはっきりさせる</li>
+                <li>調査期間や地理的範囲を設定し、データの文脈を伝える</li>
+            </ul>
+        </section>
+
+        <figure class="infographic">
+            <img src="images/infographics/architecture.png" alt="投票データから構造化データ・5形式・サイトマップが生成される仕組み">
+            <figcaption>図: 投票データから構造化データ・データファイル・サイトマップが生成される流れ</figcaption>
+        </figure>
+
+        <nav class="page-nav">
+            <a href="datasets.html" class="prev">&laquo; データセット公開</a>
+            <a href="troubleshooting.html" class="next">トラブルシューティング &raquo;</a>
+        </nav>
+
+        <footer class="manual-footer">
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.5 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+        </footer>
+    </main>
+
+    <div class="lightbox"></div>
+    <script src="js/manual.js"></script>
+</body>
+</html>
