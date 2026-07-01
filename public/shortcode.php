@@ -22,8 +22,8 @@ function kashiwazaki_poll_shortcode( $atts ) {
     $counts = get_post_meta( $poll_id, '_kashiwazaki_poll_counts', true );
     $total_votes = ( is_array( $counts ) && ! empty( $counts ) ) ? array_sum( $counts ) : 0;
     $has_data = $total_votes > 0;
-    $ip         = $_SERVER['REMOTE_ADDR'];
-    $cookie_key = 'kashiwazaki_poll_voted_' . $poll_id;
+    $ip         = kashiwazaki_poll_get_client_ip();
+    $cookie_key = 'kashiwazaki_poll_voted2_' . $poll_id; // v2: UTC基準（util.php の説明参照）
     $already_voted = kashiwazaki_poll_is_already_voted( $poll_id, $ip, $cookie_key );
     $site_name        = get_bloginfo('name');
     $ajax_url         = admin_url('admin-ajax.php');
@@ -57,12 +57,18 @@ function kashiwazaki_poll_shortcode( $atts ) {
         'siteName'     => $site_name, 'pollQuestion' => $question, 'ajaxUrl' => $ajax_url,
         'nonce'        => wp_create_nonce( 'kashiwazaki_poll_vote_' . $poll_id ),
         'datasetTheme' => $current_theme,
+        // データセットURLは window.location.origin ではなく home_url 基準にする
+        // （サブディレクトリ設置・リバースプロキシ・別 home_url でもリンクが正しくなる）。
+        'datasetsBaseUrl' => home_url( '/datasets/' ),
     );
-    $data_json = json_encode( $poll_data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+    // JSON_HEX_TAG | JSON_HEX_AMP: `<` `>` `&` を \u00XX 化し、保存値中の `</script>` 等で
+    // <script> 要素を突破される（XSS）のを防ぐ。
+    $data_json = json_encode( $poll_data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP );
     if ($data_json !== false) { echo sprintf("<script id='kashiwazaki-poll-data-%d'>kashiwazakiPollAllData[%d] = %s;</script>\n", $poll_id, $poll_id, $data_json); }
 
     echo '<div class="kashiwazaki-poll-block" data-poll-id="' . $poll_id . '">';
-    echo '<div class="kashiwazaki-poll-title">' . $question_esc . '</div>';
+    // 管理画面で設定した見出しレベル($heading_level)で質問文を出力（SEO/アクセシビリティ）。
+    echo '<' . $heading_level . ' class="kashiwazaki-poll-title">' . $question_esc . '</' . $heading_level . '>';
     echo '<div id="kashiwazaki-poll-view-result-area-'. $poll_id .'" class="kashiwazaki-poll-view-result-trigger-area" style="'. (!$already_voted ? '' : 'display: none;') .'">';
     echo '<button type="button" class="kashiwazaki-poll-view-result" data-pollid="' . $poll_id . '">集計データを拡大</button>';
     echo '</div>';
@@ -74,7 +80,8 @@ function kashiwazaki_poll_shortcode( $atts ) {
         echo wp_nonce_field( 'kashiwazaki_poll_vote_' . $poll_id, '_wpnonce', true, false );
         echo '<input type="hidden" name="poll_id" value="' . $poll_id . '">';
         echo '<input type="hidden" name="poll_type" value="' . $poll_type . '">';
-        echo '<button type="button" id="kashiwazaki-poll-submit-top-' . $poll_id . '" class="kashiwazaki-poll-submit">投票する</button>';
+        // 選択肢を先に提示してから投票ボタンを置く（スクリーンリーダー/キーボードの
+        // 論理順序。送信操作が選択肢より先に現れる問題を解消）。
         foreach ( $options as $i => $opt ) {
             $opt_esc = esc_html( $opt );
             $input_type = ($poll_type === 'multiple') ? 'checkbox' : 'radio';
@@ -102,15 +109,23 @@ function kashiwazaki_poll_shortcode( $atts ) {
     }
 
     echo '</div>';
-    $poll_desc_length = strlen( strip_tags( $poll_description ) );
-    if ( $poll_desc_length >= 150 ) {
+    // Dataset 構造化データは説明文の長さに関わらず常に出力する（短い説明のpollでも
+    // SEO/AEO向けに構造化データを欠落させない）。
+    // poll 個別ページ(/datasets/detail-{id}/)では single-poll.php が wp_head で同一の
+    // Dataset JSON-LD を出力するため、ショートコード側の出力は抑止して二重出力を防ぐ。
+    if ( $poll_id && ! is_singular( 'poll' ) ) {
          $current_counts = get_post_meta( $poll_id, '_kashiwazaki_poll_counts', true );
          $counts_for_ld = $current_counts; if ( ! is_array( $counts_for_ld ) ) { $counts_for_ld = array_fill( 0, count( $options ), 0 ); } elseif ( count( $counts_for_ld ) < count( $options ) ) { $counts_for_ld = array_pad( $counts_for_ld, count( $options ), 0 ); } elseif ( count( $counts_for_ld ) > count( $options ) ) { $counts_for_ld = array_slice( $counts_for_ld, 0, count( $options ) ); }
          $variableMeasured = []; foreach ( $options as $i => $opt ) { $value = isset( $counts_for_ld[$i] ) ? intval($counts_for_ld[$i]) : 0; $variableMeasured[] = ["@type"=>"PropertyValue", "name"=>$opt, "value"=>$value]; }
          $poll_license = get_post_meta( $poll_id, '_kashiwazaki_poll_license', true ); if ( empty( $poll_license ) ) { $poll_license = 'https://creativecommons.org/licenses/by/4.0/'; }
          global $post; $post_url = ''; $keywords = [];
          if ( is_object($post) && isset($post->ID) ) { $post_url = get_permalink( $post->ID ); $shortcode_post_tags = get_the_tags( $post->ID ); if ( ! is_wp_error( $shortcode_post_tags ) && is_array( $shortcode_post_tags ) ) { foreach ( $shortcode_post_tags as $tag ) { $keywords[] = $tag->name; } } }
-         else { $post_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; }
+         else {
+             // global $post が無い文脈では、クライアント制御の HTTP_HOST を信用せず、
+             // 信頼できる home_url() のホストに現在のパスのみを連結する（host header 注入対策）。
+             $req_path = isset( $_SERVER['REQUEST_URI'] ) ? wp_parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH ) : '/';
+             $post_url = home_url( $req_path ? $req_path : '/' );
+         }
          $site_organization_name = get_bloginfo('name'); $site_organization_url = home_url();
          $site_admin_email = get_bloginfo('admin_email');
 
@@ -170,7 +185,7 @@ function kashiwazaki_poll_shortcode( $atts ) {
              ];
          }
 
-         $distribution = []; $datasets_base_path = KASHIWAZAKI_POLL_DIR . 'datasets/'; $datasets_base_url = KASHIWAZAKI_POLL_URL . 'datasets/';
+         $distribution = []; $datasets_base_path = kashiwazaki_poll_datasets_base_dir(); $datasets_base_url = kashiwazaki_poll_datasets_base_url();
          $file_types_sd = [ 'csv' => ['path' => 'csv/', 'ext' => '.csv', 'format' => 'text/csv'], 'xml' => ['path' => 'xml/', 'ext' => '.xml', 'format' => 'application/xml'], 'yaml' => ['path' => 'yaml/', 'ext' => '.yaml', 'format' => 'application/x-yaml'], 'json' => ['path' => 'json/', 'ext' => '.json', 'format' => 'application/json'], 'svg' => ['path' => 'svg/', 'ext' => '.svg', 'format' => 'image/svg+xml'], ];
          foreach ($file_types_sd as $key => $type) { $file_path = $datasets_base_path . $type['path'] . $poll_id . $type['ext']; if (file_exists($file_path)) { $distribution[] = ['@type' => 'DataDownload', 'contentUrl' => $datasets_base_url . $type['path'] . $poll_id . $type['ext'], 'encodingFormat' => $type['format']]; } }
 
@@ -181,7 +196,7 @@ function kashiwazaki_poll_shortcode( $atts ) {
          }
          if ( ! empty( $keywords ) ) { $dataset["keywords"] = $keywords; }
          if ( ! empty( $distribution ) ) { $dataset["distribution"] = $distribution; }
-         if (!empty($dataset['url'])) { echo '<script type="application/ld+json">' . json_encode($dataset, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . '</script>'; }
+         if (!empty($dataset['url'])) { echo '<script type="application/ld+json">' . json_encode($dataset, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_HEX_TAG | JSON_HEX_AMP) . '</script>'; }
     }
 
     return ob_get_clean();

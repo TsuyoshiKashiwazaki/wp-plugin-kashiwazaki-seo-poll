@@ -379,3 +379,50 @@
     opacity: 0.4;
     font-size: 0.8em;
 }
+
+/* 集計結果 静的テーブル（中央詳細ページ） */
+.kashiwazaki-poll-results-table-wrap {
+    margin: 16px 0 24px;
+    overflow-x: auto;
+}
+.kashiwazaki-poll-results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95em;
+}
+.kashiwazaki-poll-results-table caption {
+    text-align: left;
+    font-weight: 600;
+    padding: 0 0 8px;
+    color: var(--usage-label-color, #333);
+}
+.kashiwazaki-poll-results-table th,
+.kashiwazaki-poll-results-table td {
+    border: 1px solid var(--usage-border, rgba(0, 0, 0, 0.12));
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+}
+.kashiwazaki-poll-results-table thead th {
+    background: var(--usage-bg, #f5f5f5);
+    font-weight: 600;
+    white-space: nowrap;
+}
+.kashiwazaki-poll-results-table tbody th.col-option {
+    font-weight: 400;
+}
+.kashiwazaki-poll-results-table .col-count,
+.kashiwazaki-poll-results-table .col-percent {
+    text-align: right;
+    white-space: nowrap;
+}
+.kashiwazaki-poll-results-table tfoot th,
+.kashiwazaki-poll-results-table tfoot td {
+    font-weight: 600;
+    background: var(--usage-bg, #f5f5f5);
+}
+.kashiwazaki-poll-results-asof {
+    margin: 6px 0 0;
+    font-size: 0.85em;
+    opacity: 0.7;
+}

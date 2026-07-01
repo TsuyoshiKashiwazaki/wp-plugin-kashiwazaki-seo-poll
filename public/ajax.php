@@ -13,8 +13,10 @@ function kashiwazaki_poll_vote_ajax() {
         wp_die();
     }
 
-    $ip = $_SERVER['REMOTE_ADDR'];
-    $cookie_key = 'kashiwazaki_poll_voted_' . $poll_id;
+    $ip = kashiwazaki_poll_get_client_ip();
+    // Cookieキーは v2（UTC基準）。タイムスタンプ移行に伴い旧キー(現地時刻オフセット基準)の
+    // Cookieは読まない。これにより負のGMTオフセット環境での基準ズレを回避する。
+    $cookie_key = 'kashiwazaki_poll_voted2_' . $poll_id;
 
     if ( kashiwazaki_poll_is_already_voted( $poll_id, $ip, $cookie_key ) ) {
         wp_send_json( array( 'status' => 'error', 'message' => '既に投票しています' ) );
@@ -27,6 +29,11 @@ function kashiwazaki_poll_vote_ajax() {
         wp_send_json( array( 'status' => 'error', 'message' => 'データが見つかりません。' ) );
         wp_die();
     }
+    // 未公開(draft/private/trash)pollへの投票を拒否（編集権限者を除く）。
+    if ( $poll_post->post_status !== 'publish' && ! current_user_can( 'edit_post', $poll_id ) ) {
+        wp_send_json( array( 'status' => 'error', 'message' => 'データが見つかりません。' ) );
+        wp_die();
+    }
 
     $options = get_post_meta( $poll_id, '_kashiwazaki_poll_options', true );
     if ( ! is_array( $options ) || empty( $options ) ) {
@@ -35,10 +42,18 @@ function kashiwazaki_poll_vote_ajax() {
         wp_die();
     }
 
+    // 選択肢indexを整数化し重複排除（同一選択肢への多重加算を防止）。
     $selected_indices = isset( $_POST['poll_options'] ) ? (array) $_POST['poll_options'] : array();
+    $selected_indices = array_values( array_unique( array_map( 'intval', $selected_indices ) ) );
     if ( empty( $selected_indices ) ) {
         error_log("[Poll {$poll_id} Vote] No options selected.");
         wp_send_json( array( 'status' => 'error', 'message' => '選択肢が選ばれていません。' ) );
+        wp_die();
+    }
+    // 単一選択pollでは複数選択肢への同時投票を拒否（サーバー側で強制）。
+    $poll_type = get_post_meta( $poll_id, '_kashiwazaki_poll_type', true );
+    if ( $poll_type === 'single' && count( $selected_indices ) > 1 ) {
+        wp_send_json( array( 'status' => 'error', 'message' => 'この設問では1つだけ選択できます。' ) );
         wp_die();
     }
 
@@ -71,7 +86,7 @@ function kashiwazaki_poll_vote_ajax() {
     }
 
     $new_total_votes = array_sum( $counts );
-    $vote_timestamp = current_time( 'timestamp' );
+    $vote_timestamp = time();
 
     $update_counts_success = update_post_meta( $poll_id, '_kashiwazaki_poll_counts', $counts );
     if (!$update_counts_success) {
@@ -83,9 +98,15 @@ function kashiwazaki_poll_vote_ajax() {
     $voted_ips[ $ip ] = $vote_timestamp;
     update_post_meta( $poll_id, '_kashiwazaki_poll_voted_ips', $voted_ips );
 
-    setcookie( $cookie_key, '1', time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
+    // Cookie値に投票時刻を保存（is_already_voted がリセット時刻と比較して重複判定に使う）。
+    setcookie( $cookie_key, (string) $vote_timestamp, time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
 
-    kashiwazaki_poll_generate_all_data_files( $poll_id, $counts );
+    // 公開pollのみ静的データファイルを生成（編集権限者のdraftプレビュー投票で
+    // 未公開pollの公開ファイルが生成されるのを防ぐ）。サイトマップも再生成し、
+    // 各データセットURLの lastmod（=データファイルの filemtime）を最新化する。
+    if ( $poll_post->post_status === 'publish' ) {
+        kashiwazaki_poll_generate_all_data_files( $poll_id, $counts );
+    }
 
     if ( ! is_array( $options ) ) { $options = []; }
     wp_send_json( array(
@@ -105,6 +126,8 @@ function kashiwazaki_poll_result_ajax() {
     if ( ! $poll_id ) { wp_send_json( array( 'status' => 'error', 'message' => 'poll_id がありません。' ) ); wp_die(); }
     $poll_post = get_post( $poll_id );
     if ( ! $poll_post || $poll_post->post_type !== 'poll' ) { wp_send_json( array( 'status' => 'error', 'message' => 'データが見つかりません。' ) ); wp_die(); }
+    // 未公開pollの集計結果を未認証ユーザーに返さない（情報漏洩防止）。
+    if ( $poll_post->post_status !== 'publish' && ! current_user_can( 'edit_post', $poll_id ) ) { wp_send_json( array( 'status' => 'error', 'message' => 'データが見つかりません。' ) ); wp_die(); }
     $options = get_post_meta( $poll_id, '_kashiwazaki_poll_options', true );
     $counts  = get_post_meta( $poll_id, '_kashiwazaki_poll_counts', true );
     if ( ! is_array( $options ) ) { $options = []; }

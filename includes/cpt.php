@@ -292,7 +292,7 @@ function kashiwazaki_poll_update_all_usage_counts( $post_id ) {
 
     // 最後の実行時刻をチェック（24時間間隔で実行）
     $last_update = get_option( 'kashiwazaki_poll_last_usage_update', 0 );
-    $current_time = current_time( 'timestamp' );
+    $current_time = time();
 
     // 24時間（86400秒）経過していない場合はスキップ
     if ( ( $current_time - $last_update ) < DAY_IN_SECONDS ) {

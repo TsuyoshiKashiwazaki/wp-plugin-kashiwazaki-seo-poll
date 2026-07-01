@@ -96,7 +96,8 @@
                         { type: 'svg', name: 'SVG形式', desc: 'ベクターグラフ・印刷用' }
                     ];
                     formats.forEach(format => {
-                        const link = document.createElement('a'); link.href = `${window.location.origin}/datasets/${format.type}/${data.poll_id}/`; link.target = '_blank'; link.className = 'format-link dataset-themed'; link.innerHTML = `${format.name}<br><span class="format-desc">${format.desc}</span>`; formatLinks.appendChild(link);
+                        const datasetsBase = (pollData && pollData.datasetsBaseUrl) ? pollData.datasetsBaseUrl : (window.location.origin + '/datasets/');
+                        const link = document.createElement('a'); link.href = `${datasetsBase}${format.type}/detail-${data.poll_id}/`; link.target = '_blank'; link.className = 'format-link dataset-themed'; link.innerHTML = `${format.name}<br><span class="format-desc">${format.desc}</span>`; formatLinks.appendChild(link);
                     });
                     linksContainer.appendChild(formatLinks); targetContainer.appendChild(linksContainer);
 
@@ -322,17 +323,9 @@
                 }
             });
 
-            // 追加: 各ボタンに直接リスナーを付与して冗長性を確保（複数pollでの干渉を防ぐ）
-            const viewResultBtn = pollBlock.querySelector('.kashiwazaki-poll-view-result');
-            if (viewResultBtn) {
-                viewResultBtn.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    fetchAndShowResults(true);
-                    if (form) form.style.display = 'none';
-                    if (viewResultArea) viewResultArea.style.display = 'none';
-                    if (previewContainer) previewContainer.style.display = 'none';
-                });
-            }
+            // 「集計データを拡大」ボタンは上の委譲リスナー(.kashiwazaki-poll-view-result)で
+            // 処理済み。ここで直接リスナーを重ねると同一クリックで fetchAndShowResults が
+            // 二重実行されるため付与しない。
 
             // --- 初期表示処理 ---
             const initializePollView = () => {

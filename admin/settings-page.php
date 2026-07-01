@@ -282,7 +282,7 @@ function kashiwazaki_poll_settings_page_html() {
     $reset_date_message = '';
     if ( isset( $_POST['kashiwazaki_poll_reset_date_submit'] ) && isset( $_POST['_wpnonce_reset_date'] ) ) {
         if ( wp_verify_nonce( $_POST['_wpnonce_reset_date'], 'kashiwazaki_poll_reset_date_action' ) ) {
-            update_option( 'kashiwazaki_poll_reset_timestamp', current_time( 'timestamp' ) );
+            update_option( 'kashiwazaki_poll_reset_timestamp', time() );
             $reset_date_message = '<div id="message" class="updated notice is-dismissible"><p>' . esc_html__( 'リセット日時を現在時刻に更新しました。', 'kashiwazaki-seo-poll' ) . '</p></div>';
         } else {
             $reset_date_message = '<div id="message" class="error notice is-dismissible"><p>' . esc_html__( 'Nonce検証に失敗しました。もう一度お試しください。', 'kashiwazaki-seo-poll' ) . '</p></div>';
@@ -306,9 +306,10 @@ function kashiwazaki_poll_settings_page_html() {
             $generated_count = 0;
             $error_count = 0;
 
+            // 公開pollのみ対象（draft/private のデータを公開URL配下に生成しない）。
             $poll_ids = get_posts( array(
                 'post_type'      => 'poll',
-                'post_status'    => 'any',
+                'post_status'    => 'publish',
                 'numberposts'    => -1,
                 'fields'         => 'ids',
             ) );
@@ -383,7 +384,7 @@ function kashiwazaki_poll_settings_page_html() {
         <?php
         $ts = get_option( 'kashiwazaki_poll_reset_timestamp', 0 );
         if ( $ts ) {
-            echo '<p>' . sprintf( esc_html__( '現在のリセット日時: %s', 'kashiwazaki-seo-poll' ), date_i18n( 'Y-m-d H:i:s', $ts ) ) . '</p>';
+            echo '<p>' . sprintf( esc_html__( '現在のリセット日時: %s', 'kashiwazaki-seo-poll' ), wp_date( 'Y-m-d H:i:s', $ts ) ) . '</p>';
         } else {
             echo '<p>' . esc_html__( 'まだリセット日時は設定されていません。', 'kashiwazaki-seo-poll' ) . '</p>';
         }

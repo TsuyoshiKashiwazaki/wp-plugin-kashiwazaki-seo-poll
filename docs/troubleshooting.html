@@ -11,7 +11,7 @@
     <nav class="sidebar">
         <div class="sidebar-header">
             <h2 style="color:#fff;">SEO Poll</h2>
-            <span class="version">v1.0.4</span>
+            <span class="version">v1.0.5</span>
             <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
         </div>
         <ul>
@@ -106,6 +106,22 @@
 
         <div class="callout callout-warning">
             <p>重複投票防止はIPアドレスとCookieの組み合わせで実現しています。VPNやプロキシ環境では正確に動作しない場合があります。</p>
+        </div>
+
+        <h3>リバースプロキシ／CDN配下で最初の1人しか投票できない</h3>
+
+        <p>原因: CloudflareやリバースプロキシなどのCDN配下では、すべてのアクセスがプロキシのIPアドレスに見えるため、全員が同一IPと判定され2人目以降が投票できなくなります。</p>
+
+        <div class="step">
+            <span class="step-number">1</span>
+            <div class="step-body">
+                <p><code>wp-config.php</code> に次の1行を追加し、プロキシが付与する実クライアントIPヘッダー（X-Forwarded-For / CF-Connecting-IP）を信頼する設定を有効にする。</p>
+                <pre><code>define( 'KASHIWAZAKI_POLL_TRUST_PROXY', true );</code></pre>
+            </div>
+        </div>
+
+        <div class="callout callout-warning">
+            <p>この設定は、信頼できるリバースプロキシ／CDNを経由している環境でのみ有効にしてください。プロキシを経由していない環境で有効にすると、クライアントが送信するヘッダーを偽装され、重複投票防止を回避されるおそれがあります。</p>
         </div>
 
         <h3>JSON-LDが出力されない</h3>
@@ -220,7 +236,7 @@
 
         <footer class="manual-footer">
             <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/profile/" target="_blank" rel="noopener">柏崎剛（Tsuyoshi Kashiwazaki）</a></p>
-            <p>プラグイン: Kashiwazaki SEO Poll v1.0.4</p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.5</p>
         </footer>
     </main>
 

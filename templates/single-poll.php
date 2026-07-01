@@ -19,7 +19,7 @@ add_action('wp_head', function() {
         $structured_data = kashiwazaki_poll_get_single_dataset_structured_data($poll_id, 'html');
         if (!empty($structured_data)) {
             echo '<script type="application/ld+json">' . "\n";
-            echo wp_json_encode($structured_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n";
+            echo wp_json_encode($structured_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) . "\n";
             echo '</script>' . "\n";
         }
     }
@@ -63,7 +63,7 @@ get_header(); ?>
                 </time>
                 <?php if ($survey_period) : ?>
                 <span class="meta-badge survey-period-badge">
-                    調査期間 <?php echo date_i18n('Y年m月d日', $survey_period['start']); ?>〜<?php echo date_i18n('Y年m月d日', $survey_period['end']); ?>
+                    調査期間 <?php echo wp_date('Y年m月d日', $survey_period['start']); ?>〜<?php echo wp_date('Y年m月d日', $survey_period['end']); ?>
                 </span>
                 <?php else : ?>
                 <span class="meta-badge survey-period-badge no-votes">
@@ -94,6 +94,10 @@ get_header(); ?>
 
             echo '<div class="poll-result-section">';
             echo '<h2>集計結果</h2>';
+            // JS非実行のクローラー／スクリーンリーダー向けに、集計数値を静的HTMLテーブルで出力
+            if ( function_exists( 'kashiwazaki_poll_render_results_table' ) ) {
+                echo kashiwazaki_poll_render_results_table( $poll_id );
+            }
             echo do_shortcode('[tk_poll id="' . $poll_id . '"]');
             echo '</div>';
 

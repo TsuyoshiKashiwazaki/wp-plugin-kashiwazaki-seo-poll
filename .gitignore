@@ -11,6 +11,11 @@ datasets/**/*.svg
 
 # 開発用ファイル
 .claude/
+.3ai-work/
+CLAUDE.md
+.codex
+.cursor/
+.aider*
 .playwright-mcp/
 *.log
 *.backup

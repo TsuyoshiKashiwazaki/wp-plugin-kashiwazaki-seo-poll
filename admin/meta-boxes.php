@@ -72,7 +72,7 @@ if ( ! function_exists( 'kashiwazaki_poll_options_metabox' ) ) {
         <p>詳細な説明 (description)</p>
         <textarea name="kashiwazaki_poll_description" rows="6" style="width:100%;"><?php echo esc_textarea( $description ); ?></textarea>
         <p class="description" style="margin-left:25px;">
-            ※ 150文字以上設定しない場合は、構造化マークアップは出力されません。
+            ※ 構造化データ（Dataset）の説明として使用されます。150文字以上を入力してください。
         </p>
 
         <hr>
@@ -159,7 +159,8 @@ if ( ! function_exists( 'kashiwazaki_poll_options_metabox' ) ) {
         <?php
         // 現在のショートコード使用記事一覧を表示
         if (function_exists('kashiwazaki_poll_get_shortcode_usage')) {
-            $usage_posts = kashiwazaki_poll_get_shortcode_usage($post->ID);
+            // 管理画面では未公開(draft/private/pending)も含めて編集者に提示する。
+            $usage_posts = kashiwazaki_poll_get_shortcode_usage($post->ID, true);
             ?>
             <div style="margin-top: 15px; padding: 12px; background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px;">
                 <p style="margin: 0 0 10px 0; font-weight: bold; color: #333;">掲載中のページ:</p>
@@ -306,6 +307,13 @@ if ( ! function_exists( 'kashiwazaki_poll_save_metabox' ) ) {
                 $cleaned[] = sanitize_text_field($line);
             }
         }
+        // 選択肢更新の「前」に得票数を新選択肢へ再マッピング（票の破壊/付替を防止）。
+        $options_changed = false;
+        if ( function_exists( 'kashiwazaki_poll_remap_counts_for_new_options' ) ) {
+            $prev_options = get_post_meta( $post_id, '_kashiwazaki_poll_options', true );
+            $options_changed = ( $prev_options !== $cleaned );
+            kashiwazaki_poll_remap_counts_for_new_options( $post_id, $cleaned );
+        }
         update_post_meta( $post_id, '_kashiwazaki_poll_options', $cleaned );
 
         $description = isset( $_POST['kashiwazaki_poll_description'] ) ? sanitize_textarea_field( $_POST['kashiwazaki_poll_description'] ) : '';
@@ -325,6 +333,13 @@ if ( ! function_exists( 'kashiwazaki_poll_save_metabox' ) ) {
 
         $dataset_keywords = isset( $_POST['dataset_keywords'] ) ? sanitize_text_field( $_POST['dataset_keywords'] ) : '';
         update_post_meta( $post_id, 'dataset_keywords', $dataset_keywords );
+
+        // 選択肢が変わった場合、関連メタ(license/description等)を全て保存した後に
+        // データファイルを再生成（公開pollのみ。生成物が最新メタを反映するよう末尾で実行）。
+        if ( $options_changed && get_post_status( $post_id ) === 'publish' && function_exists( 'kashiwazaki_poll_generate_all_data_files' ) ) {
+            $current_counts = get_post_meta( $post_id, '_kashiwazaki_poll_counts', true );
+            kashiwazaki_poll_generate_all_data_files( $post_id, is_array( $current_counts ) ? $current_counts : array() );
+        }
     }
 }
 
@@ -398,6 +413,23 @@ if ( ! function_exists( 'kashiwazaki_poll_reset_data_save' ) ) {
 
         delete_post_meta( $post_id, '_kashiwazaki_poll_counts' );
         delete_post_meta( $post_id, '_kashiwazaki_poll_voted_ips' );
+        // 個別リセット時刻を記録。これより前の投票Cookie/IPは無効化され、
+        // リセット後にユーザーが再投票できるようにする（F7のCookie判定と整合）。
+        update_post_meta( $post_id, '_kashiwazaki_poll_reset_ts', time() );
+
+        // 生成済みデータファイルもリセット。古い集計が直URL/DLリンクから取得できる
+        // 状態を解消する。まず既存ファイルを削除し、公開pollなら0票で再生成する。
+        if ( function_exists( 'kashiwazaki_poll_get_dataset_file_path' ) ) {
+            foreach ( array( 'csv', 'xml', 'yaml', 'json', 'svg' ) as $ft ) {
+                $fp = kashiwazaki_poll_get_dataset_file_path( $post_id, $ft );
+                if ( $fp && file_exists( $fp ) ) {
+                    @unlink( $fp );
+                }
+            }
+        }
+        if ( get_post_status( $post_id ) === 'publish' && function_exists( 'kashiwazaki_poll_generate_all_data_files' ) ) {
+            kashiwazaki_poll_generate_all_data_files( $post_id, array() );
+        }
 
         add_filter( 'redirect_post_location', function( $location ) {
             $location = remove_query_arg( array('kashiwazaki_poll_reset_error'), $location );

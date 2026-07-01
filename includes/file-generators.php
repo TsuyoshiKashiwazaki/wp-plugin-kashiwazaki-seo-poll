@@ -67,13 +67,13 @@ function kashiwazaki_poll_generate_all_data_files( $poll_id, $counts ) {
     }
 
     $total_votes = empty($counts) ? 0 : array_sum( $counts );
-    $last_updated_time = current_time( 'timestamp' );
-    $last_updated_formatted = date_i18n( 'c', $last_updated_time );
+    $last_updated_time = time();
+    $last_updated_formatted = wp_date( 'c', $last_updated_time );
 
     // 調査期間を取得
     $survey_period = kashiwazaki_poll_get_survey_period( $poll_id );
-    $survey_period_start = $survey_period ? date_i18n( 'c', $survey_period['start'] ) : null;
-    $survey_period_end = $survey_period ? date_i18n( 'c', $survey_period['end'] ) : null;
+    $survey_period_start = $survey_period ? wp_date( 'c', $survey_period['start'] ) : null;
+    $survey_period_end = $survey_period ? wp_date( 'c', $survey_period['end'] ) : null;
 
     $poll_license = get_post_meta( $poll_id, '_kashiwazaki_poll_license', true );
     if ( empty( $poll_license ) ) {
@@ -122,8 +122,23 @@ function kashiwazaki_poll_generate_all_data_files( $poll_id, $counts ) {
     return true;
 }
 
+/**
+ * CSVインジェクション対策: =, +, -, @, タブ, CR で始まるセルは表計算ソフトで数式として
+ * 解釈され得るため、先頭にシングルクオートを付けて無害化する（OWASP 推奨）。
+ *
+ * @param string $value セル値
+ * @return string 無害化済みセル値
+ */
+function kashiwazaki_poll_csv_safe_cell( $value ) {
+    $value = (string) $value;
+    if ( $value !== '' && in_array( $value[0], array( '=', '+', '-', '@', "\t", "\r" ), true ) ) {
+        return "'" . $value;
+    }
+    return $value;
+}
+
 function kashiwazaki_poll_generate_csv( $poll_id, $poll_title, $total_votes, $options_data, $copyright, $license, $survey_period_start = null, $survey_period_end = null ) {
-    $dir_path = KASHIWAZAKI_POLL_DIR . 'datasets/csv/';
+    $dir_path = kashiwazaki_poll_datasets_base_dir() . 'csv/';
     $file_path = $dir_path . $poll_id . '.csv';
     if ( ! file_exists( $dir_path ) && ! wp_mkdir_p( $dir_path ) ) { error_log("[Poll Data Gen CSV - ID:{$poll_id}] Failed to create directory: " . $dir_path); return; }
     if ( ! is_writable( $dir_path ) ) { error_log("[Poll Data Gen CSV - ID:{$poll_id}] Directory not writable: " . $dir_path); return; }
@@ -132,11 +147,11 @@ function kashiwazaki_poll_generate_csv( $poll_id, $poll_title, $total_votes, $op
     if ( !$fp ) { error_log("[Poll Data Gen CSV - ID:{$poll_id}] Failed to open file: " . $file_path); return; }
 
     fwrite($fp, "\xEF\xBB\xBF");
-    fputcsv($fp, [$poll_title]);
+    fputcsv($fp, [kashiwazaki_poll_csv_safe_cell($poll_title)]);
     fputcsv( $fp, ['option_text', 'vote_count', 'percentage'] );
     if (!empty($options_data)) {
         foreach ( $options_data as $option ) {
-            fputcsv( $fp, [ $option['text'], $option['count'], $option['percentage'] ] );
+            fputcsv( $fp, [ kashiwazaki_poll_csv_safe_cell($option['text']), $option['count'], $option['percentage'] ] );
         }
     }
     fwrite($fp, "\n");
@@ -157,7 +172,7 @@ function kashiwazaki_poll_generate_csv( $poll_id, $poll_title, $total_votes, $op
 }
 
 function kashiwazaki_poll_generate_xml( $poll_id, $poll_title, $last_updated, $total_votes, $options_data, $copyright, $license, $survey_period_start = null, $survey_period_end = null ) {
-    $dir_path = KASHIWAZAKI_POLL_DIR . 'datasets/xml/';
+    $dir_path = kashiwazaki_poll_datasets_base_dir() . 'xml/';
     $file_path = $dir_path . $poll_id . '.xml';
     if ( ! file_exists( $dir_path ) && ! wp_mkdir_p( $dir_path ) ) { error_log("[Poll Data Gen XML - ID:{$poll_id}] Failed to create directory: " . $dir_path); return; }
     if ( ! is_writable( $dir_path ) ) { error_log("[Poll Data Gen XML - ID:{$poll_id}] Directory not writable: " . $dir_path); return; }
@@ -223,7 +238,7 @@ function kashiwazaki_poll_generate_xml( $poll_id, $poll_title, $last_updated, $t
 }
 
 function kashiwazaki_poll_generate_yaml( $poll_id, $poll_data ) {
-    $dir_path = KASHIWAZAKI_POLL_DIR . 'datasets/yaml/';
+    $dir_path = kashiwazaki_poll_datasets_base_dir() . 'yaml/';
     $file_path = $dir_path . $poll_id . '.yaml';
     if ( ! file_exists( $dir_path ) && ! wp_mkdir_p( $dir_path ) ) { error_log("[Poll Data Gen YAML - ID:{$poll_id}] Failed to create directory: " . $dir_path); return; }
     if ( ! is_writable( $dir_path ) ) { error_log("[Poll Data Gen YAML - ID:{$poll_id}] Directory not writable: " . $dir_path); return; }
@@ -255,7 +270,7 @@ function kashiwazaki_poll_generate_yaml( $poll_id, $poll_data ) {
 }
 
 function kashiwazaki_poll_generate_json( $poll_id, $poll_data ) {
-    $dir_path = KASHIWAZAKI_POLL_DIR . 'datasets/json/';
+    $dir_path = kashiwazaki_poll_datasets_base_dir() . 'json/';
     $file_path = $dir_path . $poll_id . '.json';
     if ( ! file_exists( $dir_path ) && ! wp_mkdir_p( $dir_path ) ) { error_log("[Poll Data Gen JSON - ID:{$poll_id}] Failed to create directory: " . $dir_path); return; }
     if ( ! is_writable( $dir_path ) ) { error_log("[Poll Data Gen JSON - ID:{$poll_id}] Directory not writable: " . $dir_path); return; }
@@ -275,7 +290,7 @@ function kashiwazaki_poll_generate_json( $poll_id, $poll_data ) {
 }
 
 function kashiwazaki_poll_generate_svg_pie( $poll_id, $poll_title, $total_votes, $options_data, $copyright_site_url, $license ) {
-    $dir_path = KASHIWAZAKI_POLL_DIR . 'datasets/svg/';
+    $dir_path = kashiwazaki_poll_datasets_base_dir() . 'svg/';
     $file_path = $dir_path . $poll_id . '.svg';
     if ( ! file_exists( $dir_path ) && ! wp_mkdir_p( $dir_path ) ) { error_log("[Poll Data Gen SVG - ID:{$poll_id}] Failed to create directory: " . $dir_path); return; }
     if ( ! is_writable( $dir_path ) ) { error_log("[Poll Data Gen SVG - ID:{$poll_id}] Directory not writable: " . $dir_path); return; }
@@ -372,7 +387,12 @@ function kashiwazaki_poll_generate_sitemap_poll() {
         foreach ($file_types as $type) {
             $dataset_page_url = kashiwazaki_poll_get_single_dataset_page_url($poll_id, $type);
             $dataset_file_path = kashiwazaki_poll_get_dataset_file_path($poll_id, $type);
-            $dataset_last_mod = (file_exists($dataset_file_path)) ? date_i18n('c', filemtime($dataset_file_path)) : $last_modified_gmt;
+            // データファイルが存在しない形式は詳細ページが404になり得るため、
+            // サイトマップに含めない（404 URLの混入防止）。
+            if ( ! file_exists($dataset_file_path) ) {
+                continue;
+            }
+            $dataset_last_mod = wp_date('c', filemtime($dataset_file_path));
 
             if ($dataset_page_url) {
                 echo '  <url>' . "\n";

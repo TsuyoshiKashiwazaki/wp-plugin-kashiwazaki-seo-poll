@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.5] - 2026-07-01
+
+### Security
+- 構造化データ（JSON-LD）およびスクリプトへの出力エスケープを強化し、クロスサイトスクリプティング（XSS）を防止
+- CSVダウンロードの数式インジェクション（=、+、-、@ で始まるセル）を無害化
+- ショートコード掲載ページ一覧の公開表示を公開済み投稿のみに限定（未公開投稿の情報漏洩を防止）
+- キャッシュクリアのリダイレクトを wp_safe_redirect に変更（オープンリダイレクト対策）
+- global $post 不在時の URL 生成を home_url 基準に変更（ホストヘッダ注入対策）
+- クライアントIP取得を集約し、未設定時の防御とサニタイズを追加
+
+### Fixed
+- 集計データファイルの保存先をアップロードディレクトリへ変更し、プラグイン更新時のデータ消失を防止（既存データは自動移行）
+- リバースプロキシ／CDN配下で最初の1人しか投票できない問題に対応（信頼プロキシ設定を追加）
+- 投票日時・集計時点の表示をタイムゾーンに沿って統一（保存・表示ともに標準方式へ）
+- 調査期間が設定されている場合に公開日メタが欠落する不具合を修正
+- フォーマット別データセット一覧のページ数が実際の表示件数とずれる問題を修正
+- サブディレクトリ設置環境でデータセットページのルーティングが正しく動作しない問題を修正
+
+### Changed
+- 集計データフォーマットへのリンクをサイトのURL設定基準で生成
+- 質問文を管理画面で設定した見出しレベルで出力し、投票フォームの並び順をアクセシビリティに配慮
+- データセット詳細ページの構造化データ（Dataset）の二重出力を解消
+- 未使用コードの削除、メタボックスの説明文を実挙動に合わせて修正
+
 ## [1.0.4] - 2026-02-18
 
 ### Changed
@@ -78,6 +102,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - データセットの期限設定機能
 - REST API エンドポイント
 
+[1.0.5]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.5
 [1.0.4]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.4
 [1.0.3]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.3
 [1.0.2]: https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll/releases/tag/v1.0.2

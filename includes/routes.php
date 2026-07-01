@@ -99,6 +99,17 @@ function kashiwazaki_poll_wp_datasets() {
     $parsed_path = parse_url($request_uri, PHP_URL_PATH);
     $request_path = trim($parsed_path ?: '', '/');
 
+    // サブディレクトリ設置(例 https://example.com/wp/)に対応:
+    // home_url のパス接頭辞を取り除いてから datasets パターンを判定する。
+    $home_path = trim( (string) parse_url( home_url(), PHP_URL_PATH ), '/' );
+    if ( $home_path !== '' ) {
+        if ( strpos( $request_path, $home_path . '/' ) === 0 ) {
+            $request_path = ltrim( substr( $request_path, strlen( $home_path ) ), '/' );
+        } elseif ( $request_path === $home_path ) {
+            $request_path = '';
+        }
+    }
+
     // 古いURL構造からのリダイレクト処理: /datasets/poll/{id}/{format}/ → /datasets/{format}/detail-{id}/
     if (preg_match('/^datasets\/poll\/(\d+)\/(csv|xml|yaml|json|svg)$/', $request_path, $matches)) {
         $poll_id = intval($matches[1]);
@@ -301,7 +312,7 @@ function kashiwazaki_poll_output_breadcrumb_structured_data($breadcrumbs) {
     );
 
     echo '<script type="application/ld+json">';
-    echo wp_json_encode($structured_data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    echo wp_json_encode($structured_data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP);
     echo '</script>' . "\n";
 }
 
@@ -366,7 +377,7 @@ function kashiwazaki_poll_output_google_datasets_meta($page_type, $data = null) 
             $last_vote_time = max($voted_ips);
         }
         $meta_date = $last_vote_time > 0 ? $last_vote_time : $data['file_mtime'];
-        echo '<meta name="DC.date" content="' . esc_attr(date('Y-m-d', $meta_date)) . '">' . "\n";
+        echo '<meta name="DC.date" content="' . esc_attr(wp_date('Y-m-d', $meta_date)) . '">' . "\n";
         echo '<meta name="DC.extent" content="' . esc_attr($data['total_votes'] . ' votes') . '">' . "\n";
     }
 }
@@ -403,7 +414,7 @@ function kashiwazaki_poll_output_google_dataset_search_meta($data) {
         $last_vote_time = max($voted_ips);
     }
     $citation_date = $last_vote_time > 0 ? $last_vote_time : $data['file_mtime'];
-    $citation = $creator_name . ' (' . date('Y', $citation_date) . '). ' . $data['poll_title'] . '. ' . get_bloginfo('name') . '.';
+    $citation = $creator_name . ' (' . wp_date('Y', $citation_date) . '). ' . $data['poll_title'] . '. ' . get_bloginfo('name') . '.';
     echo '<meta itemprop="citation" content="' . esc_attr($citation) . '">' . "\n";
 
             // キーワード（個別アンケート投稿のカスタムキーワードがある場合のみ出力）
@@ -418,14 +429,16 @@ function kashiwazaki_poll_output_google_dataset_search_meta($data) {
         }
     }
 
+    // 公開日（datePublished で後段でも使用するため、分岐前に必ず代入しておく）。
+    $poll_date = get_the_date('Y-m-d', $poll_post);
+
     // 時間的範囲（調査期間）
     $survey_period = kashiwazaki_poll_get_survey_period($data['poll_id']);
     if ($survey_period) {
-        $survey_start = date('Y-m-d', $survey_period['start']);
-        $survey_end = date('Y-m-d', $survey_period['end']);
+        $survey_start = wp_date('Y-m-d', $survey_period['start']);
+        $survey_end = wp_date('Y-m-d', $survey_period['end']);
         echo '<meta itemprop="temporalCoverage" content="' . esc_attr($survey_start . '/' . $survey_end) . '">' . "\n";
     } else {
-        $poll_date = get_the_date('Y-m-d', $poll_post);
         $current_date = current_time('Y-m-d');
         echo '<meta itemprop="temporalCoverage" content="' . esc_attr($poll_date . '/' . $current_date) . '">' . "\n";
     }
@@ -445,7 +458,7 @@ function kashiwazaki_poll_output_google_dataset_search_meta($data) {
         $last_vote_time = max($voted_ips);
     }
     $modified_date = $last_vote_time > 0 ? $last_vote_time : $data['file_mtime'];
-    echo '<meta itemprop="dateModified" content="' . esc_attr(date('Y-m-d', $modified_date)) . '">' . "\n";
+    echo '<meta itemprop="dateModified" content="' . esc_attr(wp_date('Y-m-d', $modified_date)) . '">' . "\n";
 
     // バージョン
     $version = get_post_meta($data['poll_id'], 'dataset_version', true);
@@ -887,9 +900,10 @@ function kashiwazaki_poll_remove_conflicting_breadcrumbs() {
     }, 999);
 }
 
-function kashiwazaki_poll_get_shortcode_usage($poll_id) {
-    // 1時間キャッシュを確認（キャッシュ時間を短縮）
-    $cache_key = 'poll_shortcode_usage_' . $poll_id;
+function kashiwazaki_poll_get_shortcode_usage($poll_id, $include_unpublished = false) {
+    // 1時間キャッシュを確認（キャッシュ時間を短縮）。公開/全件でキャッシュキーを分け、
+    // 公開側に未公開投稿が混ざらないようにする。
+    $cache_key = 'poll_shortcode_usage_' . $poll_id . ( $include_unpublished ? '_all' : '_pub' );
     $cached_result = get_transient($cache_key);
 
     if ($cached_result !== false) {
@@ -930,10 +944,13 @@ function kashiwazaki_poll_get_shortcode_usage($poll_id) {
         $prepare_values[] = $pattern;
     }
 
+    // 公開側の表示では publish のみ。管理画面コンテキスト($include_unpublished=true)でのみ
+    // 未公開ステータスを含める（未公開投稿のタイトル/URLの一般公開を防ぐ）。
+    $status_in = $include_unpublished ? "'publish', 'private', 'draft', 'pending'" : "'publish'";
     $posts_with_shortcode = $wpdb->get_results($wpdb->prepare(
         "SELECT ID, post_title, post_type, post_content, post_status
          FROM {$wpdb->posts}
-         WHERE post_status IN ('publish', 'private', 'draft', 'pending')
+         WHERE post_status IN ($status_in)
          AND post_type IN ('" . implode("','", array_map('esc_sql', $all_post_types)) . "')
          AND (" . implode(' OR ', $where_conditions) . ")",
         ...$prepare_values
@@ -966,8 +983,10 @@ function kashiwazaki_poll_get_shortcode_usage($poll_id) {
 // ショートコード使用状況キャッシュをクリアする関数
 function kashiwazaki_poll_clear_usage_cache($poll_id = null) {
     if ($poll_id) {
-        // 特定のアンケートのキャッシュをクリア
-        delete_transient('poll_shortcode_usage_' . $poll_id);
+        // 特定のアンケートのキャッシュをクリア（公開/全件の両キー）
+        delete_transient('poll_shortcode_usage_' . $poll_id . '_pub');
+        delete_transient('poll_shortcode_usage_' . $poll_id . '_all');
+        delete_transient('poll_shortcode_usage_' . $poll_id); // 旧キー互換
     } else {
         // 全アンケートのキャッシュをクリア
         global $wpdb;
@@ -1011,7 +1030,8 @@ function kashiwazaki_poll_handle_cache_clear() {
             $redirect_url = esc_url_raw($_GET['return_url']);
         }
 
-        wp_redirect(add_query_arg(array('cache_cleared' => '1'), $redirect_url));
+        // wp_safe_redirect: return_url が外部ドメインを指す場合のオープンリダイレクトを防ぐ。
+        wp_safe_redirect(add_query_arg(array('cache_cleared' => '1'), $redirect_url));
         exit;
     }
 
@@ -1031,65 +1051,6 @@ function kashiwazaki_poll_handle_cache_clear() {
     }
 }
 
-/**
- * ページネーションを描画
- */
-function kashiwazaki_poll_render_pagination($current_page, $max_pages) {
-    if ($max_pages <= 1) return;
-
-    $base_url = home_url('/datasets/');
-    ?>
-    <div class="pagination-wrapper">
-        <nav class="pagination" aria-label="ページネーション">
-            <?php
-            // 前のページ
-            if ($current_page > 1) {
-                $prev_url = ($current_page == 2) ? $base_url : $base_url . 'page/' . ($current_page - 1) . '/';
-                echo '<a href="' . esc_url($prev_url) . '" class="pagination-link prev-link" aria-label="前のページ">&laquo; 前</a>';
-            }
-
-            // ページ番号
-            $start = max(1, $current_page - 2);
-            $end = min($max_pages, $current_page + 2);
-
-            // 最初のページを表示
-            if ($start > 1) {
-                $first_url = $base_url;
-                echo '<a href="' . esc_url($first_url) . '" class="pagination-link">1</a>';
-                if ($start > 2) {
-                    echo '<span class="pagination-dots">...</span>';
-                }
-            }
-
-            // ページ範囲
-            for ($i = $start; $i <= $end; $i++) {
-                if ($i == $current_page) {
-                    echo '<span class="pagination-link current" aria-current="page">' . $i . '</span>';
-                } else {
-                    $page_url = ($i == 1) ? $base_url : $base_url . 'page/' . $i . '/';
-                    echo '<a href="' . esc_url($page_url) . '" class="pagination-link">' . $i . '</a>';
-                }
-            }
-
-            // 最後のページを表示
-            if ($end < $max_pages) {
-                if ($end < $max_pages - 1) {
-                    echo '<span class="pagination-dots">...</span>';
-                }
-                $last_url = $base_url . 'page/' . $max_pages . '/';
-                echo '<a href="' . esc_url($last_url) . '" class="pagination-link">' . $max_pages . '</a>';
-            }
-
-            // 次のページ
-            if ($current_page < $max_pages) {
-                $next_url = $base_url . 'page/' . ($current_page + 1) . '/';
-                echo '<a href="' . esc_url($next_url) . '" class="pagination-link next-link" aria-label="次のページ">次 &raquo;</a>';
-            }
-            ?>
-        </nav>
-    </div>
-    <?php
-}
 
 function kashiwazaki_poll_render_shortcode_usage($poll_id, $show_border = true) {
     $posts_with_shortcode = kashiwazaki_poll_get_shortcode_usage($poll_id);
@@ -1327,6 +1288,14 @@ function kashiwazaki_poll_render_format_listing_page($format_type) {
         'order'          => 'ASC',
     ));
 
+    // 当該フォーマットのデータファイルを持つpollのみに限定する。
+    // （件数・ページ数を実表示対象と一致させ、ファイル無pollによるページングのズレを防ぐ。
+    //  表示ループ側の file_exists スキップより前にここで除外する。）
+    $all_polls = array_values( array_filter( $all_polls, function( $p ) use ( $format_type ) {
+        $fp = kashiwazaki_poll_get_dataset_file_path( $p->ID, $format_type );
+        return $fp && file_exists( $fp );
+    } ) );
+
     // 最新投票時刻順にソート
     usort($all_polls, function($a, $b) {
         $voted_ips_a = get_post_meta($a->ID, '_kashiwazaki_poll_voted_ips', true);
@@ -1429,7 +1398,7 @@ function kashiwazaki_poll_render_format_listing_page($format_type) {
                                 }
                                 ?>
                                 <?php if ($last_vote_time > 0): ?>
-                                    <span class="last-updated-tag">最終更新: <?php echo date('Y/m/d H:i', $last_vote_time); ?></span>
+                                    <span class="last-updated-tag">最終更新: <?php echo wp_date('Y/m/d H:i', $last_vote_time); ?></span>
                                 <?php else: ?>
                                     <span class="last-updated-tag no-votes">投票待ち</span>
                                 <?php endif; ?>
@@ -1593,7 +1562,7 @@ function kashiwazaki_poll_render_datasets_index_page() {
                                 }
                                 ?>
                                 <?php if ($last_vote_time > 0): ?>
-                                    <span class="last-updated-tag meta-badge date-badge">最終更新: <?php echo date('Y/m/d H:i', $last_vote_time); ?></span>
+                                    <span class="last-updated-tag meta-badge date-badge">最終更新: <?php echo wp_date('Y/m/d H:i', $last_vote_time); ?></span>
                                 <?php else: ?>
                                     <span class="last-updated-tag meta-badge no-votes">投票待ち</span>
                                 <?php endif; ?>
@@ -2002,13 +1971,13 @@ function kashiwazaki_poll_get_single_dataset_structured_data( $poll_id, $file_ty
     $description_plain = strip_tags( $poll_description );
     $datePublished = get_the_date( 'c', $poll_post );
 
-    $last_updated_time = file_exists(kashiwazaki_poll_get_dataset_file_path($poll_id, $file_type)) ? filemtime(kashiwazaki_poll_get_dataset_file_path($poll_id, $file_type)) : current_time('timestamp');
-    $dateModified = date_i18n( 'c', $last_updated_time );
+    $last_updated_time = file_exists(kashiwazaki_poll_get_dataset_file_path($poll_id, $file_type)) ? filemtime(kashiwazaki_poll_get_dataset_file_path($poll_id, $file_type)) : time();
+    $dateModified = wp_date( 'c', $last_updated_time );
 
     // 調査期間を取得
     $survey_period = kashiwazaki_poll_get_survey_period( $poll_id );
-    $survey_period_start = $survey_period ? date_i18n( 'Y-m-d', $survey_period['start'] ) : null;
-    $survey_period_end = $survey_period ? date_i18n( 'Y-m-d', $survey_period['end'] ) : null;
+    $survey_period_start = $survey_period ? wp_date( 'Y-m-d', $survey_period['start'] ) : null;
+    $survey_period_end = $survey_period ? wp_date( 'Y-m-d', $survey_period['end'] ) : null;
 
     $poll_license = get_post_meta( $poll_id, '_kashiwazaki_poll_license', true );
     if ( empty( $poll_license ) ) {
@@ -2143,7 +2112,10 @@ function kashiwazaki_poll_get_single_dataset_structured_data( $poll_id, $file_ty
         "dateModified" => $dateModified,
         "license" => $poll_license,
         "isAccessibleForFree" => true,
-        "spatialCoverage" => "Japan",
+        "spatialCoverage" => ( function() {
+            $s = get_option( 'kashiwazaki_poll_settings', array() );
+            return ( is_array( $s ) && ! empty( $s['dataset_spatial_coverage'] ) ) ? $s['dataset_spatial_coverage'] : '日本';
+        } )(),
         "temporalCoverage" => $survey_period_start && $survey_period_end ? $survey_period_start . "/" . $survey_period_end : $datePublished . "/" . $dateModified,
         "measurementTechnique" => "Survey polling",
         "version" => "1.0",
@@ -2374,7 +2346,7 @@ function kashiwazaki_poll_output_standalone_dataset_page($data) {
         kashiwazaki_poll_output_breadcrumb_structured_data($breadcrumbs_for_json);
         ?>
         <script type="application/ld+json">
-        <?php echo json_encode($data['dataset_data'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT); ?>
+        <?php echo json_encode($data['dataset_data'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_HEX_TAG | JSON_HEX_AMP); ?>
         </script>
 
         <!-- Chart.js CDN -->
@@ -2548,8 +2520,8 @@ function kashiwazaki_poll_output_standalone_dataset_page($data) {
                 // 調査期間を取得
                 $survey_period = kashiwazaki_poll_get_survey_period($data['poll_id']);
                 if ($survey_period) {
-                    $survey_start = date_i18n('Y年m月d日', $survey_period['start']);
-                    $survey_end = date_i18n('Y年m月d日', $survey_period['end']);
+                    $survey_start = wp_date('Y年m月d日', $survey_period['start']);
+                    $survey_end = wp_date('Y年m月d日', $survey_period['end']);
                     echo '<p><strong>調査期間:</strong> ' . esc_html($survey_start) . '〜' . esc_html($survey_end) . '</p>';
                 } else {
                     echo '<p><strong>調査期間:</strong> まだ投票がありません</p>';
@@ -2564,7 +2536,7 @@ function kashiwazaki_poll_output_standalone_dataset_page($data) {
                 }
 
                 if ($last_vote_time > 0) {
-                    echo date_i18n('Y/m/d H:i:s', $last_vote_time);
+                    echo wp_date('Y/m/d H:i:s', $last_vote_time);
                 } else {
                     echo '投票待ち';
                 }
