@@ -3,7 +3,9 @@
  * Plugin Name: Kashiwazaki SEO Poll
  * Plugin URI:  https://www.tsuyoshikashiwazaki.jp/
  * Description: WordPressで複数のアンケートを作成・管理できる投票プラグインです。ショートコード [tk_poll id=123] を任意の投稿や固定ページに挿入することでアンケートフォームを簡単に設置できます。単一選択・複数選択に対応しており、投票結果はChart.jsを利用したグラフでリアルタイム表示されます。また、IPアドレスとCookieを利用した重複投票防止機能や、SEO向けの構造化データ（Dataset）の自動生成機能も備えています。
- * Version:     1.0.6
+ * Version:     1.0.7
+ * Requires at least: 5.6
+ * Requires PHP: 7.4
  * Author:      柏崎剛
  * Author URI:  https://www.tsuyoshikashiwazaki.jp/
  * License:     GPLv2 or later
@@ -15,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+define( 'KASHIWAZAKI_POLL_VERSION', '1.0.7' );
 define( 'KASHIWAZAKI_POLL_FILE', __FILE__ );
 define( 'KASHIWAZAKI_POLL_DIR', plugin_dir_path( __FILE__ ) );
 define( 'KASHIWAZAKI_POLL_URL', plugin_dir_url( __FILE__ ) );
@@ -56,7 +59,9 @@ function kashiwazaki_poll_default_settings() {
         'creator_person_url'           => '',
         'creator_organization_name'    => get_bloginfo( 'name' ),
         'creator_organization_url'     => home_url(),
-        'creator_organization_email'   => get_bloginfo( 'admin_email' ),
+        // メールアドレスは本人が入力し、「構造化データに含める」を ON にしたときだけ公開する（既定では公開しない）。
+        'creator_organization_email'   => '',
+        'structured_data_email'        => 0,
     );
 }
 
@@ -222,25 +227,15 @@ function kashiwazaki_poll_run_data_file_regen() {
         'numberposts' => -1,
         'fields'      => 'ids',
     ) );
+    // パスワード保護されたデータセットはファイルを作らない（公開してよいものだけが対象）。
+    $poll_ids = array_values( array_filter( $poll_ids, 'kashiwazaki_poll_is_public_poll' ) );
 
-    // 全公開 poll を再生成し、実ファイル（全 5 形式）の存在で「完全生成できた件数」を数える。
-    // generate_all_data_files は個別書込失敗でも true を返すため、戻り値は信用しない。
+    // 全公開 poll を再生成し、全 5 形式を書けた件数を数える（生成関数は実際の書き込み結果を返す）。
     // ループ中は $skip_sitemap=true でサイトマップ再生成を抑止し（O(N^2) 回避）、
     // ループ完了後にまとめて 1 回だけ再生成する。
     $fully_generated = 0;
     foreach ( $poll_ids as $poll_id ) {
-        $counts = get_post_meta( $poll_id, '_kashiwazaki_poll_counts', true );
-        kashiwazaki_poll_generate_all_data_files( $poll_id, is_array( $counts ) ? $counts : array(), true );
-
-        $all_present = true;
-        foreach ( $types as $type ) {
-            $path = kashiwazaki_poll_get_dataset_file_path( $poll_id, $type );
-            if ( ! $path || ! file_exists( $path ) ) {
-                $all_present = false;
-                break;
-            }
-        }
-        if ( $all_present ) {
+        if ( kashiwazaki_poll_generate_all_data_files( $poll_id, null, true ) ) {
             $fully_generated++;
         }
     }
@@ -267,7 +262,7 @@ function kashiwazaki_poll_run_data_file_regen() {
         delete_option( 'kashiwazaki_poll_datasets_regen_attempts_v106' );
         delete_option( 'kashiwazaki_poll_datasets_regen_last_v106' );
         error_log( sprintf(
-            '[Kashiwazaki SEO Poll] データファイルの自動再生成を %d 回試行しましたが未完了のまま打ち切りました（%d/%d 件完成）。uploads ディレクトリの書き込み権限・空き容量を確認のうえ、設定画面の「データセット一括生成」を実行してください。',
+            '[Kashiwazaki SEO Poll] データファイルの自動再生成を %d 回試行しましたが未完了のまま打ち切りました（%d/%d 件完成）。uploads ディレクトリの書き込み権限・空き容量を確認のうえ、設定画面の「データファイルを一括生成する」を実行してください。',
             $attempts,
             $fully_generated,
             count( $poll_ids )
@@ -296,7 +291,6 @@ require_once KASHIWAZAKI_POLL_DIR . 'includes/routes.php';
 require_once KASHIWAZAKI_POLL_DIR . 'includes/page-detection.php';
 
 if ( is_admin() ) {
-    require_once KASHIWAZAKI_POLL_DIR . 'admin/jax-handlers.php';
     require_once KASHIWAZAKI_POLL_DIR . 'admin/meta-boxes.php';
     require_once KASHIWAZAKI_POLL_DIR . 'admin/settings-page.php';
 }

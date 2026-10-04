@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自動処理と権限 - SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2 style="color:#fff;">SEO Poll</h2>
+            <span class="version">v1.0.7</span>
+            <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
+        </div>
+        <ul>
+            <li><a href="index.html">概要</a></li>
+            <li><a href="setup.html">導入と最初の設定</a></li>
+            <li><a href="admin-menu.html">管理メニューとタブ</a></li>
+            <li><a href="poll-list.html">データセット一覧</a></li>
+            <li><a href="create-poll.html">データセットの作成</a></li>
+            <li><a href="vote-counts.html">投票数の確認と編集</a></li>
+            <li><a href="dataset-info.html">データセット情報</a></li>
+            <li><a href="embed.html">ショートコードと掲載ページ</a></li>
+            <li><a href="lock.html">投票の受付と締め切り</a></li>
+            <li><a href="voting.html">記事での表示と投票</a></li>
+            <li><a href="chart.html">グラフとダウンロード</a></li>
+            <li><a href="datasets.html">データセットページ</a></li>
+            <li><a href="settings.html">基本設定</a></li>
+            <li><a href="maintenance.html">メンテナンス</a></li>
+            <li><a href="seo.html">構造化データとSEO</a></li>
+            <li><a href="auto-tasks.html">自動処理と権限</a></li>
+            <li><a href="faq.html">よくある質問</a></li>
+            <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+            <li><a href="glossary.html">用語集</a></li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <h1>自動処理と権限</h1>
+        <p class="lead">このプラグインが利用者の操作なしに行う処理と、各操作に必要な権限（WordPress のユーザー権限グループ）をまとめます。</p>
+
+        <section>
+            <h2>自動で行われる処理</h2>
+            <figure class="infographic">
+                <img src="images/infographics/auto-tasks.png" alt="有効化、投票、保存、更新、停止のそれぞれのタイミングで行われる処理">
+                <figcaption>図: 自動処理のタイミング（更新時の作り直しは、1.0.5 以前から更新した初回の1回だけ）</figcaption>
+            </figure>
+            <table>
+                <thead><tr><th>タイミング</th><th>行われること</th><th>補足</th></tr></thead>
+                <tbody>
+                    <tr><td>有効化したとき</td><td>データファイルの保存用フォルダを作る。基本設定が無ければ既定値で保存する。<code>/datasets/</code> 以下の URL を使えるようにする</td><td>—</td></tr>
+                    <tr><td>投票があったとき（公開中）</td><td>そのデータセットのデータファイル5種とサイトマップを更新</td><td>下書きのデータセットではファイルを作りません</td></tr>
+                    <tr><td>編集画面で選択肢か投票数を変えて保存したとき（公開中）</td><td>同上</td><td>下書きのまま保存した場合は作りません</td></tr>
+                    <tr><td>データセットを公開したとき</td><td>データファイル5種を作り、サイトマップに載せる</td><td>予約投稿が公開されたときも同じです</td></tr>
+                    <tr><td>データセットを下書き・非公開・ゴミ箱にしたとき</td><td>データファイル5種を削除し、サイトマップから外す</td><td>もう一度公開すると作り直します</td></tr>
+                    <tr><td>集計データを全削除したとき（公開中）</td><td>ファイルを0票の内容で作り直し、サイトマップを更新</td><td>—</td></tr>
+                    <tr><td>旧版から更新したとき</td><td>足りない設定項目を既定値で補う。旧版で記録した投票日時・リセット日時に含まれていたタイムゾーン分のずれを、1回だけ取り除いて基準をそろえる。1.0.5 以前からの更新では、公開中のすべてのデータファイルとサイトマップを、保存されている投票データから1回だけ作り直す</td><td>作り直しは、更新の約30秒後のバックグラウンド処理と、管理者が管理画面を開いたときの両方で試みます。全部そろうまで5分おきに最大5回試します。一度終わると、以後の更新では作り直しません。投票データ自体は変わりません</td></tr>
+                    <tr><td>記事を保存したとき</td><td>一覧の「使用記事」で並べ替えるための件数を更新（最大24時間に1回）</td><td>—</td></tr>
+                    <tr><td>停止したとき</td><td><code>/datasets/</code> 以下の URL を無効にし、予定していた自動の作り直しを取り消す</td><td>投票データ・設定・データファイル・サイトマップのファイルは残ります</td></tr>
+                    <tr><td>削除したとき</td><td>専用の削除処理はありません</td><td>投票データ・設定・データファイル・サイトマップのファイルは残ります</td></tr>
+                </tbody>
+            </table>
+            <h3>保存して使い回す情報</h3>
+            <table>
+                <thead><tr><th>情報</th><th>保存期間</th><th>すぐ更新したいとき</th></tr></thead>
+                <tbody>
+                    <tr><td>一覧の「使用記事」、編集画面の「掲載中のページ」</td><td>最大1時間</td><td>一覧の「掲載ページ情報を再取得」、編集画面の「掲載ページの情報を再取得」</td></tr>
+                    <tr><td>記事のグラフ</td><td>保存しません（ページを開くたびに最新の集計を読み込みます）</td><td>—</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>操作に必要な権限</h2>
+            <figure class="infographic">
+                <img src="images/infographics/permissions.png" alt="管理者、編集者・投稿者、サイトの訪問者のそれぞれができること">
+                <figcaption>図: 誰が何をできるか</figcaption>
+            </figure>
+            <p>データセットは WordPress の「投稿」と同じ権限の仕組みで管理されます。下の表の「通常の権限グループ」は WordPress の標準設定の場合です。</p>
+            <table>
+                <thead><tr><th>操作</th><th>通常の権限グループ</th></tr></thead>
+                <tbody>
+                    <tr><td>左メニューとデータセット一覧を見る、データセットを作る</td><td>寄稿者以上</td></tr>
+                    <tr><td>データセットを公開する</td><td>投稿者以上</td></tr>
+                    <tr><td>他の人が作ったデータセットを編集する</td><td>編集者以上</td></tr>
+                    <tr><td>編集画面の各項目の保存（選択肢・投票数・データセット情報・受付）</td><td>そのデータセットを編集できる人</td></tr>
+                    <tr><td>一覧の「受付を締め切る」「受付を再開」</td><td>そのデータセットを編集できる人</td></tr>
+                    <tr><td>「集計データを全削除する」</td><td>そのデータセットを編集できる人</td></tr>
+                    <tr><td>編集画面の「掲載ページの情報を再取得」</td><td>寄稿者以上</td></tr>
+                    <tr><td>一覧の「掲載ページ情報を再取得」</td><td>管理者</td></tr>
+                    <tr><td>「基本設定」タブ、基本設定画面、設定の保存、メンテナンスの3つのボタン</td><td>管理者</td></tr>
+                    <tr><td>投票する、グラフを見る、データをダウンロードする（公開中のデータセット）</td><td>だれでも（ログイン不要）</td></tr>
+                </tbody>
+            </table>
+            <div class="callout callout-note">
+                <p class="callout-title">権限を変更しているサイト</p>
+                <p>権限を管理するプラグインなどで権限グループの内容を変えている場合は、上の表と異なることがあります。</p>
+            </div>
+        </section>
+
+        <nav class="page-nav">
+            <a href="seo.html" class="prev">&laquo; 構造化データとSEO</a>
+            <a href="faq.html" class="next">よくある質問 &raquo;</a>
+        </nav>
+
+        <footer class="manual-footer">
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.7 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+        </footer>
+    </main>
+
+    <div class="lightbox"></div>
+    <script src="js/manual.js"></script>
+</body>
+</html>

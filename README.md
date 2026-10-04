@@ -1,7 +1,7 @@
 # Kashiwazaki SEO Poll
 
-![Version](https://img.shields.io/badge/Version-1.0.6-blue.svg)
-![WordPress](https://img.shields.io/badge/WordPress-5.0%2B-blue.svg)
+![Version](https://img.shields.io/badge/Version-1.0.7-blue.svg)
+![WordPress](https://img.shields.io/badge/WordPress-5.6%2B-blue.svg)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-purple.svg)
 ![License](https://img.shields.io/badge/License-GPLv2-green.svg)
 
@@ -27,6 +27,8 @@ Google Dataset検索最適化対応の高機能データ収集プラグイン。
 - IPアドレス + Cookie による重複投票防止
 - リセット日時による期間限定投票制限解除
 - 投票データの個別リセット機能
+- 投票の受付の締め切り（ロック）と再開。締め切り中の記事にはグラフと詳細ページへのリンクだけを表示
+- 管理画面での投票数の直接編集（書き換えた選択肢だけを保存）
 
 ### データセット自動生成
 - **CSV**: ExcelやGoogleスプレッドシート互換の表形式データ
@@ -49,6 +51,9 @@ Google Dataset検索最適化対応の高機能データ収集プラグイン。
 - 投票前のプレビュー表示
 
 ### 管理機能
+- 左メニュー1つ＋タブ（データセット一覧／基本設定）の管理画面
+- 編集画面の入力欄をタイトル直下と右列の上部に集約
+- データセット一覧に「受付」「総投票数」列と「受付を締め切る／受付を再開」操作
 - ショートコード使用状況の自動追跡
 - データセット一括生成機能
 - カラーテーマ6種類（minimal, blue, green, orange, purple, dark）
@@ -60,9 +65,13 @@ Google Dataset検索最適化対応の高機能データ収集プラグイン。
 
 1. プラグインファイル一式を `/wp-content/plugins/kashiwazaki-seo-poll/` にアップロード
 2. WordPress管理画面の「プラグイン」ページで「Kashiwazaki SEO Poll」を有効化
-3. 「Kashiwazaki SEO Poll」メニューから新規データを作成
+3. 左メニュー「Kashiwazaki SEO Poll」→「新しいデータセットを追加」から作成
 4. タイトルに質問文を入力し、選択肢を設定して公開
 5. ショートコード `[tk_poll id="123"]` を任意のページに挿入
+
+## マニュアル
+
+画面ごとの詳しい使い方は、[オンラインマニュアル](https://tsuyoshikashiwazaki.github.io/wp-plugin-kashiwazaki-seo-poll/)を参照してください。
 
 ## 使い方
 
@@ -123,7 +132,7 @@ Google Dataset検索最適化対応の高機能データ収集プラグイン。
 
 ## 技術仕様
 
-- **WordPress**: 5.0以上
+- **WordPress**: 5.6以上
 - **PHP**: 7.4以上
 - **Chart.js**: 4.4.8（CDN経由）
 - **chartjs-plugin-datalabels**: 2.2.0（CDN経由）

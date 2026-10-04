@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>グラフ機能 - SEO Poll マニュアル</title>
+    <title>グラフとダウンロード - SEO Poll マニュアル</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -11,72 +11,127 @@
     <nav class="sidebar">
         <div class="sidebar-header">
             <h2 style="color:#fff;">SEO Poll</h2>
-            <span class="version">v1.0.6</span>
+            <span class="version">v1.0.7</span>
             <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
         </div>
         <ul>
             <li><a href="index.html">概要</a></li>
-            <li><a href="setup.html">インストール・初期設定</a></li>
-            <li><a href="create-poll.html">アンケートの作成</a></li>
-            <li><a href="settings.html">基本設定ガイド</a></li>
-            <li><a href="voting.html">表示と投票のしくみ</a></li>
-            <li><a href="chart.html">グラフ機能</a></li>
-            <li><a href="datasets.html">データセット公開</a></li>
-            <li><a href="seo.html">SEO・構造化データ</a></li>
+            <li><a href="setup.html">導入と最初の設定</a></li>
+            <li><a href="admin-menu.html">管理メニューとタブ</a></li>
+            <li><a href="poll-list.html">データセット一覧</a></li>
+            <li><a href="create-poll.html">データセットの作成</a></li>
+            <li><a href="vote-counts.html">投票数の確認と編集</a></li>
+            <li><a href="dataset-info.html">データセット情報</a></li>
+            <li><a href="embed.html">ショートコードと掲載ページ</a></li>
+            <li><a href="lock.html">投票の受付と締め切り</a></li>
+            <li><a href="voting.html">記事での表示と投票</a></li>
+            <li><a href="chart.html">グラフとダウンロード</a></li>
+            <li><a href="datasets.html">データセットページ</a></li>
+            <li><a href="settings.html">基本設定</a></li>
+            <li><a href="maintenance.html">メンテナンス</a></li>
+            <li><a href="seo.html">構造化データとSEO</a></li>
+            <li><a href="auto-tasks.html">自動処理と権限</a></li>
+            <li><a href="faq.html">よくある質問</a></li>
             <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+            <li><a href="glossary.html">用語集</a></li>
         </ul>
     </nav>
 
     <main class="content">
-        <h1>グラフ機能</h1>
-        <p class="lead">投票結果は Chart.js による円グラフで表示されます。ここでは、グラフの見方と、画像として保存する方法を解説します。</p>
+        <h1>グラフとダウンロード</h1>
+        <p class="lead">投票結果は円グラフで表示されます。グラフは画像として保存でき、集計データは CSV・JSON・XML・YAML・SVG の5つの形式で取得できます。このページでは、グラフの見方と各ダウンロードの違いを説明します。</p>
+
+        <figure class="infographic">
+            <img src="images/infographics/chart-download.png" alt="円グラフから PNG 画像を保存する方法と、CSV、JSON、XML、YAML、SVG の5形式">
+            <figcaption>図: グラフとダウンロードの全体像</figcaption>
+        </figure>
 
         <section>
-            <h2>集計結果の円グラフ</h2>
-            <p>投票すると、または「集計データを拡大」を開くと、結果が円グラフで表示されます。各扇には割合（パーセント）のラベルが表示され、下の凡例では「選択肢名（得票数票 / 割合）」を確認できます。</p>
-            <figure class="screenshot">
-                <img src="images/screenshots/08-chart-pie.png" alt="割合ラベル付きの円グラフと、得票数・割合を示した凡例" class="lightbox-trigger">
-                <figcaption>図: 集計結果の円グラフ。割合ラベルと凡例、投票総数が表示されます</figcaption>
-            </figure>
+            <h2>グラフが表示される場所</h2>
+            <table>
+                <thead><tr><th>場所</th><th>グラフ</th></tr></thead>
+                <tbody>
+                    <tr><td>記事の投票ブロック（投票前）</td><td>小さなプレビュー（凡例・割合の数字なし）</td></tr>
+                    <tr><td>記事の投票ブロック（結果を拡大・投票後・投票済み・受付終了）</td><td>大きなグラフ</td></tr>
+                    <tr><td>データセットの詳細ページ</td><td>ページ内の投票ブロックに表示（状態は記事と同じ）。あわせて集計表を表示</td></tr>
+                </tbody>
+            </table>
             <div class="callout callout-note">
-                <p>グラフの種類は<strong>円グラフ</strong>です。棒グラフやドーナツグラフへの切り替え機能はありません。</p>
+                <p class="callout-title">グラフは常に最新</p>
+                <p>グラフはページを開いたときに最新の集計を読み込んで描きます。ページがキャッシュされていても、グラフの数字は最新です。</p>
             </div>
-            <ul>
-                <li>凡例のラベルが長い場合（15文字を超える場合）は省略表示され、マウスを乗せるとツールチップで全文が表示されます。</li>
-                <li>グラフには投票総数と、サイト名・年のコピーライトも描画されます。</li>
-            </ul>
         </section>
 
         <section>
-            <h2>集計表</h2>
-            <p>「集計データを拡大」で開く画面には、円グラフに加えて、選択肢ごとの得票数と割合をまとめた集計表も表示されます。数字を正確に把握したいときに便利です。</p>
+            <h2>大きなグラフの見方</h2>
             <figure class="screenshot">
-                <img src="images/screenshots/10-result-table.png" alt="選択肢・得票数・割合と総投票数をまとめた集計表" class="lightbox-trigger">
-                <figcaption>図: 集計表。選択肢ごとの得票数・割合と、総投票数・集計時点を表示します</figcaption>
+                <img src="images/screenshots/42-front-results.png" alt="大きな円グラフ。上に設問、扇形に割合、下に凡例、投票総数、コピーライト" class="lightbox-trigger">
+                <figcaption>図: 大きなグラフ</figcaption>
             </figure>
+            <table>
+                <thead><tr><th>部分</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>上部の文字</td><td>設問（長い場合は2行まで）</td></tr>
+                    <tr><td>扇形の数字</td><td>各選択肢の割合（%）。ごく小さい割合は表示しません</td></tr>
+                    <tr><td>凡例</td><td>「選択肢名 (N票 / xx.x%)」。15文字を超える選択肢名は「...」で省略され、マウスを載せると全文が表示されます</td></tr>
+                    <tr><td>投票総数 N 票</td><td>全選択肢の合計</td></tr>
+                    <tr><td>© サイト名 年</td><td>グラフの出典表記</td></tr>
+                    <tr><td>色</td><td>選択肢の順に決まった色で塗り分けます（基本設定のカラーテーマでは変わりません）</td></tr>
+                </tbody>
+            </table>
         </section>
 
         <section>
-            <h2>投票前のプレビュー表示</h2>
-            <p>まだ投票していない来訪者にも、現在の傾向がうっすら分かるプレビューの円グラフが表示されます。プレビューでは、割合ラベルや凡例、ツールチップは控えめに（非表示に）なり、投票を促しつつ結果の雰囲気を伝えます。</p>
-        </section>
-
-        <section>
-            <h2>グラフを画像として保存する</h2>
-            <p>拡大表示の画面にある「グラフをダウンロード」ボタンを押すと、表示中の円グラフを <strong>PNG 画像</strong>としてダウンロードできます。ファイル名にはサイト名が含まれ、資料やレポートへの貼り付けに使えます。</p>
+            <h2>グラフをダウンロード</h2>
+            <p>緑の「グラフをダウンロード」ボタンを押すと、表示中のグラフを PNG 画像として保存します。ファイル名は「chart_（番号）_（サイト名）.png」です。サイト名のうち半角英数字・「_」「-」以外の文字（日本語など）は1文字ずつ「_」に置き換わり、英字は小文字になります（例: 「SEO対策研究室」→ chart_12_seo_____.png）。サイト名が空のときは site になります。</p>
             <div class="callout callout-tip">
-                <p>ダウンロードされる画像形式は PNG です。透過なしの高画質画像なので、そのままスライドや記事に貼り付けられます。</p>
+                <p class="callout-title">使い道</p>
+                <p>SNS への投稿や資料への貼り付けに使えます。グラフには出典（© サイト名 年）が入っています。</p>
             </div>
+        </section>
+
+        <section>
+            <h2>フォーマット別データダウンロード</h2>
+            <p>大きなグラフの下にある「📊 フォーマット別データダウンロード」（説明「同じアンケートデータを異なるファイル形式で取得できます」）から、5つの形式のページを新しいタブで開けます。各ページの「（形式） Download」ボタンでファイルを保存できます。</p>
+            <table>
+                <thead><tr><th>リンク</th><th>画面の説明</th><th>向いている使い方</th></tr></thead>
+                <tbody>
+                    <tr><td>CSV形式</td><td>Excel・スプレッドシート用</td><td>表計算ソフトで開いて集計・加工する</td></tr>
+                    <tr><td>JSON形式</td><td>API・プログラム連携用</td><td>プログラムやツールで読み込む</td></tr>
+                    <tr><td>XML形式</td><td>システム間データ交換用</td><td>XML に対応したシステムに取り込む</td></tr>
+                    <tr><td>YAML形式</td><td>設定ファイル・自動化用</td><td>人が読みやすいテキストとして扱う</td></tr>
+                    <tr><td>SVG形式</td><td>ベクターグラフ・印刷用</td><td>拡大しても粗くならない円グラフの図として使う</td></tr>
+                </tbody>
+            </table>
+            <p>リンクの枠と文字の色は、基本設定の「カラーテーマ」に合わせて変わります。各ファイルの中身は <a href="datasets.html">データセットページ</a> で説明しています。</p>
+            <div class="callout callout-warning">
+                <p class="callout-title">ファイルが作られていないとき</p>
+                <p>データファイルがまだ作られていない場合でもリンクは表示され、開くと「見つかりません」のページになります。基本設定の「メンテナンス」で「データファイルを一括生成する」を押すと作られます。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>グラフの部分に表示されるメッセージ</h2>
+            <table>
+                <thead><tr><th>メッセージ</th><th>原因</th><th>対処</th></tr></thead>
+                <tbody>
+                    <tr><td>まだ投票がありません。</td><td>1票も無い</td><td>—</td></tr>
+                    <tr><td>グラフ描画に必要なライブラリ(Chart.js)が読み込まれていないか、初期化に失敗しました。</td><td>グラフを描く部品をインターネット上の配信元から読み込めなかった</td><td>通信環境、広告ブロック等の拡張機能、サイトのスクリプト最適化の設定を確認する</td></tr>
+                    <tr><td>グラフデータの形式に問題があります。</td><td>選択肢と票数の数が合わない</td><td>編集画面で一度「更新」を押して保存し直す</td></tr>
+                    <tr><td>グラフオプションの設定中にエラーが発生しました。／グラフの表示に失敗しました。開発者コンソールで詳細を確認してください。</td><td>グラフ表示中の予期しないエラー</td><td>ページを再読み込みする。ほかのプラグインやテーマのスクリプトとの組み合わせも確認する</td></tr>
+                    <tr><td>グラフ要素が見つからず、ダウンロードできませんでした。／グラフ画像の生成またはダウンロード中にエラーが発生しました。</td><td>「グラフをダウンロード」が失敗した</td><td>グラフが表示されてから押す。別のブラウザで試す</td></tr>
+                </tbody>
+            </table>
         </section>
 
         <nav class="page-nav">
-            <a href="voting.html" class="prev">&laquo; 表示と投票のしくみ</a>
-            <a href="datasets.html" class="next">データセット公開 &raquo;</a>
+            <a href="voting.html" class="prev">&laquo; 記事での表示と投票</a>
+            <a href="datasets.html" class="next">データセットページ &raquo;</a>
         </nav>
 
         <footer class="manual-footer">
             <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
-            <p>プラグイン: Kashiwazaki SEO Poll v1.0.6 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.7 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
         </footer>
     </main>
 

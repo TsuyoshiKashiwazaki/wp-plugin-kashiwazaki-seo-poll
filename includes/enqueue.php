@@ -24,8 +24,8 @@ add_action( 'wp_enqueue_scripts', function() {
     );
 
     $css_file_path = KASHIWAZAKI_POLL_DIR . 'assets/css/front.css';
-    $css_plugin_data = get_plugin_data(KASHIWAZAKI_POLL_DIR . 'kashiwazaki-poll.php');
-    $css_default_version = isset($css_plugin_data['Version']) ? $css_plugin_data['Version'] : '1.0';
+    // get_plugin_data は管理画面用の関数で公開ページでは読み込まれていないことがあるため、定数を使う。
+    $css_default_version = KASHIWAZAKI_POLL_VERSION;
     $css_version = file_exists($css_file_path) ? filemtime($css_file_path) : $css_default_version;
     wp_enqueue_style(
         'kashiwazaki-front-css',
@@ -53,7 +53,7 @@ add_action( 'wp_enqueue_scripts', function() {
     }
 
     $js_file_path = KASHIWAZAKI_POLL_DIR . 'assets/js/poll-frontend.js';
-    $js_default_version = isset($css_plugin_data['Version']) ? $css_plugin_data['Version'] : '1.0';
+    $js_default_version = KASHIWAZAKI_POLL_VERSION;
     $js_version = file_exists($js_file_path) ? filemtime($js_file_path) : $js_default_version;
     wp_register_script(
         'kashiwazaki-poll-frontend-js',
@@ -66,9 +66,14 @@ add_action( 'wp_enqueue_scripts', function() {
 });
 
 add_action( 'admin_enqueue_scripts', function( $hook_suffix ) {
+    // 本プラグインの画面（データセット一覧・編集・基本設定）だけで読み込む。
+    $screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+    $is_poll_screen = $screen && 'poll' === $screen->post_type;
+    if ( ! $is_poll_screen && ! ( function_exists( 'kashiwazaki_poll_is_settings_screen' ) && kashiwazaki_poll_is_settings_screen() ) ) {
+        return;
+    }
     $admin_css_path = KASHIWAZAKI_POLL_DIR . 'assets/css/admin.css';
-    $admin_plugin_data = get_plugin_data(KASHIWAZAKI_POLL_DIR . 'kashiwazaki-poll.php');
-    $admin_css_default_version = isset($admin_plugin_data['Version']) ? $admin_plugin_data['Version'] : '1.0';
+    $admin_css_default_version = KASHIWAZAKI_POLL_VERSION;
     $admin_css_version = file_exists($admin_css_path) ? filemtime($admin_css_path) : $admin_css_default_version;
     wp_enqueue_style( 'kashiwazaki-poll-admin', KASHIWAZAKI_POLL_URL . 'assets/css/admin.css', array(), $admin_css_version);
 });

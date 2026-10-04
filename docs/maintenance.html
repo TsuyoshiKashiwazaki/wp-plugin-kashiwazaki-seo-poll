@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>メンテナンス - SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2 style="color:#fff;">SEO Poll</h2>
+            <span class="version">v1.0.7</span>
+            <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
+        </div>
+        <ul>
+            <li><a href="index.html">概要</a></li>
+            <li><a href="setup.html">導入と最初の設定</a></li>
+            <li><a href="admin-menu.html">管理メニューとタブ</a></li>
+            <li><a href="poll-list.html">データセット一覧</a></li>
+            <li><a href="create-poll.html">データセットの作成</a></li>
+            <li><a href="vote-counts.html">投票数の確認と編集</a></li>
+            <li><a href="dataset-info.html">データセット情報</a></li>
+            <li><a href="embed.html">ショートコードと掲載ページ</a></li>
+            <li><a href="lock.html">投票の受付と締め切り</a></li>
+            <li><a href="voting.html">記事での表示と投票</a></li>
+            <li><a href="chart.html">グラフとダウンロード</a></li>
+            <li><a href="datasets.html">データセットページ</a></li>
+            <li><a href="settings.html">基本設定</a></li>
+            <li><a href="maintenance.html">メンテナンス</a></li>
+            <li><a href="seo.html">構造化データとSEO</a></li>
+            <li><a href="auto-tasks.html">自動処理と権限</a></li>
+            <li><a href="faq.html">よくある質問</a></li>
+            <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+            <li><a href="glossary.html">用語集</a></li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <h1>メンテナンス</h1>
+        <p class="lead">基本設定画面の下部にある「メンテナンス」には、すべてのデータセットにまとめて効く3つの操作があります。ボタンを押すとすぐに実行され、確認のダイアログは出ません。</p>
+
+        <figure class="infographic">
+            <img src="images/infographics/maintenance-tools.png" alt="投票制限を解除、サイトマップ再生成、データファイル一括生成の3つのカード">
+            <figcaption>図: 3つのメンテナンス機能</figcaption>
+        </figure>
+        <figure class="screenshot">
+            <img src="images/screenshots/34-settings-maintenance.png" alt="メンテナンスの3枚のカード。全データセットの投票制限を解除、サイトマップ、データファイルの一括生成" class="lightbox-trigger">
+            <figcaption>図: メンテナンスの3枚のカード</figcaption>
+        </figure>
+
+        <section>
+            <h2>全データセットの投票制限を解除</h2>
+            <p>画面の説明: 「すべてのデータセットで、これまで投票した人も改めて投票できるようになります。投票数は消えません。」</p>
+            <table>
+                <thead><tr><th>項目</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>ボタン</td><td>リセット日時を現在に更新</td></tr>
+                    <tr><td>押すと</td><td>「リセット日時」を今の日時にします。これより前に投票した人は、すべてのデータセットで「投票済み」とみなされなくなり、再び投票できます</td></tr>
+                    <tr><td>変わらないもの</td><td>票数、投票者数（IP）、調査期間、データファイル</td></tr>
+                    <tr><td>状態の表示</td><td>「現在のリセット日時: 年-月-日 時:分:秒」。一度も実行していなければ「まだリセット日時は設定されていません。」</td></tr>
+                    <tr><td>結果</td><td>「リセット日時を現在時刻に更新しました。」</td></tr>
+                </tbody>
+            </table>
+            <figure class="screenshot">
+                <img src="images/screenshots/38-maint-reset-done.png" alt="リセット日時を現在時刻に更新しました。の通知" class="lightbox-trigger">
+                <figcaption>図: 実行後の通知</figcaption>
+            </figure>
+            <figure class="screenshot">
+                <img src="images/screenshots/39-maint-reset-card.png" alt="全データセットの投票制限を解除カード。現在のリセット日時が表示されている" class="lightbox-trigger">
+                <figcaption>図: 実行後のカード。「現在のリセット日時」が更新されます</figcaption>
+            </figure>
+            <div class="callout callout-warning">
+                <p class="callout-title">取り消しはできません</p>
+                <p>リセット日時を前の日時に戻す操作はありません。実行すると、すべてのデータセットで同じ人がもう一度投票できるようになるため、票が重複して増える可能性があります。</p>
+            </div>
+            <div class="callout callout-tip">
+                <p class="callout-title">使いどころ</p>
+                <p>同じ設問で、期間を区切って「第2回」の投票を集めたいときなどに使います。1つのデータセットだけをやり直したいときは、編集画面の「集計データを全削除する」を使います（票も0になります）。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>サイトマップ</h2>
+            <table>
+                <thead><tr><th>項目</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>サイトマップURL</td><td><code>（サイトのアドレス）/sitemap-poll-datasets.xml</code>。ファイルがあればリンクと緑の「✓ ファイルが存在します」、無ければ赤の「⚠ ファイルが存在しません」</td></tr>
+                    <tr><td>画面の説明</td><td>「データセット専用のサイトマップです。投票時やデータ一括生成時に自動更新されますが、手動で再生成することもできます。」「※ 旧sitemap-poll.xmlは廃止されました。Google Search Consoleには上記URLを登録してください。」</td></tr>
+                    <tr><td>ボタン</td><td>サイトマップを再生成する</td></tr>
+                    <tr><td>結果</td><td>「サイトマップを再生成しました。」</td></tr>
+                </tbody>
+            </table>
+            <figure class="screenshot">
+                <img src="images/screenshots/36-maint-sitemap-done.png" alt="サイトマップを再生成しました。の通知" class="lightbox-trigger">
+                <figcaption>図: 再生成後の通知</figcaption>
+            </figure>
+            <h3>サイトマップに載るページ</h3>
+            <ul>
+                <li>載る: 公開中のデータセットの詳細ページ（<code>/datasets/detail-番号/</code>）と形式別ページ（<code>/datasets/csv/detail-番号/</code> など、ファイルがあるものだけ）。</li>
+                <li>載らない: データセット一覧、形式別の一覧、パスワード保護したデータセット。</li>
+                <li>データセットを公開すると載り、非公開・下書き・ゴミ箱にすると自動で外れます。</li>
+            </ul>
+            <div class="callout callout-tip">
+                <p class="callout-title">検索エンジンへの登録</p>
+                <p>表示されている「サイトマップURL」を、Google Search Console の「サイトマップ」に登録します。以前の版の sitemap-poll.xml を登録している場合は、新しい URL に置き換えてください。</p>
+            </div>
+            <div class="callout callout-warning">
+                <p class="callout-title">「⚠ ファイルが存在しません」が消えないとき</p>
+                <p>サーバーの設定で、サイトのフォルダにファイルを書き込めない場合があります。この場合は「サイトマップを書き込めませんでした。サイトのフォルダに書き込めるか、サーバーの設定を確認してください。」と表示されます。サーバーの書き込み権限をサーバー管理者に確認してください。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>データファイルの一括生成</h2>
+            <p>画面の説明: 「このボタンをクリックすると、全てのデータについて、最新の集計結果に基づきデータファイル（CSV, XML, YAML, JSON, SVG）を生成または更新します。同時に、サイトマップも更新されます。」「データ数が多い場合、処理に時間がかかることがあります。」</p>
+            <table>
+                <thead><tr><th>項目</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>ボタン</td><td>データファイルを一括生成する</td></tr>
+                    <tr><td>対象</td><td>公開中のデータセットすべて（下書き・非公開は対象外）</td></tr>
+                    <tr><td>かかる時間</td><td>件数によります。目安として130件程度で数秒でした。処理中は画面の読み込みが続きます</td></tr>
+                    <tr><td>結果</td><td>「N 件のデータについてファイルの一括生成（更新）が完了しました。サイトマップも更新されました。」</td></tr>
+                </tbody>
+            </table>
+            <figure class="screenshot">
+                <img src="images/screenshots/37-maint-batch-done.png" alt="131 件のデータについてファイルの一括生成（更新）が完了しました。サイトマップも更新されました。の通知" class="lightbox-trigger">
+                <figcaption>図: 一括生成の完了通知</figcaption>
+            </figure>
+            <h3>こんなときに押します</h3>
+            <ul>
+                <li>データセットページに「利用可能な形式」が表示されない、形式別ページが「見つかりません」になる。</li>
+                <li>サーバーの引っ越しやプラグインの更新の後に、ファイルを確実に作り直したい。</li>
+            </ul>
+            <div class="callout callout-note">
+                <p class="callout-title">票は変わりません</p>
+                <p>一括生成は、保存されている集計からファイルを作り直すだけです。票数や設定は変わりません。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>この画面で出るメッセージ</h2>
+            <table>
+                <thead><tr><th>メッセージ</th><th>種類</th><th>意味と対処</th></tr></thead>
+                <tbody>
+                    <tr><td>リセット日時を現在時刻に更新しました。</td><td><span class="status-ok">成功</span></td><td>—</td></tr>
+                    <tr><td>サイトマップを再生成しました。</td><td><span class="status-ok">成功</span></td><td>—</td></tr>
+                    <tr><td>サイトマップを書き込めませんでした。サイトのフォルダに書き込めるか、サーバーの設定を確認してください。</td><td><span class="status-error">エラー</span></td><td>サーバーの書き込み権限をサーバー管理者に確認します（一括生成のときも、サイトマップを書き込めなければ表示されます）</td></tr>
+                    <tr><td>N 件のデータについてファイルの一括生成（更新）が完了しました。サイトマップも更新されました。</td><td><span class="status-ok">成功</span></td><td>—</td></tr>
+                    <tr><td>処理対象のデータが見つかりませんでした。サイトマップは更新されました。</td><td>情報</td><td>公開中のデータセットがありません。データセットを公開してから実行します</td></tr>
+                    <tr><td>N 件のデータについてファイルの生成を試みましたが、M 件で書き込めないファイルがありました。サーバーの書き込み権限を確認してください。</td><td><span class="status-warning">警告</span></td><td>一部のファイルを書き込めませんでした。サーバーの書き込み権限を確認します</td></tr>
+                    <tr><td>N 件のデータすべてでファイルを書き込めませんでした。サーバーの書き込み権限を確認してください。</td><td><span class="status-error">エラー</span></td><td>同上</td></tr>
+                    <tr><td>公開していないデータセットのデータファイルが N 件削除できませんでした。データファイルの保存用フォルダの書き込み権限を確認してください。</td><td><span class="status-error">エラー</span></td><td>一括生成では、公開していない（下書き・非公開・パスワード保護・削除済みの）データセットのファイルも片付けます。消せなかったときに表示されます。書き込み権限を確認してから、もう一度押します</td></tr>
+                    <tr><td>Kashiwazaki SEO Poll: データセット（ID: …）で、投票数などの保存が途中で止まったか、データベースのエラーで元に戻せませんでした。…（管理画面の上部）</td><td><span class="status-error">エラー</span></td><td>投票・選択肢・投票数の保存の途中でデータベースとの接続が切れて処理が止まったときや、エラーで元の状態に戻せなかったときに、管理者に表示されます。編集画面で選択肢と投票数を確認し、必要なら直して「更新」を押すと消えます</td></tr>
+                    <tr><td>Kashiwazaki SEO Poll: 公開をやめたデータセット（ID: …）のデータファイルを削除できませんでした。（管理画面の上部）</td><td><span class="status-error">エラー</span></td><td>非公開・ゴミ箱・削除にしたときにファイルを消せなかった場合に、管理者に表示されます。書き込み権限を確認し、「データファイルを一括生成する」を押すと消し直します</td></tr>
+                    <tr><td>Nonce検証に失敗しました。もう一度お試しください。</td><td><span class="status-error">エラー</span></td><td>画面を長く開いていたなどで確認が通りませんでした。再読み込みしてもう一度押します</td></tr>
+                </tbody>
+            </table>
+            <div class="callout callout-note">
+                <p class="callout-title">再読み込みしても実行し直されません</p>
+                <p>ボタンを押すと処理が終わってから画面が読み込み直され、結果が表示されます。その画面をブラウザで再読み込みしても、同じ操作がもう一度実行されることはありません。もう一度実行したいときは、ボタンを押し直してください。</p>
+            </div>
+        </section>
+
+        <nav class="page-nav">
+            <a href="settings.html" class="prev">&laquo; 基本設定</a>
+            <a href="seo.html" class="next">構造化データとSEO &raquo;</a>
+        </nav>
+
+        <footer class="manual-footer">
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.7 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+        </footer>
+    </main>
+
+    <div class="lightbox"></div>
+    <script src="js/manual.js"></script>
+</body>
+</html>

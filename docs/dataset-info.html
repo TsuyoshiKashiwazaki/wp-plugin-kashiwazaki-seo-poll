@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>データセット情報 - SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2 style="color:#fff;">SEO Poll</h2>
+            <span class="version">v1.0.7</span>
+            <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
+        </div>
+        <ul>
+            <li><a href="index.html">概要</a></li>
+            <li><a href="setup.html">導入と最初の設定</a></li>
+            <li><a href="admin-menu.html">管理メニューとタブ</a></li>
+            <li><a href="poll-list.html">データセット一覧</a></li>
+            <li><a href="create-poll.html">データセットの作成</a></li>
+            <li><a href="vote-counts.html">投票数の確認と編集</a></li>
+            <li><a href="dataset-info.html">データセット情報</a></li>
+            <li><a href="embed.html">ショートコードと掲載ページ</a></li>
+            <li><a href="lock.html">投票の受付と締め切り</a></li>
+            <li><a href="voting.html">記事での表示と投票</a></li>
+            <li><a href="chart.html">グラフとダウンロード</a></li>
+            <li><a href="datasets.html">データセットページ</a></li>
+            <li><a href="settings.html">基本設定</a></li>
+            <li><a href="maintenance.html">メンテナンス</a></li>
+            <li><a href="seo.html">構造化データとSEO</a></li>
+            <li><a href="auto-tasks.html">自動処理と権限</a></li>
+            <li><a href="faq.html">よくある質問</a></li>
+            <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+            <li><a href="glossary.html">用語集</a></li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <h1>データセット情報</h1>
+        <p class="lead">編集画面の「データセット情報」ボックスでは、集計データの説明・利用条件（ライセンス）・版・キーワードを設定します。ここで入れた内容は、データセットページ・データファイル・構造化データに使われます。</p>
+
+        <figure class="screenshot">
+            <img src="images/screenshots/13-box-dataset.png" alt="データセット情報ボックス。詳細な説明、ライセンス、バージョン、キーワード" class="lightbox-trigger">
+            <figcaption>図: 「データセット情報」ボックス</figcaption>
+        </figure>
+        <p>ボックスの冒頭には「データセットページと構造化データ（Dataset）に出力される情報です。」と表示されます。</p>
+
+        <section>
+            <h2>入力した内容が使われる場所</h2>
+            <figure class="infographic">
+                <img src="images/infographics/dataset-info-flow.png" alt="詳細な説明、ライセンス、バージョン、キーワードが、データセットページ、データファイル、構造化データのどこに出るかを示す図">
+                <figcaption>図: データセット情報の出力先</figcaption>
+            </figure>
+            <table>
+                <thead><tr><th>項目</th><th>データセットページ</th><th>データファイル</th><th>構造化データ</th></tr></thead>
+                <tbody>
+                    <tr><td>詳細な説明</td><td>一覧のカード、詳細ページ、形式別ページの本文と説明文</td><td>—</td><td>説明（記事・詳細ページ・形式別ページ）</td></tr>
+                    <tr><td>ライセンス</td><td>形式別ページの情報</td><td>CSV の末尾、XML・YAML・JSON・SVG の中</td><td>ライセンス</td></tr>
+                    <tr><td>バージョン</td><td>形式別ページの情報</td><td>—</td><td>版（詳細ページ・形式別ページ）</td></tr>
+                    <tr><td>キーワード</td><td>一覧画面の「データセットキーワード」列、形式別ページの情報</td><td>—</td><td>キーワード（詳細ページ・形式別ページ）</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>詳細な説明</h2>
+            <p>調査の目的・対象・期間・使い方などを文章で書きます。</p>
+            <table>
+                <thead><tr><th>項目</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>入力形式</td><td>複数行のテキスト</td></tr>
+                    <tr><td>既定値</td><td>空</td></tr>
+                    <tr><td>画面の説明</td><td>「構造化データの説明（description）に使われます。150文字以上がおすすめです。現在 N 文字。」</td></tr>
+                    <tr><td>文字数</td><td>入力するたびに「現在 N 文字」がその場で更新されます。150文字未満でも保存できます</td></tr>
+                    <tr><td>空のとき</td><td>データセットページの説明文は表示されません</td></tr>
+                    <tr><td>使えない文字</td><td>HTML のタグは取り除かれます</td></tr>
+                </tbody>
+            </table>
+            <div class="callout callout-tip">
+                <p class="callout-title">書き方のコツ</p>
+                <p>「何を・誰に・いつ・どうやって調べたか」「結果をどう使えるか」を入れると、読む人にも検索エンジンにも内容が伝わりやすくなります。例: 「Web担当者を対象に、AI 概要の登場後のオーガニック流入の変化を調べた投票です。2026年2月から受付を開始しました。自社の対策を見直す際の参考データとして自由に引用できます。」</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>ライセンス</h2>
+            <p>集計データをほかの人がどう使ってよいかを示します。</p>
+            <table>
+                <thead><tr><th>選択肢</th><th>意味（概要）</th></tr></thead>
+                <tbody>
+                    <tr><td>CC BY 4.0（既定）</td><td>出典を示せば、商用も含めて自由に利用・改変できる</td></tr>
+                    <tr><td>CC BY-SA 4.0</td><td>出典を示し、改変したものも同じ条件で公開すれば利用できる</td></tr>
+                    <tr><td>CC BY-NC 4.0</td><td>出典を示せば、営利目的以外で利用・改変できる</td></tr>
+                    <tr><td>CC0 1.0</td><td>権利を放棄し、条件なしで利用できる</td></tr>
+                    <tr><td>CC BY-NC-SA 4.0</td><td>出典表示・営利目的以外・同じ条件での公開が条件</td></tr>
+                    <tr><td>CC BY-ND 4.0</td><td>出典を示せば利用できるが、改変はできない</td></tr>
+                    <tr><td>CC BY-NC-ND 4.0</td><td>出典表示・営利目的以外・改変なしが条件</td></tr>
+                    <tr><td>Public Domain Mark 1.0</td><td>著作権の保護がないことを示す</td></tr>
+                    <tr><td>CC BY 3.0</td><td>CC BY の旧版</td></tr>
+                    <tr><td>CC BY 2.0</td><td>CC BY の旧版</td></tr>
+                </tbody>
+            </table>
+            <div class="callout callout-note">
+                <p class="callout-title">ライセンスの正確な内容</p>
+                <p>各ライセンスの正確な条件は、クリエイティブ・コモンズの公式サイトで確認してください。データファイルや構造化データには、選んだライセンスの公式ページの URL が書き込まれます。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>バージョン</h2>
+            <table>
+                <thead><tr><th>項目</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>入力形式</td><td>短いテキスト（自由入力）</td></tr>
+                    <tr><td>既定値</td><td>1.0（空で保存すると 1.0 と表示し直されます）</td></tr>
+                    <tr><td>使われる場所</td><td>形式別ページ（<code>/datasets/csv/detail-番号/</code> など）に埋め込まれるデータの情報と、詳細ページ・形式別ページの構造化データの版</td></tr>
+                </tbody>
+            </table>
+            <div class="callout callout-tip">
+                <p class="callout-title">おすすめ</p>
+                <p>選択肢を大きく変えたときや、投票数を手で直したときに「1.1」「2.0」のように上げておくと、管理の目印になります。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>キーワード</h2>
+            <table>
+                <thead><tr><th>項目</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>入力形式</td><td>テキスト（カンマ区切り）</td></tr>
+                    <tr><td>画面の説明</td><td>「カンマ区切りで入力します。例：マーケティング,消費者行動,統計」</td></tr>
+                    <tr><td>既定値</td><td>空</td></tr>
+                    <tr><td>使われる場所</td><td>一覧画面の「データセットキーワード」列、詳細ページと形式別ページの構造化データ・ページ情報</td></tr>
+                </tbody>
+            </table>
+            <div class="callout callout-note">
+                <p class="callout-title">記事の投票フォームのキーワード</p>
+                <p>記事に置いた投票フォームが出力する構造化データでも、ここのキーワードが使われます。ここが空のときだけ、その記事に付けたタグがキーワードとして使われます。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>よくある使い方</h2>
+            <h3>調査データとして引用してもらいたい</h3>
+            <ul>
+                <li>「詳細な説明」に調査の目的・対象・期間と「自由に引用できます」などの案内を書きます。</li>
+                <li>「ライセンス」は既定の CC BY 4.0（出典表示で自由に利用可）のままにします。</li>
+                <li>「キーワード」にテーマの言葉を3〜5個入れます。</li>
+            </ul>
+        </section>
+
+        <nav class="page-nav">
+            <a href="vote-counts.html" class="prev">&laquo; 投票数の確認と編集</a>
+            <a href="embed.html" class="next">ショートコードと掲載ページ &raquo;</a>
+        </nav>
+
+        <footer class="manual-footer">
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.7 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+        </footer>
+    </main>
+
+    <div class="lightbox"></div>
+    <script src="js/manual.js"></script>
+</body>
+</html>

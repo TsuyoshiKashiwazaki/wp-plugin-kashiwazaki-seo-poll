@@ -15,14 +15,25 @@ function kashiwazaki_poll_register_plugin_settings() {
 
     add_settings_section(
         'kashiwazaki_poll_settings_section_structured_data',
-        '構造化データ設定',
-        null,
+        '構造化データ',
+        function() {
+            echo '<p>データセットページと投票フォームに出力する構造化データ（Dataset）の設定です。</p>';
+        },
+        'kashiwazaki_poll_settings_page_id'
+    );
+
+    add_settings_section(
+        'kashiwazaki_poll_settings_section_dataset_page',
+        'データセットページ',
+        function() {
+            echo '<p>集計結果を公開するデータセットページ（/datasets/）の表示設定です。</p>';
+        },
         'kashiwazaki_poll_settings_page_id'
     );
 
     add_settings_field(
         'breadcrumb_structured_data_field',
-        'パンくずリスト構造化データ',
+        'パンくずリスト',
         'kashiwazaki_poll_settings_field_breadcrumb_cb',
         'kashiwazaki_poll_settings_page_id',
         'kashiwazaki_poll_settings_section_structured_data',
@@ -39,8 +50,17 @@ function kashiwazaki_poll_register_plugin_settings() {
     );
 
     add_settings_field(
+        'structured_data_email_field',
+        '連絡先メールアドレス',
+        'kashiwazaki_poll_settings_field_email_cb',
+        'kashiwazaki_poll_settings_page_id',
+        'kashiwazaki_poll_settings_section_structured_data',
+        array( 'label_for' => 'kashiwazaki_poll_structured_data_email' )
+    );
+
+    add_settings_field(
         'structured_data_creator_type_field',
-        'Creator設定',
+        '作成者（Creator）',
         'kashiwazaki_poll_settings_field_creator_type_cb',
         'kashiwazaki_poll_settings_page_id',
         'kashiwazaki_poll_settings_section_structured_data',
@@ -49,7 +69,7 @@ function kashiwazaki_poll_register_plugin_settings() {
 
     add_settings_field(
         'structured_data_creator_person_field',
-        'Person Creator設定',
+        '個人の情報',
         'kashiwazaki_poll_settings_field_creator_person_cb',
         'kashiwazaki_poll_settings_page_id',
         'kashiwazaki_poll_settings_section_structured_data'
@@ -57,7 +77,7 @@ function kashiwazaki_poll_register_plugin_settings() {
 
     add_settings_field(
         'structured_data_creator_organization_field',
-        'Organization Creator設定',
+        '組織の情報',
         'kashiwazaki_poll_settings_field_creator_organization_cb',
         'kashiwazaki_poll_settings_page_id',
         'kashiwazaki_poll_settings_section_structured_data'
@@ -65,28 +85,28 @@ function kashiwazaki_poll_register_plugin_settings() {
 
     add_settings_field(
         'dataset_page_title_field',
-        'データセットページタイトル',
+        '一覧ページのタイトル',
         'kashiwazaki_poll_settings_field_dataset_page_title_cb',
         'kashiwazaki_poll_settings_page_id',
-        'kashiwazaki_poll_settings_section_structured_data',
+        'kashiwazaki_poll_settings_section_dataset_page',
         array( 'label_for' => 'kashiwazaki_poll_dataset_page_title' )
     );
 
     add_settings_field(
         'dataset_page_color_theme_field',
-        'データセットページカラーテーマ',
+        'カラーテーマ',
         'kashiwazaki_poll_settings_field_color_theme_cb',
         'kashiwazaki_poll_settings_page_id',
-        'kashiwazaki_poll_settings_section_structured_data',
+        'kashiwazaki_poll_settings_section_dataset_page',
         array( 'label_for' => 'kashiwazaki_poll_dataset_color_theme' )
     );
 
     add_settings_field(
         'dataset_spatial_coverage_field',
-        'データセット地理的範囲',
+        '地理的範囲',
         'kashiwazaki_poll_settings_field_dataset_spatial_coverage_cb',
         'kashiwazaki_poll_settings_page_id',
-        'kashiwazaki_poll_settings_section_structured_data',
+        'kashiwazaki_poll_settings_section_dataset_page',
         array( 'label_for' => 'kashiwazaki_poll_dataset_spatial_coverage' )
     );
 }
@@ -105,6 +125,8 @@ function kashiwazaki_poll_settings_sanitize( $input ) {
     } else {
         $sanitized_input['structured_data_provider'] = 0;
     }
+
+    $sanitized_input['structured_data_email'] = isset( $input['structured_data_email'] ) ? 1 : 0;
 
     // Creator Type
     if ( isset( $input['creator_type'] ) && in_array( $input['creator_type'], array( 'organization_only', 'person_only', 'both' ) ) ) {
@@ -170,13 +192,20 @@ function kashiwazaki_poll_settings_field_provider_cb() {
     echo '<p class="description">' . esc_html__( 'このプラグインの作者（柏崎剛）を Dataset の `provider` として明記します。', 'kashiwazaki-seo-poll') . '</p>';
 }
 
+function kashiwazaki_poll_settings_field_email_cb() {
+    $options = get_option( 'kashiwazaki_poll_settings', array() );
+    $checked = ( is_array( $options ) && ! empty( $options['structured_data_email'] ) ) ? 'checked' : '';
+    echo '<label><input type="checkbox" id="kashiwazaki_poll_structured_data_email" name="kashiwazaki_poll_settings[structured_data_email]" value="1" ' . $checked . ' /> ' . esc_html__( '構造化データに組織のメールアドレスを含める', 'kashiwazaki-seo-poll' ) . '</label>';
+    echo '<p class="description">' . esc_html__( 'ON にすると、下の「組織の情報」のメールアドレスを、作成者・発行者の連絡先として公開ページの構造化データに出力します（誰でも見られます）。既定は OFF で、メールアドレスは出力しません。', 'kashiwazaki-seo-poll' ) . '</p>';
+}
+
 function kashiwazaki_poll_settings_field_creator_type_cb() {
     $options = get_option( 'kashiwazaki_poll_settings', array( 'creator_type' => 'organization_only' ) );
     $creator_type = $options['creator_type'];
     $html = '<select name="kashiwazaki_poll_settings[creator_type]" id="kashiwazaki_poll_creator_type">';
-    $html .= '<option value="organization_only" ' . selected( $creator_type, 'organization_only', false ) . '>' . esc_html__( 'Organization Only', 'kashiwazaki-seo-poll' ) . '</option>';
-    $html .= '<option value="person_only" ' . selected( $creator_type, 'person_only', false ) . '>' . esc_html__( 'Person Only', 'kashiwazaki-seo-poll' ) . '</option>';
-    $html .= '<option value="both" ' . selected( $creator_type, 'both', false ) . '>' . esc_html__( 'Both', 'kashiwazaki-seo-poll' ) . '</option>';
+    $html .= '<option value="organization_only" ' . selected( $creator_type, 'organization_only', false ) . '>' . esc_html__( '組織（Organization）のみ', 'kashiwazaki-seo-poll' ) . '</option>';
+    $html .= '<option value="person_only" ' . selected( $creator_type, 'person_only', false ) . '>' . esc_html__( '個人（Person）のみ', 'kashiwazaki-seo-poll' ) . '</option>';
+    $html .= '<option value="both" ' . selected( $creator_type, 'both', false ) . '>' . esc_html__( '個人と組織の両方', 'kashiwazaki-seo-poll' ) . '</option>';
     $html .= '</select>';
     echo $html;
     echo '<p class="description">' . esc_html__( '構造化データに含める Creator の種類を選択します。', 'kashiwazaki-seo-poll' ) . '</p>';
@@ -201,7 +230,7 @@ function kashiwazaki_poll_settings_field_creator_organization_cb() {
         'creator_type' => 'organization_only',
         'creator_organization_name' => get_bloginfo('name'),
         'creator_organization_url' => home_url(),
-        'creator_organization_email' => get_bloginfo('admin_email')
+        'creator_organization_email' => ''
     ) );
 
     echo '<div id="creator_organization_fields" style="display: none;">';
@@ -235,27 +264,27 @@ function kashiwazaki_poll_settings_field_color_theme_cb() {
     $themes = array(
         'minimal' => array(
             'name' => 'ミニマル（白ベース）',
-            'description' => '白背景、グレーアクセント'
+            'description' => 'グレーのアクセント'
         ),
         'blue' => array(
             'name' => 'ブルー',
-            'description' => '青ヘッダー、白背景'
+            'description' => '青のアクセント'
         ),
         'green' => array(
             'name' => 'グリーン',
-            'description' => '緑ヘッダー、白背景'
+            'description' => '緑のアクセント'
         ),
         'orange' => array(
             'name' => 'オレンジ',
-            'description' => 'オレンジヘッダー、白背景'
+            'description' => 'オレンジのアクセント'
         ),
         'purple' => array(
             'name' => 'パープル',
-            'description' => '紫ヘッダー、白背景'
+            'description' => '紫のアクセント'
         ),
         'dark' => array(
             'name' => 'ダーク',
-            'description' => '黒背景、白文字'
+            'description' => '濃い色のカード・明るい文字'
         )
     );
 
@@ -271,7 +300,86 @@ function kashiwazaki_poll_settings_field_color_theme_cb() {
         echo '</div>';
     }
     echo '</div>';
-    echo '<p class="description">' . esc_html__( 'データセットページの色合いを選択してください。', 'kashiwazaki-seo-poll' ) . '</p>';
+    echo '<p class="description">' . esc_html__( 'データセットページの表・カード・リンク・ボタンの色合いを選択してください（ページの背景やヘッダーの色はテーマに従います）。', 'kashiwazaki-seo-poll' ) . '</p>';
+}
+
+/**
+ * 基本設定画面のメンテナンス操作（投票制限の解除・サイトマップ再生成・データファイル一括生成）を
+ * 画面の出力前に処理し、結果を URL 引数に付けて同じ画面へリダイレクトする。
+ */
+add_action( 'admin_init', 'kashiwazaki_poll_handle_maintenance_post' );
+function kashiwazaki_poll_handle_maintenance_post() {
+    if ( 'POST' !== ( isset( $_SERVER['REQUEST_METHOD'] ) ? $_SERVER['REQUEST_METHOD'] : '' ) ) {
+        return;
+    }
+    if ( ! isset( $_GET['page'] ) || 'kashiwazaki_poll_settings' !== $_GET['page'] ) {
+        return;
+    }
+    $actions = array(
+        'reset'   => array( 'kashiwazaki_poll_reset_date_submit', '_wpnonce_reset_date', 'kashiwazaki_poll_reset_date_action' ),
+        'sitemap' => array( 'kashiwazaki_poll_sitemap_regenerate_submit', '_wpnonce_sitemap_regenerate', 'kashiwazaki_poll_sitemap_regenerate_action' ),
+        'batch'   => array( 'kashiwazaki_poll_batch_generate_submit', '_wpnonce_batch_generate', 'kashiwazaki_poll_batch_generate_action' ),
+    );
+    $action = '';
+    foreach ( $actions as $key => $def ) {
+        if ( isset( $_POST[ $def[0] ] ) ) {
+            $action = $key;
+            break;
+        }
+    }
+    if ( '' === $action ) {
+        return;
+    }
+    if ( ! current_user_can( 'manage_options' ) ) {
+        wp_die( esc_html__( 'この操作を行う権限がありません。', 'kashiwazaki-seo-poll' ), '', array( 'response' => 403 ) );
+    }
+    $def   = $actions[ $action ];
+    $nonce = isset( $_POST[ $def[1] ] ) ? sanitize_text_field( wp_unslash( $_POST[ $def[1] ] ) ) : '';
+    $args  = array();
+    if ( ! wp_verify_nonce( $nonce, $def[2] ) ) {
+        $args['kspoll_maint'] = $action . '_nonce';
+    } elseif ( 'reset' === $action ) {
+        update_option( 'kashiwazaki_poll_reset_timestamp', time() );
+        $args['kspoll_maint'] = 'reset_done';
+    } elseif ( 'sitemap' === $action ) {
+        $args['kspoll_maint'] = kashiwazaki_poll_generate_sitemap_poll() ? 'sitemap_done' : 'sitemap_failed';
+    } else {
+        $ok = 0;
+        $ng = 0;
+        // 公開pollのみ対象（draft/private のデータを公開URL配下に生成しない）。
+        $poll_ids = get_posts( array(
+            'post_type'   => 'poll',
+            'post_status' => 'publish',
+            'numberposts' => -1,
+            'fields'      => 'ids',
+        ) );
+        // パスワード保護されたデータセットはファイルを作らない（公開してよいものだけが対象）。
+        $poll_ids = array_values( array_filter( $poll_ids, 'kashiwazaki_poll_is_public_poll' ) );
+        foreach ( $poll_ids as $poll_id ) {
+            if ( kashiwazaki_poll_generate_all_data_files( $poll_id, null, true ) ) {
+                $ok++;
+            } else {
+                $ng++;
+                error_log( '[Poll Batch Gen on Settings Page] Error generating files for poll ID: ' . $poll_id );
+            }
+        }
+        // 公開していないデータセットのファイル（旧版で残ったものなど）を消す。
+        $purge_failed = kashiwazaki_poll_purge_orphan_files();
+        $args = array(
+            'kspoll_maint' => 'batch_done',
+            'kspoll_ok'    => $ok,
+            'kspoll_ng'    => $ng,
+            'kspoll_pf'    => $purge_failed,
+            'kspoll_sm'    => kashiwazaki_poll_generate_sitemap_poll() ? '1' : '0',
+        );
+    }
+    wp_safe_redirect( add_query_arg( $args, admin_url( 'admin.php?page=kashiwazaki_poll_settings' ) ) );
+    exit;
+}
+
+add_filter( 'removable_query_args', 'kashiwazaki_poll_maintenance_removable_args' );
+function kashiwazaki_poll_maintenance_removable_args( $args ) {
+    return array_merge( $args, array( 'kspoll_maint', 'kspoll_ok', 'kspoll_ng', 'kspoll_pf', 'kspoll_sm' ) );
 }
 
 function kashiwazaki_poll_settings_page_html() {
@@ -279,87 +387,55 @@ function kashiwazaki_poll_settings_page_html() {
         wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'kashiwazaki-seo-poll' ) );
     }
 
+    // メンテナンス操作の結果は、処理後のリダイレクト先の URL 引数から表示する
+    // （送信をそのまま表示すると、再読み込みで同じ操作が再実行されるため）。
     $reset_date_message = '';
-    if ( isset( $_POST['kashiwazaki_poll_reset_date_submit'] ) && isset( $_POST['_wpnonce_reset_date'] ) ) {
-        if ( wp_verify_nonce( $_POST['_wpnonce_reset_date'], 'kashiwazaki_poll_reset_date_action' ) ) {
-            update_option( 'kashiwazaki_poll_reset_timestamp', time() );
-            $reset_date_message = '<div id="message" class="updated notice is-dismissible"><p>' . esc_html__( 'リセット日時を現在時刻に更新しました。', 'kashiwazaki-seo-poll' ) . '</p></div>';
-        } else {
-            $reset_date_message = '<div id="message" class="error notice is-dismissible"><p>' . esc_html__( 'Nonce検証に失敗しました。もう一度お試しください。', 'kashiwazaki-seo-poll' ) . '</p></div>';
-        }
-    }
-
     $sitemap_regenerate_message = '';
-    if ( isset( $_POST['kashiwazaki_poll_sitemap_regenerate_submit'] ) && isset( $_POST['_wpnonce_sitemap_regenerate'] ) ) {
-        if ( wp_verify_nonce( $_POST['_wpnonce_sitemap_regenerate'], 'kashiwazaki_poll_sitemap_regenerate_action' ) ) {
-            kashiwazaki_poll_generate_sitemap_poll();
-            $sitemap_regenerate_message = '<div id="message" class="updated notice is-dismissible"><p>' . esc_html__( 'サイトマップを再生成しました。', 'kashiwazaki-seo-poll' ) . '</p></div>';
-        } else {
-            $sitemap_regenerate_message = '<div id="message" class="error notice is-dismissible"><p>' . esc_html__( 'Nonce検証に失敗しました。もう一度お試しください。', 'kashiwazaki-seo-poll' ) . '</p></div>';
-        }
-    }
-
     $batch_generate_message = '';
-    if ( isset( $_POST['kashiwazaki_poll_batch_generate_submit'] ) && isset( $_POST['_wpnonce_batch_generate'] ) ) {
-        if ( wp_verify_nonce( $_POST['_wpnonce_batch_generate'], 'kashiwazaki_poll_batch_generate_action' ) ) {
-            $generation_triggered = true;
-            $generated_count = 0;
-            $error_count = 0;
-
-            // 公開pollのみ対象（draft/private のデータを公開URL配下に生成しない）。
-            $poll_ids = get_posts( array(
-                'post_type'      => 'poll',
-                'post_status'    => 'publish',
-                'numberposts'    => -1,
-                'fields'         => 'ids',
-            ) );
-
-            if ( ! empty( $poll_ids ) ) {
-                foreach ( $poll_ids as $poll_id ) {
-                    $counts = get_post_meta($poll_id, '_kashiwazaki_poll_counts', true);
-                    $result = kashiwazaki_poll_generate_all_data_files( $poll_id, $counts );
-                    if ( $result ) {
-                        $generated_count++;
-                    } else {
-                        $error_count++;
-                        error_log("[Poll Batch Gen on Settings Page] Error generating files for poll ID: " . $poll_id);
-                    }
-                }
+    $maint = isset( $_GET['kspoll_maint'] ) ? sanitize_key( wp_unslash( $_GET['kspoll_maint'] ) ) : '';
+    $maint_ok = isset( $_GET['kspoll_ok'] ) ? absint( $_GET['kspoll_ok'] ) : 0;
+    $maint_ng = isset( $_GET['kspoll_ng'] ) ? absint( $_GET['kspoll_ng'] ) : 0;
+    $nonce_error = '<div class="error notice is-dismissible"><p>' . esc_html__( 'Nonce検証に失敗しました。もう一度お試しください。', 'kashiwazaki-seo-poll' ) . '</p></div>';
+    switch ( $maint ) {
+        case 'reset_done':
+            $reset_date_message = '<div class="updated notice is-dismissible"><p>' . esc_html__( 'リセット日時を現在時刻に更新しました。', 'kashiwazaki-seo-poll' ) . '</p></div>';
+            break;
+        case 'reset_nonce':
+            $reset_date_message = $nonce_error;
+            break;
+        case 'sitemap_done':
+            $sitemap_regenerate_message = '<div class="updated notice is-dismissible"><p>' . esc_html__( 'サイトマップを再生成しました。', 'kashiwazaki-seo-poll' ) . '</p></div>';
+            break;
+        case 'sitemap_failed':
+            $sitemap_regenerate_message = '<div class="error notice is-dismissible"><p>' . esc_html__( 'サイトマップを書き込めませんでした。サイトのフォルダに書き込めるか、サーバーの設定を確認してください。', 'kashiwazaki-seo-poll' ) . '</p></div>';
+            break;
+        case 'sitemap_nonce':
+            $sitemap_regenerate_message = $nonce_error;
+            break;
+        case 'batch_done':
+            if ( $maint_ok === 0 && $maint_ng === 0 ) {
+                $batch_generate_message = '<div class="notice notice-info is-dismissible"><p>' . esc_html__( '処理対象のデータが見つかりませんでした。サイトマップは更新されました。', 'kashiwazaki-seo-poll' ) . '</p></div>';
+            } elseif ( $maint_ng === 0 ) {
+                $batch_generate_message = '<div class="updated notice is-dismissible"><p>' . sprintf( esc_html__( '%d 件のデータについてファイルの一括生成（更新）が完了しました。サイトマップも更新されました。', 'kashiwazaki-seo-poll' ), $maint_ok ) . '</p></div>';
+            } elseif ( $maint_ok > 0 ) {
+                $batch_generate_message = '<div class="notice notice-warning is-dismissible"><p>' . sprintf( esc_html__( '%1$d 件のデータについてファイルの生成を試みましたが、%2$d 件で書き込めないファイルがありました。サーバーの書き込み権限を確認してください。', 'kashiwazaki-seo-poll' ), $maint_ok + $maint_ng, $maint_ng ) . '</p></div>';
             } else {
-                 error_log("[Poll Batch Gen on Settings Page] No polls found to generate data for.");
+                $batch_generate_message = '<div class="error notice is-dismissible"><p>' . sprintf( esc_html__( '%d 件のデータすべてでファイルを書き込めませんでした。サーバーの書き込み権限を確認してください。', 'kashiwazaki-seo-poll' ), $maint_ng ) . '</p></div>';
             }
-
-            kashiwazaki_poll_generate_sitemap_poll();
-
-            if ( $generated_count > 0 && $error_count === 0 ) {
-                $batch_generate_message = '<div id="message" class="updated notice is-dismissible"><p>' . sprintf( esc_html__( '%d 件のデータについてファイルの一括生成（更新）が完了しました。サイトマップも更新されました。', 'kashiwazaki-seo-poll' ), $generated_count ) . '</p></div>';
-            } elseif ( $generated_count > 0 && $error_count > 0 ) {
-                 $batch_generate_message = '<div id="message" class="notice notice-warning is-dismissible"><p>' . sprintf( esc_html__( '%d 件のデータについてファイルの生成を試みましたが、%d 件でエラーが発生しました。詳細はエラーログを確認してください。サイトマップは更新されました。', 'kashiwazaki-seo-poll' ), $generated_count + $error_count, $error_count ) . '</p></div>';
-            } elseif ( $generated_count === 0 && $error_count > 0 ) {
-                 $batch_generate_message = '<div id="message" class="error notice is-dismissible"><p>' . sprintf( esc_html__( '%d 件のデータでファイルの生成中にエラーが発生しました。詳細はエラーログを確認してください。サイトマップは更新されました。', 'kashiwazaki-seo-poll' ), $error_count ) . '</p></div>';
-            } elseif ( $generated_count === 0 && $error_count === 0 && empty($poll_ids) ) {
-                 $batch_generate_message = '<div id="message" class="notice notice-info is-dismissible"><p>' . esc_html__( '処理対象のデータが見つかりませんでした。サイトマップは更新されました。', 'kashiwazaki-seo-poll' ) . '</p></div>';
-            } elseif ( $generated_count === 0 && $error_count === 0 && !empty($poll_ids) && $generation_triggered ) {
-                 $batch_generate_message = '<div id="message" class="notice notice-info is-dismissible"><p>' . esc_html__( 'データファイルは既に最新か、生成対象のデータがありませんでした。サイトマップは更新されました。', 'kashiwazaki-seo-poll' ) . '</p></div>';
+            if ( isset( $_GET['kspoll_pf'] ) && absint( $_GET['kspoll_pf'] ) > 0 ) {
+                $batch_generate_message .= '<div class="error notice is-dismissible"><p>' . sprintf( esc_html__( '公開していないデータセットのデータファイルが %d 件削除できませんでした。データファイルの保存用フォルダの書き込み権限を確認してください。', 'kashiwazaki-seo-poll' ), absint( $_GET['kspoll_pf'] ) ) . '</p></div>';
             }
-
-        } else {
-            $batch_generate_message = '<div id="message" class="error notice is-dismissible"><p>' . esc_html__( 'Nonce検証に失敗しました。もう一度お試しください。', 'kashiwazaki-seo-poll' ) . '</p></div>';
-        }
+            if ( isset( $_GET['kspoll_sm'] ) && '0' === $_GET['kspoll_sm'] ) {
+                $batch_generate_message .= '<div class="error notice is-dismissible"><p>' . esc_html__( 'サイトマップを書き込めませんでした。サイトのフォルダに書き込めるか、サーバーの設定を確認してください。', 'kashiwazaki-seo-poll' ) . '</p></div>';
+            }
+            break;
+        case 'batch_nonce':
+            $batch_generate_message = $nonce_error;
+            break;
     }
-
     ?>
     <div class="wrap kashiwazaki-poll-settings-wrap">
         <h1><?php esc_html_e( 'Kashiwazaki SEO Poll 基本設定', 'kashiwazaki-seo-poll' ); ?></h1>
-
-        <div class="notice notice-info" style="border-left-color: #0073aa; margin-top: 20px;">
-            <p style="margin: 10px 0;">
-                <strong>📋 データ管理</strong> -
-                新しいデータの作成や既存データの編集は
-                <a href="<?php echo esc_url(admin_url('edit.php?post_type=poll')); ?>" class="button button-primary" style="margin-left: 10px;">📋 投稿一覧</a>
-                から行えます。
-            </p>
-        </div>
 
         <?php settings_errors(); ?>
 
@@ -371,11 +447,12 @@ function kashiwazaki_poll_settings_page_html() {
             ?>
         </form>
 
-        <hr>
-
-        <h2><?php esc_html_e( '投票制限の解除', 'kashiwazaki-seo-poll' ); ?></h2>
+        <h2 class="kspoll-maint-title"><?php esc_html_e( 'メンテナンス', 'kashiwazaki-seo-poll' ); ?></h2>
+        <div class="kspoll-maint-grid">
+        <div class="card kspoll-card">
+        <h3><?php esc_html_e( '全データセットの投票制限を解除', 'kashiwazaki-seo-poll' ); ?></h3>
         <?php echo $reset_date_message; ?>
-        <p><?php esc_html_e( 'このボタンを押すと、これまで投票した人も改めて投票できるようになります。投票データ自体は消えずにそのまま残ります。', 'kashiwazaki-seo-poll' ); ?></p>
+        <p><?php esc_html_e( 'すべてのデータセットで、これまで投票した人も改めて投票できるようになります。投票数は消えません。', 'kashiwazaki-seo-poll' ); ?></p>
         <form method="post">
             <?php wp_nonce_field( 'kashiwazaki_poll_reset_date_action', '_wpnonce_reset_date' ); ?>
             <input type="hidden" name="kashiwazaki_poll_reset_date_submit" value="1">
@@ -390,9 +467,10 @@ function kashiwazaki_poll_settings_page_html() {
         }
         ?>
 
-        <hr>
+        </div>
 
-        <h2><?php esc_html_e( 'サイトマップ', 'kashiwazaki-seo-poll' ); ?></h2>
+        <div class="card kspoll-card">
+        <h3><?php esc_html_e( 'サイトマップ', 'kashiwazaki-seo-poll' ); ?></h3>
         <?php echo $sitemap_regenerate_message; ?>
         <?php
         $sitemap_url = home_url( 'sitemap-poll-datasets.xml' );
@@ -417,17 +495,20 @@ function kashiwazaki_poll_settings_page_html() {
             <?php submit_button( __( 'サイトマップを再生成する', 'kashiwazaki-seo-poll' ), 'secondary', 'kashiwazaki_poll_sitemap_regenerate_submit_btn' ); ?>
         </form>
 
-        <hr>
+        </div>
 
-        <h2><?php esc_html_e( 'データセット一括生成', 'kashiwazaki-seo-poll' ); ?></h2>
+        <div class="card kspoll-card">
+        <h3><?php esc_html_e( 'データファイルの一括生成', 'kashiwazaki-seo-poll' ); ?></h3>
         <?php echo $batch_generate_message; ?>
         <p><?php esc_html_e( 'このボタンをクリックすると、全てのデータについて、最新の集計結果に基づきデータファイル（CSV, XML, YAML, JSON, SVG）を生成または更新します。同時に、サイトマップも更新されます。', 'kashiwazaki-seo-poll' ); ?></p>
         <p><?php esc_html_e( 'データ数が多い場合、処理に時間がかかることがあります。', 'kashiwazaki-seo-poll' ); ?></p>
         <form method="post">
             <?php wp_nonce_field( 'kashiwazaki_poll_batch_generate_action', '_wpnonce_batch_generate' ); ?>
             <input type="hidden" name="kashiwazaki_poll_batch_generate_submit" value="1">
-            <?php submit_button( __( 'データファイルを一括生成する', 'kashiwazaki-seo-poll' ), 'primary', 'kashiwazaki_poll_batch_generate_submit_btn' ); ?>
+            <?php submit_button( __( 'データファイルを一括生成する', 'kashiwazaki-seo-poll' ), 'secondary', 'kashiwazaki_poll_batch_generate_submit_btn' ); ?>
         </form>
+        </div>
+        </div>
 
     </div>
 

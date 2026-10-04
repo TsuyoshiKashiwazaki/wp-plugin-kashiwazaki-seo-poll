@@ -16,7 +16,7 @@ add_action( 'init', function() {
         'search_items'       => 'データセットを検索',
         'not_found'          => 'データセットはありません',
         'not_found_in_trash' => 'ゴミ箱にデータセットはありません',
-        'menu_name'          => 'データセット'
+        'menu_name'          => 'Kashiwazaki SEO Poll'
     );
     $args = array(
         'labels'             => $labels,
@@ -24,8 +24,10 @@ add_action( 'init', function() {
         'exclude_from_search'=> false,
         'publicly_queryable' => true,
         'show_ui'            => true,
+        // 左メニューは「Kashiwazaki SEO Poll」の 1 つだけ（クリックでデータセット一覧）。
+        // 一覧と基本設定は画面上部のタブで切り替える（kashiwazaki_poll_render_admin_tabs）。
         'show_in_menu'       => true,
-        'menu_position'      => 5, // 投稿の下に表示
+        'menu_position'      => 81,
         'menu_icon'          => 'dashicons-chart-pie',
         'capability_type'    => 'post',
         'hierarchical'       => false,
@@ -55,64 +57,169 @@ function kashiwazaki_poll_add_single_post_rewrite() {
     );
 }
 
-// Kashiwazaki SEO Poll 設定メニューを追加
+// 「Kashiwazaki SEO Poll」メニュー。
+// 左メニューは投稿タイプ poll のトップメニュー 1 つだけにし（リンク先はデータセット一覧）、
+// サブメニューは出さない。基本設定はこのメニューの下のページとして登録し
+// (admin.php?page=kashiwazaki_poll_settings)、一覧と基本設定の行き来は画面上部のタブで行う。
 add_action( 'admin_menu', 'kashiwazaki_poll_add_settings_menu' );
 function kashiwazaki_poll_add_settings_menu() {
-    // トップレベルメニュー「Kashiwazaki SEO Poll」を位置81に追加
-    add_menu_page(
-        'Kashiwazaki SEO Poll 基本設定',   // ページタイトル
-        'Kashiwazaki SEO Poll',            // メニュータイトル
-        'manage_options',                   // 権限
-        'kashiwazaki_poll_settings',        // メニュースラッグ
-        'kashiwazaki_poll_settings_page_html', // コールバック関数
-        'dashicons-admin-settings',         // アイコン
-        81                                  // 位置（元の位置）
+    $hook = add_submenu_page(
+        'edit.php?post_type=poll',
+        'Kashiwazaki SEO Poll 基本設定',
+        '基本設定',
+        'manage_options',
+        'kashiwazaki_poll_settings',
+        'kashiwazaki_poll_settings_page_html'
     );
-
-    // サブメニュー: 基本設定（トップレベルと同じページ）
-    add_submenu_page(
-        'kashiwazaki_poll_settings',        // 親メニュースラッグ
-        '基本設定',                         // ページタイトル
-        '基本設定',                         // メニュータイトル
-        'manage_options',                   // 権限
-        'kashiwazaki_poll_settings',        // メニュースラッグ
-        'kashiwazaki_poll_settings_page_html' // コールバック関数
-    );
+    if ( $hook ) {
+        $GLOBALS['kashiwazaki_poll_settings_hook'] = $hook;
+    }
 }
 
-// 管理画面にキャッシュクリア機能を追加
-add_action('admin_notices', 'kashiwazaki_poll_admin_notices');
+// サブメニュー（データセット一覧・新規追加・基本設定）を左メニューの表示から外す。
+// WordPress はアクセス判定 (user_can_access_admin_page) と画面タイトル・選択中のメニューの
+// 判定をサブメニューの一覧を使って行い、その後で左メニューを描く。admin_menu の段階で外すと
+// 基本設定のページが「親の無いページ」と判定されて開けなくなるため、判定が済んだ後
+// (admin_head。左メニューを描く直前) に外す。
+add_action( 'admin_head', 'kashiwazaki_poll_hide_submenus' );
+function kashiwazaki_poll_hide_submenus() {
+    remove_submenu_page( 'edit.php?post_type=poll', 'edit.php?post_type=poll' );
+    remove_submenu_page( 'edit.php?post_type=poll', 'post-new.php?post_type=poll' );
+    remove_submenu_page( 'edit.php?post_type=poll', 'kashiwazaki_poll_settings' );
+}
+
+/**
+ * 基本設定の画面かどうか。
+ */
+function kashiwazaki_poll_is_settings_screen() {
+    $screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+    $hook   = isset( $GLOBALS['kashiwazaki_poll_settings_hook'] ) ? $GLOBALS['kashiwazaki_poll_settings_hook'] : '';
+    return $screen && $hook && $screen->id === $hook;
+}
+
+// データセット一覧と基本設定の上部にタブを出す。
+// 本文の領域 (#wpbody-content) の中に出すため all_admin_notices の先頭で描く
+// (in_admin_header は左メニューと同じ配置の範囲で、タブの枠が左メニューの下まで回り込む)。
+add_action( 'all_admin_notices', 'kashiwazaki_poll_render_admin_tabs', 0 );
+function kashiwazaki_poll_render_admin_tabs() {
+    $screen = get_current_screen();
+    if ( ! $screen ) {
+        return;
+    }
+    $is_list     = ( 'edit-poll' === $screen->id );
+    $is_settings = kashiwazaki_poll_is_settings_screen();
+    if ( ! $is_list && ! $is_settings ) {
+        return;
+    }
+    $tabs = array(
+        array( 'label' => 'データセット一覧', 'url' => admin_url( 'edit.php?post_type=poll' ), 'active' => $is_list ),
+    );
+    if ( current_user_can( 'manage_options' ) ) {
+        $tabs[] = array( 'label' => '基本設定', 'url' => admin_url( 'admin.php?page=kashiwazaki_poll_settings' ), 'active' => $is_settings );
+    }
+    echo '<div class="kspoll-tabs-wrap"><nav class="nav-tab-wrapper kspoll-tabs" aria-label="Kashiwazaki SEO Poll">';
+    foreach ( $tabs as $tab ) {
+        printf(
+            '<a href="%1$s" class="nav-tab%2$s"%3$s>%4$s</a>',
+            esc_url( $tab['url'] ),
+            $tab['active'] ? ' nav-tab-active' : '',
+            $tab['active'] ? ' aria-current="page"' : '',
+            esc_html( $tab['label'] )
+        );
+    }
+    echo '</nav></div>';
+}
+
+// 管理画面にキャッシュクリア完了メッセージを表示
+add_action( 'admin_notices', 'kashiwazaki_poll_admin_notices' );
 function kashiwazaki_poll_admin_notices() {
     $screen = get_current_screen();
-    if ($screen->post_type !== 'poll') {
+    if ( ! $screen || $screen->post_type !== 'poll' ) {
         return;
     }
 
-    // キャッシュクリア完了メッセージ
-    if (isset($_GET['cache_cleared'])) {
-        if ($screen->base === 'post') {
-            echo '<div class="notice notice-success is-dismissible"><p>ショートコード使用状況キャッシュをクリアしました。</p></div>';
-        } else {
-            echo '<div class="notice notice-success is-dismissible"><p>ショートコード使用状況のキャッシュをクリアしました。</p></div>';
+    if ( isset( $_GET['cache_cleared'] ) ) {
+        echo '<div class="notice notice-success is-dismissible"><p>掲載ページの情報を再取得しました。</p></div>';
+    }
+
+    if ( isset( $_GET['all_cache_cleared'] ) ) {
+        echo '<div class="notice notice-success is-dismissible"><p>全データセットの掲載ページ情報を再取得しました。</p></div>';
+    }
+
+    if ( isset( $_GET['kashiwazaki_poll_locked'] ) ) {
+        $state = sanitize_key( wp_unslash( $_GET['kashiwazaki_poll_locked'] ) );
+        if ( 'locked' === $state ) {
+            echo '<div class="notice notice-success is-dismissible"><p>投票の受付を締め切りました（ロック）。</p></div>';
+        } elseif ( 'open' === $state ) {
+            echo '<div class="notice notice-success is-dismissible"><p>投票の受付を再開しました。</p></div>';
+        } elseif ( 'busy' === $state ) {
+            echo '<div class="notice notice-error is-dismissible"><p>他の処理（投票など）と重なったため、受付の状態は変えませんでした。少し待ってから、もう一度お試しください。</p></div>';
+        } elseif ( 'failed' === $state ) {
+            echo '<div class="notice notice-error is-dismissible"><p>受付の状態を保存できませんでした。もう一度お試しください。</p></div>';
         }
     }
+}
 
-    if (isset($_GET['all_cache_cleared'])) {
-        echo '<div class="notice notice-success is-dismissible"><p>全データのショートコード使用状況キャッシュをクリアしました。</p></div>';
+add_filter( 'removable_query_args', function( $args ) {
+    $args[] = 'kashiwazaki_poll_locked';
+    return $args;
+} );
+
+// データセット一覧の上部に「掲載ページ情報の再取得」ボタンを置く
+add_action( 'manage_posts_extra_tablenav', 'kashiwazaki_poll_list_tablenav' );
+function kashiwazaki_poll_list_tablenav( $which ) {
+    $screen = get_current_screen();
+    if ( 'top' !== $which || ! $screen || 'edit-poll' !== $screen->id || ! current_user_can( 'manage_options' ) ) {
+        return;
     }
+    $clear_all_url = wp_nonce_url(
+        admin_url( 'edit.php?post_type=poll&action=clear_all_poll_usage_cache' ),
+        'clear_all_poll_usage_cache'
+    );
+    echo '<div class="alignleft actions">';
+    echo '<a href="' . esc_url( $clear_all_url ) . '" class="button" title="「使用記事」列が正しく表示されないときに使います">掲載ページ情報を再取得</a>';
+    echo '</div>';
+}
 
-    // 一覧ページでのみキャッシュクリアボタンを表示
-    if ($screen->base === 'edit' && $screen->post_type === 'poll') {
-        $clear_all_url = wp_nonce_url(
-            admin_url('edit.php?post_type=poll&action=clear_all_poll_usage_cache'),
-            'clear_all_poll_usage_cache'
-        );
-
-        echo '<div class="notice notice-info">';
-        echo '<p>ショートコード使用状況が正しく表示されない場合は、キャッシュをクリアしてください。</p>';
-        echo '<p><a href="' . esc_url($clear_all_url) . '" class="button" onclick="return confirm(\'全データのキャッシュをクリアしますか？\')">全キャッシュをクリア</a></p>';
-        echo '</div>';
+// 一覧の行アクションに「受付を締め切る／再開する」を追加
+add_filter( 'post_row_actions', 'kashiwazaki_poll_row_actions', 10, 2 );
+function kashiwazaki_poll_row_actions( $actions, $post ) {
+    if ( 'poll' !== $post->post_type || ! current_user_can( 'edit_post', $post->ID ) || 'trash' === $post->post_status ) {
+        return $actions;
     }
+    $locked = kashiwazaki_poll_is_locked( $post->ID );
+    $url = wp_nonce_url(
+        admin_url( 'admin-post.php?action=kashiwazaki_poll_toggle_lock&post=' . $post->ID . '&state=' . ( $locked ? 'open' : 'locked' ) ),
+        'kashiwazaki_poll_toggle_lock_' . $post->ID
+    );
+    $actions['kashiwazaki_poll_lock'] = '<a href="' . esc_url( $url ) . '">' . ( $locked ? '受付を再開' : '受付を締め切る' ) . '</a>';
+    return $actions;
+}
+
+add_action( 'admin_post_kashiwazaki_poll_toggle_lock', 'kashiwazaki_poll_handle_toggle_lock' );
+function kashiwazaki_poll_handle_toggle_lock() {
+    $post_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0;
+    $state   = isset( $_GET['state'] ) ? sanitize_key( wp_unslash( $_GET['state'] ) ) : '';
+    check_admin_referer( 'kashiwazaki_poll_toggle_lock_' . $post_id );
+    if ( ! $post_id || 'poll' !== get_post_type( $post_id ) || ! current_user_can( 'edit_post', $post_id ) ) {
+        wp_die( esc_html__( 'この操作を行う権限がありません。', 'kashiwazaki-seo-poll' ), 403 );
+    }
+    if ( ! in_array( $state, array( 'locked', 'open' ), true ) ) {
+        wp_die( esc_html__( '不正なリクエストです。', 'kashiwazaki-seo-poll' ), 400 );
+    }
+    // 受付の切り替えも、編集画面の保存と同じ共通の入口（データセット単位の排他）を通す（同時の保存で上書きし合わないように）。
+    $mutation = kashiwazaki_poll_mutate_vote_state( $post_id, function( $s ) use ( $state ) {
+        return array( 'set' => array( '_kashiwazaki_poll_locked' => 'locked' === $state ? '1' : null ) );
+    } );
+    if ( ! $mutation['ok'] ) {
+        $state = 'busy' === $mutation['error'] ? 'busy' : 'failed';
+    }
+    $back = wp_get_referer();
+    if ( ! $back ) {
+        $back = admin_url( 'edit.php?post_type=poll' );
+    }
+    wp_safe_redirect( add_query_arg( 'kashiwazaki_poll_locked', $state, remove_query_arg( 'kashiwazaki_poll_locked', $back ) ) );
+    exit;
 }
 
 // 管理画面の投稿一覧にカスタム列を追加
@@ -122,6 +229,8 @@ function kashiwazaki_poll_add_admin_columns( $columns ) {
     $new_columns = array();
     foreach ( $columns as $key => $value ) {
         if ( $key === 'date' ) {
+            $new_columns['poll_status'] = '受付';
+            $new_columns['poll_votes'] = '総投票数';
             $new_columns['dataset_keywords'] = 'データセットキーワード';
             $new_columns['shortcode_usage'] = '使用記事';
         }
@@ -133,8 +242,19 @@ function kashiwazaki_poll_add_admin_columns( $columns ) {
 // カスタム列の内容を表示
 add_action( 'manage_poll_posts_custom_column', 'kashiwazaki_poll_show_admin_columns', 10, 2 );
 function kashiwazaki_poll_show_admin_columns( $column, $post_id ) {
-    if ( $column === 'dataset_keywords' ) {
-        $keywords = get_post_meta( $post_id, 'dataset_keywords', true );
+    if ( $column === 'poll_status' ) {
+        if ( kashiwazaki_poll_is_locked( $post_id ) ) {
+            echo '<span class="kspoll-list-badge is-locked">🔒 締切</span>';
+        } else {
+            echo '<span class="kspoll-list-badge is-open">受付中</span>';
+        }
+    } elseif ( $column === 'poll_votes' ) {
+        $counts = get_post_meta( $post_id, '_kashiwazaki_poll_counts', true );
+        $options = get_post_meta( $post_id, '_kashiwazaki_poll_options', true );
+        $counts = kashiwazaki_poll_normalize_counts( $counts, is_array( $options ) ? count( $options ) : 0 );
+        echo esc_html( number_format_i18n( array_sum( $counts ) ) ) . ' 票';
+    } elseif ( $column === 'dataset_keywords' ) {
+        $keywords = kashiwazaki_poll_decode_stored_text( get_post_meta( $post_id, 'dataset_keywords', true ) );
         if ( ! empty( $keywords ) ) {
             $keywords_array = array_map( 'trim', explode( ',', $keywords ) );
             $keywords_array = array_filter( $keywords_array ); // 空の要素を除去
@@ -174,17 +294,6 @@ function kashiwazaki_poll_show_admin_columns( $column, $post_id ) {
                     );
                     $type_label_jp = isset( $type_translations[ $usage_post->post_type ] ) ? $type_translations[ $usage_post->post_type ] : $type_label;
 
-                    // 投稿ステータス
-                    $status = get_post_status( $usage_post->ID );
-                    $status_label = '';
-                    if ( $status === 'draft' ) {
-                        $status_label = ' [下書き]';
-                    } elseif ( $status === 'private' ) {
-                        $status_label = ' [非公開]';
-                    } elseif ( $status === 'pending' ) {
-                        $status_label = ' [レビュー待ち]';
-                    }
-
                     // 投稿日時
                     $post_date = get_the_date( 'Y/m/d', $usage_post->ID );
 
@@ -193,11 +302,9 @@ function kashiwazaki_poll_show_admin_columns( $column, $post_id ) {
                     if ( $edit_url && current_user_can( 'edit_post', $usage_post->ID ) ) {
                         echo '<a href="' . esc_url( $edit_url ) . '" class="usage-edit-link" title="編集: ' . esc_attr( $usage_post->post_title ) . '">';
                         echo '<span class="usage-title">' . esc_html( mb_substr( $usage_post->post_title, 0, 25 ) . ( mb_strlen( $usage_post->post_title ) > 25 ? '...' : '' ) ) . '</span>';
-                        echo '<span class="usage-status">' . esc_html( $status_label ) . '</span>';
                         echo '</a>';
                     } else {
                         echo '<span class="usage-title">' . esc_html( mb_substr( $usage_post->post_title, 0, 25 ) . ( mb_strlen( $usage_post->post_title ) > 25 ? '...' : '' ) ) . '</span>';
-                        echo '<span class="usage-status">' . esc_html( $status_label ) . '</span>';
                     }
                     echo '</div>';
                     echo '<div class="usage-meta">';
@@ -207,7 +314,7 @@ function kashiwazaki_poll_show_admin_columns( $column, $post_id ) {
                     if ( isset( $usage_post->shortcode_count ) && $usage_post->shortcode_count > 1 ) {
                         echo '<span class="usage-count"> | ' . $usage_post->shortcode_count . '回使用</span>';
                     }
-                    if ( $view_url && $status === 'publish' ) {
+                    if ( $view_url && 'publish' === get_post_status( $usage_post->ID ) ) {
                         echo ' | <a href="' . esc_url( $view_url ) . '" target="_blank" class="usage-view-link">表示</a>';
                     }
                     echo '</div>';
@@ -241,17 +348,27 @@ function kashiwazaki_poll_sort_by_custom_columns( $query ) {
 
     $orderby = $query->get( 'orderby' );
 
-    if ( 'dataset_keywords' === $orderby ) {
-        $query->set( 'meta_key', 'dataset_keywords' );
-        $query->set( 'orderby', 'meta_value' );
-    } elseif ( 'shortcode_usage' === $orderby ) {
-        // 使用記事数でソートするために、カスタムメタクエリを使用
-        $query->set( 'meta_key', '_poll_usage_count' );
-        $query->set( 'orderby', 'meta_value_num' );
-
-        // 使用記事数のメタデータが存在しない場合は0として扱う
+    if ( 'dataset_keywords' === $orderby && 'poll' === $query->get( 'post_type' ) ) {
+        // meta_key を指定するとキーワードのメタが無いデータセットが一覧から消えるため、LEFT JOIN で並べ替える。
+        add_filter( 'posts_clauses', 'kashiwazaki_poll_keyword_sort_clauses', 10, 2 );
+    } elseif ( 'shortcode_usage' === $orderby && 'poll' === $query->get( 'post_type' ) ) {
+        // 使用記事数で並べ替える。meta_key を指定すると件数のメタが無いデータセットが一覧から消えるため、
+        // 並べ替えの識別子はそのまま残し、SQL 句の調整（LEFT JOIN で無い場合は0扱い）だけで並べ替える。
         add_filter( 'posts_clauses', 'kashiwazaki_poll_usage_sort_clauses', 10, 2 );
     }
+}
+
+// キーワード列のソート用のSQL句調整（メタが無いデータセットは空文字として扱う）
+function kashiwazaki_poll_keyword_sort_clauses( $clauses, $query ) {
+    global $wpdb;
+    if ( is_admin() && $query->is_main_query() && $query->get( 'orderby' ) === 'dataset_keywords' ) {
+        $order = ( 'DESC' === strtoupper( (string) $query->get( 'order' ) ) ) ? 'DESC' : 'ASC';
+        $clauses['join']   .= " LEFT JOIN {$wpdb->postmeta} AS pm_kw ON {$wpdb->posts}.ID = pm_kw.post_id AND pm_kw.meta_key = 'dataset_keywords'";
+        $clauses['orderby'] = "COALESCE(pm_kw.meta_value, '') {$order}, {$wpdb->posts}.ID {$order}";
+        $clauses['groupby'] = "{$wpdb->posts}.ID";
+        remove_filter( 'posts_clauses', 'kashiwazaki_poll_keyword_sort_clauses', 10 );
+    }
+    return $clauses;
 }
 
 // 使用記事数ソート用のSQL句調整
@@ -261,7 +378,8 @@ function kashiwazaki_poll_usage_sort_clauses( $clauses, $query ) {
     if ( is_admin() && $query->is_main_query() && $query->get( 'orderby' ) === 'shortcode_usage' ) {
         // LEFT JOINを使用して、メタデータが存在しない場合も含める
         $clauses['join'] .= " LEFT JOIN {$wpdb->postmeta} AS pm_usage ON {$wpdb->posts}.ID = pm_usage.post_id AND pm_usage.meta_key = '_poll_usage_count'";
-        $clauses['orderby'] = "CAST(COALESCE(pm_usage.meta_value, 0) AS SIGNED) " . $query->get( 'order', 'ASC' );
+        $order = ( 'DESC' === strtoupper( (string) $query->get( 'order' ) ) ) ? 'DESC' : 'ASC';
+        $clauses['orderby'] = "CAST(COALESCE(pm_usage.meta_value, 0) AS SIGNED) {$order}, {$wpdb->posts}.ID {$order}";
 
         // 重複を避けるためにGROUP BYを追加
         $clauses['groupby'] = "{$wpdb->posts}.ID";

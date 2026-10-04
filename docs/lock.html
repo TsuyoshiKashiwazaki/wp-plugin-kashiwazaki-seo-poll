@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投票の受付と締め切り - SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2 style="color:#fff;">SEO Poll</h2>
+            <span class="version">v1.0.7</span>
+            <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
+        </div>
+        <ul>
+            <li><a href="index.html">概要</a></li>
+            <li><a href="setup.html">導入と最初の設定</a></li>
+            <li><a href="admin-menu.html">管理メニューとタブ</a></li>
+            <li><a href="poll-list.html">データセット一覧</a></li>
+            <li><a href="create-poll.html">データセットの作成</a></li>
+            <li><a href="vote-counts.html">投票数の確認と編集</a></li>
+            <li><a href="dataset-info.html">データセット情報</a></li>
+            <li><a href="embed.html">ショートコードと掲載ページ</a></li>
+            <li><a href="lock.html">投票の受付と締め切り</a></li>
+            <li><a href="voting.html">記事での表示と投票</a></li>
+            <li><a href="chart.html">グラフとダウンロード</a></li>
+            <li><a href="datasets.html">データセットページ</a></li>
+            <li><a href="settings.html">基本設定</a></li>
+            <li><a href="maintenance.html">メンテナンス</a></li>
+            <li><a href="seo.html">構造化データとSEO</a></li>
+            <li><a href="auto-tasks.html">自動処理と権限</a></li>
+            <li><a href="faq.html">よくある質問</a></li>
+            <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+            <li><a href="glossary.html">用語集</a></li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <h1>投票の受付と締め切り</h1>
+        <p class="lead">編集画面の右列いちばん上にある「投票の受付と集計」ボックスでは、投票の受付を締め切る（ロックする）・再開する操作と、集計状況の確認、集計データの全削除ができます。締め切っている間、記事にはグラフと詳細ページへのリンクだけが表示されます。</p>
+
+        <figure class="screenshot">
+            <img src="images/screenshots/15-box-status-open.png" alt="投票の受付と集計ボックス。投票受付中のバッジ、受け付けると締め切るのラジオ、総投票数、投票者数、最終更新" class="lightbox-trigger">
+            <figcaption>図: 「投票の受付と集計」ボックス（受付中）</figcaption>
+        </figure>
+
+        <section>
+            <h2>画面の地図</h2>
+            <table>
+                <thead><tr><th>番号</th><th>表示</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>1</td><td>状態バッジ</td><td>「● 投票受付中」（緑）または「🔒 受付終了（ロック中）」。保存済みの状態を表します</td></tr>
+                    <tr><td>2</td><td>受け付ける／締め切る（ロック）</td><td>受付の切り替え。選んだ後に「更新」を押すと反映されます</td></tr>
+                    <tr><td>3</td><td>説明</td><td>「切り替えたら「更新」を押してください。ロック中は投票フォームの代わりに結果が表示され、新しい投票は受け付けません。解除すると、また投票できるようになります。」</td></tr>
+                    <tr><td>4</td><td>総投票数</td><td>全選択肢の合計（例: 6 票）</td></tr>
+                    <tr><td>5</td><td>投票者数（IP）</td><td>投票した接続元（IP アドレス）の数（例: 5 人）</td></tr>
+                    <tr><td>6</td><td>最終更新</td><td>最後に投票があった日時と、投票数を手で直した日時の新しい方。無ければ「—」</td></tr>
+                    <tr><td>7</td><td>データセットページを見る ↗</td><td>公開中のときだけ表示。詳細ページを新しいタブで開きます</td></tr>
+                    <tr><td>8</td><td>集計データを全削除する（折りたたみ）</td><td>開くと説明と削除ボタンが表示されます</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>受付を締め切る・再開する</h2>
+            <figure class="infographic">
+                <img src="images/infographics/lock-compare.png" alt="受付中は設問と選択肢と投票するボタン、受付終了は円グラフと詳細ページへのリンクだけ">
+                <figcaption>図: 受付中と受付終了で、記事の表示はこう変わります</figcaption>
+            </figure>
+            <h3>編集画面から切り替える</h3>
+            <div class="step"><div class="step-number">1</div><div class="step-content"><p>「締め切る（ロック）」を選びます（再開するときは「受け付ける」）。</p></div></div>
+            <div class="step"><div class="step-number">2</div><div class="step-content"><p>「公開」ボックスの「更新」を押します。</p></div></div>
+            <div class="step"><div class="step-number">3</div><div class="step-content"><p>状態バッジが「🔒 受付終了（ロック中）」に変われば完了です。</p></div></div>
+            <figure class="screenshot">
+                <img src="images/screenshots/25-box-status-locked.png" alt="受付終了（ロック中）のバッジと、締め切るが選ばれた状態" class="lightbox-trigger">
+                <figcaption>図: 締め切った後の表示</figcaption>
+            </figure>
+            <div class="callout callout-note">
+                <p class="callout-title">切り替えたときのメッセージ</p>
+                <p>状態が変わると、画面上部に「投票の受付を締め切りました（ロック）。」または「投票の受付を再開しました。」と表示されます。ラジオを選んだだけで「更新」を押さなければ、状態は変わりません。</p>
+            </div>
+            <h3>一覧画面から切り替える</h3>
+            <p>データセット一覧で、タイトルにマウスを載せて「受付を締め切る」または「受付を再開」を押すと、その場で切り替わります（<a href="poll-list.html">データセット一覧</a>）。確認のダイアログは出ません。</p>
+
+            <h3>締め切っている間に起きること</h3>
+            <table>
+                <thead><tr><th>場所</th><th>受付中</th><th>受付終了（ロック中）</th></tr></thead>
+                <tbody>
+                    <tr><td>記事の投票フォーム</td><td>設問・選択肢・「投票する」・「集計データを拡大」</td><td>円グラフと「このデータセットの詳細ページを見る」だけ（設問の見出し、フォーム、締め切りの文言、ダウンロードのボタンは表示しません）</td></tr>
+                    <tr><td>新しい投票</td><td>受け付ける</td><td>受け付けない</td></tr>
+                    <tr><td>締め切る前に開かれていた記事から投票した場合</td><td>—</td><td>メッセージは出さずに、グラフと詳細ページへのリンクだけの表示に切り替わります。票は増えません</td></tr>
+                    <tr><td>データセットページ</td><td>表示される</td><td>表示される（形式別ページの「投票ページ」は「受付終了（結果を見る）」になります）</td></tr>
+                    <tr><td>一覧画面の「受付」列</td><td>受付中</td><td>🔒 締切</td></tr>
+                    <tr><td>票・投票した記録</td><td colspan="2">変わりません。再開すると、まだ投票していない人は投票でき、投票済みの人は引き続き投票できません</td></tr>
+                </tbody>
+            </table>
+            <figure class="screenshot">
+                <img src="images/screenshots/44-front-locked.png" alt="受付終了中の記事の表示。円グラフと詳細ページへのリンクだけ" class="lightbox-trigger">
+                <figcaption>図: 受付終了中の記事の表示</figcaption>
+            </figure>
+            <div class="callout callout-tip">
+                <p class="callout-title">おすすめの使い方</p>
+                <p>アンケートの期間が終わったら締め切ると、結果を見せながら追加の票が入らない状態にできます。投票数を手で直す前に締め切っておくと、作業中に票が動きません。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>集計の見方</h2>
+            <table>
+                <thead><tr><th>項目</th><th>数え方</th><th>注意点</th></tr></thead>
+                <tbody>
+                    <tr><td>総投票数</td><td>いまの選択肢それぞれの票数の合計</td><td>複数選択では延べ票数のため、投票者数より多くなります</td></tr>
+                    <tr><td>投票者数（IP）</td><td>投票した接続元（IP アドレス）の数</td><td>同じ接続元からの投票は1人と数えます。基本設定の「全データセットの投票制限を解除」をしても減りません。投票数を手で直しても変わりません</td></tr>
+                    <tr><td>最終更新</td><td>最後の投票の日時と、投票数を手で直した日時の新しい方（年/月/日 時:分）</td><td>サイトのタイムゾーンで表示します</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>集計データを全削除する</h2>
+            <p>このデータセットの票と投票した記録をすべて消し、0票の状態に戻します。テスト投票をやり直すときなどに使います。</p>
+            <figure class="screenshot">
+                <img src="images/screenshots/26-box-status-reset-open.png" alt="集計データを全削除するの折りたたみを開いた状態。説明文と赤い削除ボタン" class="lightbox-trigger">
+                <figcaption>図: 折りたたみを開いた状態</figcaption>
+            </figure>
+            <p>画面の説明: 「票数と投票者の記録（IP）をすべて削除し、0票に戻します。削除後は、投票済みの人も再び投票できます。この操作は元に戻せません。」</p>
+            <div class="step"><div class="step-number">1</div><div class="step-content"><p>「集計データを全削除する」の折りたたみを開きます。</p></div></div>
+            <div class="step"><div class="step-number">2</div><div class="step-content"><p>赤い「集計データを全削除する」ボタンを押します。</p></div></div>
+            <div class="step"><div class="step-number">3</div><div class="step-content"><p>確認のダイアログ「本当にこの集計データをすべて削除してもよろしいですか？ この操作は元に戻せません。」が出ます。「OK」で削除、「キャンセル」で何もしません。</p></div></div>
+            <div class="step"><div class="step-number">4</div><div class="step-content"><p>画面上部に「集計データを全削除しました。」と出れば完了です。</p></div></div>
+            <figure class="screenshot">
+                <img src="images/screenshots/27-reset-done.png" alt="集計データを全削除しました。の通知" class="lightbox-trigger">
+                <figcaption>図: 削除が完了したときの表示</figcaption>
+            </figure>
+            <h3>削除すると起きること</h3>
+            <ul>
+                <li>すべての選択肢の票が0になり、投票した接続元の記録も消えます。</li>
+                <li>このデータセットに以前投票した人も、再び投票できるようになります。</li>
+                <li>「最終更新」は「—」に戻ります。</li>
+                <li>公開中なら、データファイル（CSV など）を0票の内容で作り直し、サイトマップも更新します。</li>
+                <li>選択肢・設問・データセット情報・受付の状態は消えません。</li>
+            </ul>
+            <div class="callout callout-warning">
+                <p class="callout-title">元に戻せません／ほかの入力も保存されます</p>
+                <p>削除した票は復元できません。必要ならデータセットページから CSV を先にダウンロードしてください。また、削除ボタンを押すと、そのとき画面で入力中のタイトル・選択肢・受付の状態なども一緒に保存されます（「投票数」欄の書き換えは無視されます）。下書きは下書きのままです。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>この画面で出るメッセージ</h2>
+            <table>
+                <thead><tr><th>メッセージ</th><th>種類</th><th>意味と対処</th></tr></thead>
+                <tbody>
+                    <tr><td>本当にこの集計データをすべて削除してもよろしいですか？ この操作は元に戻せません。</td><td>確認</td><td>削除してよければ「OK」</td></tr>
+                    <tr><td>集計データを全削除しました。</td><td><span class="status-ok">成功</span></td><td>不要</td></tr>
+                    <tr><td>集計データの削除に失敗しました。ページを再読み込みしてやり直してください。</td><td><span class="status-error">エラー</span></td><td>画面を長く開いていたなどで確認が通りませんでした。再読み込みしてやり直してください</td></tr>
+                    <tr><td>集計データを削除する権限がありません。</td><td><span class="status-error">エラー</span></td><td>このデータセットを編集できる人に依頼してください</td></tr>
+                    <tr><td>他の処理（投票など）と重なったため、集計データは削除しませんでした。少し待ってから、もう一度お試しください。</td><td><span class="status-error">エラー</span></td><td>投票などと同時だったため削除を見送りました。少し待ってからやり直してください</td></tr>
+                    <tr><td>集計データを削除できませんでした。集計データは元のままです。もう一度お試しください。</td><td><span class="status-error">エラー</span></td><td>データベースでの削除に失敗したため、元に戻しました。やり直してください</td></tr>
+                    <tr><td>集計データの削除中にエラーが発生しました。</td><td><span class="status-error">エラー</span></td><td>通常の操作では出ません。再読み込みしてやり直してください</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>よくある使い方</h2>
+            <h3>締め切った後、結果だけを見せ続けたい</h3>
+            <p>締め切ったままにしておけば、記事にはグラフと詳細ページへのリンクが表示され続けます。データセットページとダウンロードも引き続き利用できます。</p>
+            <h3>本番の告知前にテスト投票したので消したい</h3>
+            <p>「集計データを全削除する」を使います。投票数を0に書き換えるだけでは、テストで投票した自分のブラウザ・回線から再び投票できないためです。</p>
+        </section>
+
+        <nav class="page-nav">
+            <a href="embed.html" class="prev">&laquo; ショートコードと掲載ページ</a>
+            <a href="voting.html" class="next">記事での表示と投票 &raquo;</a>
+        </nav>
+
+        <footer class="manual-footer">
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.7 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+        </footer>
+    </main>
+
+    <div class="lightbox"></div>
+    <script src="js/manual.js"></script>
+</body>
+</html>

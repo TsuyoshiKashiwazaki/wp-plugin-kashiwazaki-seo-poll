@@ -126,7 +126,7 @@ function kashiwazaki_poll_wp_datasets() {
 
         // IDが存在するか確認
         $poll_post = get_post($poll_id);
-        if ($poll_post && $poll_post->post_type === 'poll' && $poll_post->post_status === 'publish') {
+        if ( kashiwazaki_poll_is_public_poll( $poll_post ) ) {
             $new_url = home_url("/datasets/{$format}/detail-{$poll_id}/");
             wp_redirect($new_url, 301);
             exit;
@@ -264,28 +264,6 @@ function kashiwazaki_poll_render_unified_pagination($current_page, $max_pages, $
     <?php
 }
 
-function kashiwazaki_poll_render_breadcrumbs($breadcrumbs, $current_theme) {
-    if (empty($breadcrumbs)) return;
-    ?>
-    <nav class="breadcrumbs" aria-label="パンくずナビゲーション">
-        <ol class="breadcrumb-list">
-            <?php foreach ($breadcrumbs as $index => $crumb): ?>
-                <li class="breadcrumb-item">
-                    <?php if (!empty($crumb['url']) && $index < count($breadcrumbs) - 1): ?>
-                        <a href="<?php echo esc_url($crumb['url']); ?>"><?php echo esc_html($crumb['name']); ?></a>
-                    <?php else: ?>
-                        <span><?php echo esc_html($crumb['name']); ?></span>
-                    <?php endif; ?>
-                    <?php if ($index < count($breadcrumbs) - 1): ?>
-                        <span class="breadcrumb-separator">&gt;</span>
-                    <?php endif; ?>
-                </li>
-            <?php endforeach; ?>
-        </ol>
-    </nav>
-    <?php
-}
-
 function kashiwazaki_poll_output_breadcrumb_structured_data($breadcrumbs) {
     if (empty($breadcrumbs)) return;
 
@@ -371,11 +349,7 @@ function kashiwazaki_poll_output_google_datasets_meta($page_type, $data = null) 
         echo '<meta name="DC.subject" content="' . esc_attr($format_name . ',集計結果,' . $data['poll_title']) . '">' . "\n";
         echo '<meta name="DC.format" content="' . esc_attr(strtolower($data['file_type'])) . '">' . "\n";
         // 最新投票時刻を取得
-        $voted_ips = get_post_meta($data['poll_id'], '_kashiwazaki_poll_voted_ips', true);
-        $last_vote_time = 0;
-        if (is_array($voted_ips) && !empty($voted_ips)) {
-            $last_vote_time = max($voted_ips);
-        }
+        $last_vote_time = kashiwazaki_poll_get_last_updated_time( $data['poll_id'] );
         $meta_date = $last_vote_time > 0 ? $last_vote_time : $data['file_mtime'];
         echo '<meta name="DC.date" content="' . esc_attr(wp_date('Y-m-d', $meta_date)) . '">' . "\n";
         echo '<meta name="DC.extent" content="' . esc_attr($data['total_votes'] . ' votes') . '">' . "\n";
@@ -408,17 +382,13 @@ function kashiwazaki_poll_output_google_dataset_search_meta($data) {
     // 引用情報
     $creator_name = !empty($settings['creator_organization_name']) ? $settings['creator_organization_name'] : get_bloginfo('name');
     // 最新投票時刻を取得してcitationで使用
-    $voted_ips = get_post_meta($data['poll_id'], '_kashiwazaki_poll_voted_ips', true);
-    $last_vote_time = 0;
-    if (is_array($voted_ips) && !empty($voted_ips)) {
-        $last_vote_time = max($voted_ips);
-    }
+    $last_vote_time = kashiwazaki_poll_get_last_updated_time( $data['poll_id'] );
     $citation_date = $last_vote_time > 0 ? $last_vote_time : $data['file_mtime'];
     $citation = $creator_name . ' (' . wp_date('Y', $citation_date) . '). ' . $data['poll_title'] . '. ' . get_bloginfo('name') . '.';
     echo '<meta itemprop="citation" content="' . esc_attr($citation) . '">' . "\n";
 
             // キーワード（個別アンケート投稿のカスタムキーワードがある場合のみ出力）
-    $poll_keywords = get_post_meta($data['poll_id'], 'dataset_keywords', true);
+    $poll_keywords = kashiwazaki_poll_decode_stored_text( get_post_meta( $data['poll_id'], 'dataset_keywords', true ) );
     if (!empty($poll_keywords)) {
         $custom_keywords = array_map('trim', explode(',', $poll_keywords));
         $keywords = array_unique($custom_keywords);
@@ -452,458 +422,26 @@ function kashiwazaki_poll_output_google_dataset_search_meta($data) {
     echo '<meta itemprop="datePublished" content="' . esc_attr($poll_date) . '">' . "\n";
 
     // 更新日（最新投票時刻を使用）
-    $voted_ips = get_post_meta($data['poll_id'], '_kashiwazaki_poll_voted_ips', true);
-    $last_vote_time = 0;
-    if (is_array($voted_ips) && !empty($voted_ips)) {
-        $last_vote_time = max($voted_ips);
-    }
+    $last_vote_time = kashiwazaki_poll_get_last_updated_time( $data['poll_id'] );
     $modified_date = $last_vote_time > 0 ? $last_vote_time : $data['file_mtime'];
     echo '<meta itemprop="dateModified" content="' . esc_attr(wp_date('Y-m-d', $modified_date)) . '">' . "\n";
 
     // バージョン
-    $version = get_post_meta($data['poll_id'], 'dataset_version', true);
+    $version = kashiwazaki_poll_decode_stored_text( get_post_meta( $data['poll_id'], 'dataset_version', true ) );
     if (empty($version)) {
         $version = '1.0';
     }
     echo '<meta itemprop="version" content="' . esc_attr($version) . '">' . "\n";
 }
 
-function kashiwazaki_poll_render_dataset_header($current_theme, $page_title = '') {
-    ?>
-<div class="site-wrapper">
-    <header class="site-header">
-        <div class="container">
-            <div class="header-content">
-                <div class="site-branding">
-                    <?php
-                    if (function_exists('backbone_display_custom_logo')) {
-                        $logo_displayed = backbone_display_custom_logo();
-                        if (!$logo_displayed) {
-                            $logo_settings = function_exists('backbone_get_subdirectory_logo_settings') ? backbone_get_subdirectory_logo_settings() : array('home_url' => home_url('/'));
-                            ?>
-                            <h1 class="site-title">
-                                <a href="<?php echo esc_url($logo_settings['home_url']); ?>" rel="home">
-                                    <?php echo esc_html(function_exists('backbone_get_site_title') ? backbone_get_site_title() : get_bloginfo('name')); ?>
-                                </a>
-                            </h1>
-                            <?php
-                        }
-                    } else {
-                        if (has_custom_logo()) {
-                            the_custom_logo();
-                        } else {
-                            ?>
-                            <h1 class="site-title">
-                                <a href="<?php echo esc_url(home_url('/')); ?>" rel="home">
-                                    <?php echo esc_html(get_bloginfo('name')); ?>
-                                </a>
-                            </h1>
-                            <?php
-                        }
-                    }
-                    ?>
-
-                    <?php
-                    if (function_exists('backbone_get_header_message')) {
-                        $header_message = backbone_get_header_message();
-                        if ($header_message) :
-                        ?>
-                            <p class="site-description"><?php echo wp_kses_post($header_message); ?></p>
-                        <?php else : ?>
-                            <?php
-                            $description = function_exists('backbone_get_tagline') ? backbone_get_tagline() : get_bloginfo('description', 'display');
-                            if ($description || is_customize_preview()) :
-                            ?>
-                                <p class="site-description"><?php echo esc_html($description); ?></p>
-                            <?php endif; ?>
-                        <?php endif;
-                    } else {
-                        $header_message = get_theme_mod('header_message');
-                        if ($header_message) :
-                        ?>
-                            <p class="site-description"><?php echo esc_html($header_message); ?></p>
-                        <?php else : ?>
-                            <?php
-                            $description = get_bloginfo('description', 'display');
-                            if ($description || is_customize_preview()) :
-                            ?>
-                                <p class="site-description"><?php echo $description; ?></p>
-                            <?php endif; ?>
-                        <?php endif;
-                    }
-                    ?>
-                </div>
-
-                <nav class="main-navigation" role="navigation" aria-label="<?php esc_attr_e('メインメニュー', 'backbone-seo-llmo'); ?>">
-                    <?php
-                    $menu_items = wp_nav_menu(array(
-                        'theme_location' => 'primary',
-                        'menu_id'        => 'primary-menu',
-                        'container'      => false,
-                        'fallback_cb'    => 'backbone_fallback_menu',
-                        'echo'           => false,
-                    ));
-                    
-                    if (get_theme_mod('search_button_enabled', true)) {
-                        $search_button = '<li class="menu-item menu-item-search menu-item-depth-0">
-                            <button class="search-toggle" aria-label="検索を開く" aria-expanded="false">
-                                <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-                                </svg>
-                            </button>
-                        </li>';
-                        
-                        if ($menu_items) {
-                            $menu_items = str_replace('</ul>', $search_button . '</ul>', $menu_items);
-                        }
-                    }
-                    
-                    echo $menu_items;
-                    ?>
-                </nav>
-            </div>
-        </div>
-    </header>
-
-    <?php if (get_theme_mod('search_button_enabled', true)) : ?>
-        <div class="search-popup-overlay" aria-hidden="true">
-            <div class="search-popup-container" role="dialog" aria-modal="true" aria-labelledby="search-popup-title">
-                <div class="search-popup-header">
-                    <h2 id="search-popup-title" class="search-popup-title">サイト内検索</h2>
-                    <button class="search-popup-close" aria-label="検索を閉じる">&times;</button>
-                </div>
-                <form class="search-popup-form" role="search" method="get" action="<?php echo esc_url(home_url('/')); ?>">
-                    <input type="search" 
-                           class="search-popup-input" 
-                           name="s" 
-                           placeholder="検索キーワードを入力..." 
-                           aria-label="検索キーワード"
-                           autocomplete="off">
-                    <button type="submit" class="search-popup-submit" aria-label="検索実行">
-                        <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-                        </svg>
-                    </button>
-                </form>
-            </div>
-        </div>
-    <?php endif; ?>
-
-    <main>
-    <?php
-}
 
 
-
-
-function kashiwazaki_poll_render_simple_footer($current_theme) {
-    $site_name = get_bloginfo('name');
-    $site_description = get_bloginfo('description');
-    $current_year = date('Y');
-    ?>
-    <footer class="dataset-footer">
-        <div class="footer-container">
-            <p class="copyright">&copy; <?php echo $current_year; ?> <?php echo esc_html($site_name); ?></p>
-            <?php if (!empty($site_description)): ?>
-                <p class="site-description"><?php echo esc_html($site_description); ?></p>
-            <?php endif; ?>
-        </div>
-    </footer>
-    <?php
-}
-
-function kashiwazaki_poll_get_header_footer_styles($current_theme) {
-    return "
-    .dataset-header {
-        background: " . $current_theme['header_bg'] . ";
-        color: " . $current_theme['header_color'] . ";
-        padding: 1rem 0;
-        margin-bottom: 2rem;
-        border-bottom: 3px solid " . $current_theme['accent_color'] . ";
-    }
-    .header-container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 0 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-    .site-branding h1 {
-        margin: 0;
-        font-size: 1.5rem;
-    }
-    .site-branding h1 a {
-        color: " . $current_theme['header_color'] . ";
-        text-decoration: none;
-    }
-    .site-branding h1 a:hover {
-        text-decoration: underline;
-    }
-    .site-description {
-        margin: 0.25rem 0 0 0;
-        font-size: 0.9rem;
-        opacity: 0.8;
-    }
-    .header-nav {
-        display: flex;
-        gap: 1rem;
-    }
-    .nav-link {
-        color: " . $current_theme['header_color'] . ";
-        text-decoration: none;
-        padding: 0.5rem 1rem;
-        border: 1px solid " . $current_theme['header_color'] . ";
-        border-radius: 4px;
-        transition: all 0.2s ease;
-        }
-    .nav-link:hover {
-        background: " . $current_theme['header_color'] . ";
-        color: " . $current_theme['header_bg'] . ";
-    }
-
-    .breadcrumbs {
-        background: " . ($current_theme['body_bg'] === '#2c3e50' ? '#34495e' : '#f8f9fa') . ";
-        padding: 0.75rem 0;
-        border-bottom: 1px solid " . ($current_theme['body_bg'] === '#2c3e50' ? '#3498db' : '#dee2e6') . ";
-    }
-    .breadcrumb-list {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 0 20px;
-        list-style: none;
-        margin-bottom: 0;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-    }
-    .breadcrumb-item {
-        display: flex;
-        align-items: center;
-        font-size: 0.9rem;
-    }
-    .breadcrumb-item a {
-        color: " . $current_theme['accent_color'] . ";
-        text-decoration: none;
-        transition: color 0.2s ease;
-    }
-    .breadcrumb-item a:hover {
-        color: " . $current_theme['button_primary'] . ";
-        text-decoration: underline;
-    }
-    .breadcrumb-item span:not(.breadcrumb-separator) {
-        color: " . $current_theme['body_color'] . ";
-        font-weight: 500;
-    }
-    .breadcrumb-separator {
-        margin: 0 0.5rem;
-        color: " . ($current_theme['body_bg'] === '#2c3e50' ? '#95a5a6' : '#6c757d') . ";
-    }
-
-    .datasets-pagination {
-        margin: 2rem 0;
-        padding: 1rem 0;
-        border-top: 1px solid " . ($current_theme['body_bg'] === '#2c3e50' ? '#34495e' : '#dee2e6') . ";
-    }
-    .pagination-container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 0 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-    .pagination-numbers {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    .pagination-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.25rem;
-        padding: 0.5rem 0.75rem;
-        min-width: 2.5rem;
-        height: 2.5rem;
-        background: " . $current_theme['button_secondary'] . ";
-        color: " . $current_theme['body_color'] . ";
-        text-decoration: none;
-        border-radius: 4px;
-        font-size: 0.9rem;
-        transition: all 0.2s ease;
-        border: 1px solid " . ($current_theme['body_bg'] === '#2c3e50' ? '#34495e' : '#dee2e6') . ";
-        justify-content: center;
-    }
-    .pagination-link:hover {
-        background: " . $current_theme['accent_color'] . ";
-        color: white;
-        border-color: " . $current_theme['accent_color'] . ";
-    }
-    .pagination-current {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.5rem 0.75rem;
-        min-width: 2.5rem;
-        height: 2.5rem;
-        background: " . $current_theme['accent_color'] . ";
-        color: white;
-        border-radius: 4px;
-        font-size: 0.9rem;
-        font-weight: 600;
-    }
-    .pagination-ellipsis {
-        padding: 0.5rem 0.25rem;
-        color: " . ($current_theme['body_bg'] === '#2c3e50' ? '#95a5a6' : '#6c757d') . ";
-    }
-    .pagination-prev,
-    .pagination-next {
-        font-weight: 500;
-        padding: 0.5rem 1rem;
-        min-width: auto;
-    }
-
-    .dataset-footer {
-        background: " . ($current_theme['body_bg'] === '#2c3e50' ? '#34495e' : '#f8f9fa') . ";
-        color: " . $current_theme['body_color'] . ";
-        padding: 1.5rem 0;
-        margin-top: 3rem;
-        border-top: 1px solid " . ($current_theme['body_bg'] === '#2c3e50' ? '#3498db' : '#dee2e6') . ";
-        text-align: center;
-    }
-    .footer-container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 0 20px;
-    }
-    .footer-container .copyright {
-        margin: 0 0 0.5rem 0;
-        font-weight: 500;
-    }
-    .footer-container .site-description {
-        margin: 0;
-        font-size: 0.9rem;
-        opacity: 0.8;
-    }
-
-    @media (max-width: 600px) {
-        .header-container {
-            flex-direction: column;
-            text-align: center;
-        }
-        .breadcrumb-list {
-            font-size: 0.8rem;
-        }
-        .breadcrumb-separator {
-            margin: 0 0.3rem;
-        }
-        .pagination-container {
-            flex-direction: column;
-            text-align: center;
-        }
-        .pagination-numbers {
-            order: 2;
-        }
-        .pagination-prev {
-            order: 1;
-        }
-        .pagination-next {
-            order: 3;
-        }
-        .pagination-link,
-        .pagination-current {
-            font-size: 0.8rem;
-            min-width: 2rem;
-            height: 2rem;
-            padding: 0.25rem 0.5rem;
-        }
-    }
-    ";
-}
-
-function kashiwazaki_poll_remove_conflicting_breadcrumbs() {
-    // Site Kit by GoogleやYoast SEOなどのパンくず構造化データを削除
-    remove_action('wp_head', 'googlesitekit_output_structured_data', 10);
-    remove_action('wp_head', 'wpseo_frontend_head_init', 1);
-
-    // Site Kitのstructured dataフィルターを無効化
-    add_filter('googlesitekit_disable_structured_data', '__return_true');
-    add_filter('googlesitekit_structured_data_disable', '__return_true');
-    add_filter('googlesitekit_breadcrumbs_disabled', '__return_true');
-
-    // Site Kit の JSON-LD 出力を無効化
-    add_filter('googlesitekit_structured_data_output', function($data) {
-        if (isset($data['@type']) && $data['@type'] === 'BreadcrumbList') {
-            return false;
-        }
-        return $data;
-    }, 10, 1);
-
-    // Site Kit の全構造化データ出力を無効化（データセットページのみ）
-    add_filter('pre_get_option_googlesitekit_search-console_settings', function($value) {
-        if (is_array($value)) {
-            $value['enhancedMeasurement'] = false;
-        }
-        return $value;
-    });
-
-    // その他のSEOプラグインのBreadcrumbList出力を無効化
-    add_filter('rank_math/frontend/remove_breadcrumbs', '__return_true');
-    add_filter('wpseo_breadcrumb_output', '__return_false');
-
-    // より具体的なアクションのみを削除（wp_head全体ではなく）
-    remove_action('wp_head', 'wp_generator');
-    remove_action('wp_head', 'wlwmanifest_link');
-    remove_action('wp_head', 'rsd_link');
-    remove_action('wp_head', 'wp_shortlink_wp_head');
-
-    // Yoast SEOの特定の構造化データのみ無効化
-    add_filter('wpseo_json_ld_output', function($data, $context) {
-        if (isset($data['@type']) && $data['@type'] === 'BreadcrumbList') {
-            return false;
-        }
-        return $data;
-    }, 10, 2);
-
-    // Rank Mathの特定の構造化データのみ無効化
-    add_filter('rank_math/json_ld', function($data, $jsonld) {
-        if (isset($data['@type']) && $data['@type'] === 'BreadcrumbList') {
-            return false;
-        }
-        return $data;
-    }, 10, 2);
-
-    // より強力なSite Kit無効化
-    add_filter('googlesitekit_inline_modules_data', function($data) {
-        if (isset($data['search-console'])) {
-            unset($data['search-console']);
-        }
-        return $data;
-    });
-
-    // wp_head の最後で Site Kit の出力を削除
-    add_action('wp_head', function() {
-        ob_start();
-    }, 1);
-
-    add_action('wp_head', function() {
-        $output = ob_get_clean();
-        // Site Kit のBreadcrumbList JSON-LDを削除
-        $output = preg_replace('/<script[^>]*type=["\']application\/ld\+json["\'][^>]*>.*?"@type":\s*"BreadcrumbList".*?<\/script>/s', '', $output);
-        echo $output;
-    }, 999);
-}
 
 function kashiwazaki_poll_get_shortcode_usage($poll_id, $include_unpublished = false) {
     // 1時間キャッシュを確認（キャッシュ時間を短縮）。公開/全件でキャッシュキーを分け、
     // 公開側に未公開投稿が混ざらないようにする。
-    $cache_key = 'poll_shortcode_usage_' . $poll_id . ( $include_unpublished ? '_all' : '_pub' );
+    // 公開側のキーは、一般公開されていない投稿タイプを除くようにした版で作り直す（古いキャッシュを使わない）。
+    $cache_key = 'poll_shortcode_usage_' . $poll_id . ( $include_unpublished ? '_all' : '_pubv' );
     $cached_result = get_transient($cache_key);
 
     if ($cached_result !== false) {
@@ -915,6 +453,15 @@ function kashiwazaki_poll_get_shortcode_usage($poll_id, $include_unpublished = f
     // pollとrevisionは除外
     $excluded_types = array('revision', 'nav_menu_item', 'attachment', 'poll');
     $all_post_types = array_diff($all_post_types, $excluded_types);
+    // 公開側の表示では、訪問者が見られる投稿タイプだけを対象にする（パターン（wp_block）や非公開の
+    // カスタム投稿タイプの内部タイトルを、データセットページの「掲載中のページ」に出さない）。
+    if ( ! $include_unpublished ) {
+        $all_post_types = array_filter( $all_post_types, 'is_post_type_viewable' );
+        if ( empty( $all_post_types ) ) {
+            set_transient( $cache_key, array(), HOUR_IN_SECONDS );
+            return array();
+        }
+    }
 
     global $wpdb;
 
@@ -963,7 +510,9 @@ function kashiwazaki_poll_get_shortcode_usage($poll_id, $include_unpublished = f
 
         // WordPressのショートコード処理と同様のロジックを使用
         // do_shortcode関数の内部処理を参考にした、より精密なマッチング
-        $shortcode_regex = '/\[tk_poll\b[^\]]*\bid\s*=\s*(?:["\']?' . preg_quote($poll_id, '/') . '["\']?)[^\]]*\]/i';
+        // id は完全一致で比べる（id="12" の検索で id="123" に一致しないように）。
+        $quoted_id = preg_quote( (string) intval( $poll_id ), '/' );
+        $shortcode_regex = '/\[tk_poll\b[^\]]*(?<![\w-])id\s*=\s*(?:"' . $quoted_id . '"|\'' . $quoted_id . '\'|' . $quoted_id . '(?![0-9]))[^\]]*\]/i';
 
         $matches = array();
         $count = preg_match_all($shortcode_regex, $content, $matches);
@@ -984,7 +533,8 @@ function kashiwazaki_poll_get_shortcode_usage($poll_id, $include_unpublished = f
 function kashiwazaki_poll_clear_usage_cache($poll_id = null) {
     if ($poll_id) {
         // 特定のアンケートのキャッシュをクリア（公開/全件の両キー）
-        delete_transient('poll_shortcode_usage_' . $poll_id . '_pub');
+        delete_transient('poll_shortcode_usage_' . $poll_id . '_pubv');
+        delete_transient('poll_shortcode_usage_' . $poll_id . '_pub'); // 旧キー
         delete_transient('poll_shortcode_usage_' . $poll_id . '_all');
         delete_transient('poll_shortcode_usage_' . $poll_id); // 旧キー互換
     } else {
@@ -1003,7 +553,7 @@ function kashiwazaki_poll_handle_cache_clear() {
         isset($_GET['action']) && $_GET['action'] === 'edit' && current_user_can('edit_posts')) {
 
         $poll_id = intval($_GET['clear_poll_usage_cache']);
-        if (!wp_verify_nonce($_GET['_wpnonce'], 'clear_poll_usage_cache_' . $poll_id)) {
+        if (!wp_verify_nonce(isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '', 'clear_poll_usage_cache_' . $poll_id)) {
             wp_die('セキュリティチェックに失敗しました。');
         }
 
@@ -1017,7 +567,7 @@ function kashiwazaki_poll_handle_cache_clear() {
     if (isset($_GET['action']) && $_GET['action'] === 'clear_poll_usage_cache' &&
         isset($_GET['poll_id']) && current_user_can('manage_options')) {
 
-        if (!wp_verify_nonce($_GET['_wpnonce'], 'clear_poll_usage_cache_' . $_GET['poll_id'])) {
+        if (!wp_verify_nonce(isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '', 'clear_poll_usage_cache_' . $_GET['poll_id'])) {
             wp_die('セキュリティチェックに失敗しました。');
         }
 
@@ -1039,7 +589,7 @@ function kashiwazaki_poll_handle_cache_clear() {
     if (isset($_GET['action']) && $_GET['action'] === 'clear_all_poll_usage_cache' &&
         current_user_can('manage_options')) {
 
-        if (!wp_verify_nonce($_GET['_wpnonce'], 'clear_all_poll_usage_cache')) {
+        if (!wp_verify_nonce(isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '', 'clear_all_poll_usage_cache')) {
             wp_die('セキュリティチェックに失敗しました。');
         }
 
@@ -1283,6 +833,7 @@ function kashiwazaki_poll_render_format_listing_page($format_type) {
     $all_polls = get_posts(array(
         'post_type'      => 'poll',
         'post_status'    => 'publish',
+        'has_password'   => false, // パスワード保護されたデータセットは載せない
         'numberposts'    => -1, // 全投稿を取得
         'orderby'        => 'ID',
         'order'          => 'ASC',
@@ -1298,18 +849,8 @@ function kashiwazaki_poll_render_format_listing_page($format_type) {
 
     // 最新投票時刻順にソート
     usort($all_polls, function($a, $b) {
-        $voted_ips_a = get_post_meta($a->ID, '_kashiwazaki_poll_voted_ips', true);
-        $voted_ips_b = get_post_meta($b->ID, '_kashiwazaki_poll_voted_ips', true);
-
-        $last_vote_a = 0;
-        if (is_array($voted_ips_a) && !empty($voted_ips_a)) {
-            $last_vote_a = max($voted_ips_a);
-        }
-
-        $last_vote_b = 0;
-        if (is_array($voted_ips_b) && !empty($voted_ips_b)) {
-            $last_vote_b = max($voted_ips_b);
-        }
+        $last_vote_a = kashiwazaki_poll_get_last_updated_time( $a->ID );
+        $last_vote_b = kashiwazaki_poll_get_last_updated_time( $b->ID );
 
         // 降順（最新順）
         return $last_vote_b - $last_vote_a;
@@ -1378,7 +919,7 @@ function kashiwazaki_poll_render_format_listing_page($format_type) {
                     <?php foreach ( $polls as $poll ) :
                         $poll_id = $poll->ID;
                         $poll_title = $poll->post_title;
-                        $poll_description = get_post_meta( $poll_id, '_kashiwazaki_poll_description', true );
+                        $poll_description = kashiwazaki_poll_decode_stored_text( get_post_meta( $poll_id, '_kashiwazaki_poll_description', true ) );
 
                         // 該当フォーマットのファイルが存在するかチェック
                         $file_path = kashiwazaki_poll_get_dataset_file_path($poll_id, $format_type);
@@ -1391,11 +932,7 @@ function kashiwazaki_poll_render_format_listing_page($format_type) {
                                 <h2><?php echo esc_html( $poll_title ); ?></h2>
                                 <?php
                                 // 最終更新日（最新投票時刻）を取得
-                                $voted_ips = get_post_meta($poll_id, '_kashiwazaki_poll_voted_ips', true);
-                                $last_vote_time = 0;
-                                if (is_array($voted_ips) && !empty($voted_ips)) {
-                                    $last_vote_time = max($voted_ips);
-                                }
+                                $last_vote_time = kashiwazaki_poll_get_last_updated_time( $poll_id );
                                 ?>
                                 <?php if ($last_vote_time > 0): ?>
                                     <span class="last-updated-tag">最終更新: <?php echo wp_date('Y/m/d H:i', $last_vote_time); ?></span>
@@ -1462,6 +999,7 @@ function kashiwazaki_poll_render_datasets_index_page() {
     $all_polls = get_posts(array(
         'post_type'      => 'poll',
         'post_status'    => 'publish',
+        'has_password'   => false, // パスワード保護されたデータセットは載せない
         'numberposts'    => -1,
         'orderby'        => 'ID',
         'order'          => 'ASC',
@@ -1469,18 +1007,8 @@ function kashiwazaki_poll_render_datasets_index_page() {
 
     // 最新投票時刻順にソート
     usort($all_polls, function($a, $b) {
-        $voted_ips_a = get_post_meta($a->ID, '_kashiwazaki_poll_voted_ips', true);
-        $voted_ips_b = get_post_meta($b->ID, '_kashiwazaki_poll_voted_ips', true);
-
-        $last_vote_a = 0;
-        if (is_array($voted_ips_a) && !empty($voted_ips_a)) {
-            $last_vote_a = max($voted_ips_a);
-        }
-
-        $last_vote_b = 0;
-        if (is_array($voted_ips_b) && !empty($voted_ips_b)) {
-            $last_vote_b = max($voted_ips_b);
-        }
+        $last_vote_a = kashiwazaki_poll_get_last_updated_time( $a->ID );
+        $last_vote_b = kashiwazaki_poll_get_last_updated_time( $b->ID );
 
         return $last_vote_b - $last_vote_a;
     });
@@ -1549,17 +1077,13 @@ function kashiwazaki_poll_render_datasets_index_page() {
                     <?php foreach ( $polls as $poll ) :
                         $poll_title = esc_html( $poll->post_title );
                         $poll_id = $poll->ID;
-                        $poll_description = get_post_meta( $poll_id, '_kashiwazaki_poll_description', true );
+                        $poll_description = kashiwazaki_poll_decode_stored_text( get_post_meta( $poll_id, '_kashiwazaki_poll_description', true ) );
                     ?>
                         <div class="poll-item dataset-poll-card">
                             <div class="poll-header">
                                 <h2><a href="<?php echo esc_url( get_permalink($poll_id) ); ?>"><?php echo $poll_title; ?></a></h2>
                                 <?php
-                                $voted_ips = get_post_meta($poll_id, '_kashiwazaki_poll_voted_ips', true);
-                                $last_vote_time = 0;
-                                if (is_array($voted_ips) && !empty($voted_ips)) {
-                                    $last_vote_time = max($voted_ips);
-                                }
+                                $last_vote_time = kashiwazaki_poll_get_last_updated_time( $poll_id );
                                 ?>
                                 <?php if ($last_vote_time > 0): ?>
                                     <span class="last-updated-tag meta-badge date-badge">最終更新: <?php echo wp_date('Y/m/d H:i', $last_vote_time); ?></span>
@@ -1659,6 +1183,25 @@ function kashiwazaki_poll_render_datasets_index_page() {
         </div>
     </article>
 
+    <?php
+    // 基本設定の「カラーテーマ」を一覧ページにも効かせる（下のスタイルが使う色をここで決める）。
+    $index_theme = kashiwazaki_poll_get_color_theme();
+    $index_colors = $index_theme['colors'];
+    $index_is_dark = ( 'dark' === $index_theme['name'] );
+    ?>
+    <style>
+    .datasets-archive-page {
+        --border-color: <?php echo esc_html( $index_colors['border_color'] ); ?>;
+        --card-background: <?php echo esc_html( $index_colors['body_bg'] ); ?>;
+        --link-color: <?php echo esc_html( $index_colors['link_color'] ); ?>;
+        --link-hover-color: <?php echo esc_html( $index_colors['accent_color'] ); ?>;
+        --text-color: <?php echo esc_html( $index_colors['body_color'] ); ?>;
+        --text-color-secondary: <?php echo $index_is_dark ? '#bdc3c7' : '#666666'; ?>;
+        --button-background: <?php echo esc_html( $index_colors['button_secondary'] ); ?>;
+        --button-hover-background: <?php echo esc_html( $index_colors['border_color'] ); ?>;
+        --text-on-accent: #ffffff;
+    }
+    </style>
     <style>
     /* データセット一覧ページ専用スタイル */
     .dataset-polls-grid {
@@ -1966,12 +1509,22 @@ function kashiwazaki_poll_get_single_dataset_structured_data( $poll_id, $file_ty
         return [];
     }
 
-    $question = $poll_post->post_title;
-    $poll_description = get_post_meta( $poll_id, '_kashiwazaki_poll_description', true );
+    $question = kashiwazaki_poll_decode_stored_text( $poll_post->post_title );
+    $poll_description = kashiwazaki_poll_decode_stored_text( get_post_meta( $poll_id, '_kashiwazaki_poll_description', true ) );
     $description_plain = strip_tags( $poll_description );
     $datePublished = get_the_date( 'c', $poll_post );
 
-    $last_updated_time = file_exists(kashiwazaki_poll_get_dataset_file_path($poll_id, $file_type)) ? filemtime(kashiwazaki_poll_get_dataset_file_path($poll_id, $file_type)) : time();
+    // 形式別ページはそのファイルの更新時刻、詳細ページ（html）は集計の最終更新（最後の投票・投票数の編集）を使う。
+    // どちらも無いときはデータセットの更新日時。ページを開いた時刻は使わない。
+    $dataset_file_path = kashiwazaki_poll_get_dataset_file_path( $poll_id, $file_type );
+    if ( $dataset_file_path && file_exists( $dataset_file_path ) ) {
+        $last_updated_time = filemtime( $dataset_file_path );
+    } else {
+        $last_updated_time = kashiwazaki_poll_get_last_updated_time( $poll_id );
+        if ( ! $last_updated_time ) {
+            $last_updated_time = (int) get_post_modified_time( 'U', true, $poll_post );
+        }
+    }
     $dateModified = wp_date( 'c', $last_updated_time );
 
     // 調査期間を取得
@@ -1995,7 +1548,7 @@ function kashiwazaki_poll_get_single_dataset_structured_data( $poll_id, $file_ty
         'creator_person_url' => '',
         'creator_organization_name' => get_bloginfo('name'),
         'creator_organization_url' => home_url(),
-        'creator_organization_email' => get_bloginfo('admin_email')
+        'creator_organization_email' => ''
     ) );
 
     $creator_info = [];
@@ -2014,21 +1567,10 @@ function kashiwazaki_poll_get_single_dataset_structured_data( $poll_id, $file_ty
     if ( $plugin_settings['creator_type'] === 'organization_only' || $plugin_settings['creator_type'] === 'both' ) {
         $org_name = !empty($plugin_settings['creator_organization_name']) ? $plugin_settings['creator_organization_name'] : $site_organization_name;
         $org_url = !empty($plugin_settings['creator_organization_url']) ? $plugin_settings['creator_organization_url'] : $site_organization_url;
-        $org_email = !empty($plugin_settings['creator_organization_email']) ? $plugin_settings['creator_organization_email'] : $site_admin_email;
-
-        $creator_info[] = [
-            "@type" => "Organization",
-            "name" => $org_name,
-            "url" => $org_url,
-            "contactPoint" => [
-                "@type" => "ContactPoint",
-                "contactType" => "customer service",
-                "email" => $org_email
-            ]
-        ];
+        $creator_info[] = kashiwazaki_poll_ld_organization_creator( $org_name, $org_url );
     }
 
-    $options_data = get_post_meta( $poll_id, '_kashiwazaki_poll_options', true );
+    $options_data = kashiwazaki_poll_get_display_options( $poll_id );
     $current_counts = get_post_meta( $poll_id, '_kashiwazaki_poll_counts', true );
     if ( ! is_array( $options_data ) ) { $options_data = []; }
     if ( ! is_array( $current_counts ) ) { $current_counts = array_fill( 0, count( $options_data ), 0 ); }
@@ -2047,7 +1589,7 @@ function kashiwazaki_poll_get_single_dataset_structured_data( $poll_id, $file_ty
 
     $keywords = [];
     // 個別に設定されたキーワードのみ使用
-    $poll_keywords = get_post_meta($poll_id, 'dataset_keywords', true);
+    $poll_keywords = kashiwazaki_poll_decode_stored_text( get_post_meta( $poll_id, 'dataset_keywords', true ) );
     if (!empty($poll_keywords)) {
         $custom_keywords = array_map('trim', explode(',', $poll_keywords));
         $keywords = array_filter($custom_keywords, function($keyword) {
@@ -2092,12 +1634,7 @@ function kashiwazaki_poll_get_single_dataset_structured_data( $poll_id, $file_ty
         }
     }
 
-    $publisher_info = [
-        "@type" => "Organization",
-        "name" => $site_organization_name,
-        "url" => $site_organization_url,
-        "email" => $site_admin_email
-    ];
+    $publisher_info = kashiwazaki_poll_ld_publisher();
 
     $structured_data = [
         "@context" => "https://schema.org/",
@@ -2118,7 +1655,7 @@ function kashiwazaki_poll_get_single_dataset_structured_data( $poll_id, $file_ty
         } )(),
         "temporalCoverage" => $survey_period_start && $survey_period_end ? $survey_period_start . "/" . $survey_period_end : $datePublished . "/" . $dateModified,
         "measurementTechnique" => "Survey polling",
-        "version" => "1.0",
+        "version" => ( '' !== (string) kashiwazaki_poll_decode_stored_text( get_post_meta( $poll_id, 'dataset_version', true ) ) ) ? (string) kashiwazaki_poll_decode_stored_text( get_post_meta( $poll_id, 'dataset_version', true ) ) : '1.0',
         "includedInDataCatalog" => [
             "@type" => "DataCatalog",
             "name" => $site_organization_name . ' 調査データカタログ',
@@ -2167,33 +1704,30 @@ function kashiwazaki_poll_output_datasets_head_meta() {
     ?>
 
     <!-- 構造化データ：データカタログ -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org/",
-        "@type": "DataCatalog",
-        "name": "<?php echo esc_js(get_bloginfo('name')); ?> 集計データカタログ",
-        "description": "当サイトで公開している調査の集計データを一覧で閲覧できます。各データセットはCSV、XML、YAML、JSON、SVG形式で提供されています。",
-        "url": "<?php echo esc_url( kashiwazaki_poll_get_dataset_index_url() ); ?>",
-        "publisher": {
-            "@type": "Organization",
-            "name": "<?php echo esc_js(get_bloginfo('name')); ?>",
-            "url": "<?php echo esc_url(home_url()); ?>",
-            "email": "<?php echo esc_js(get_bloginfo('admin_email')); ?>"
-        },
-        "license": "https://creativecommons.org/licenses/by/4.0/",
-        "dateModified": "<?php echo esc_js(date('c')); ?>",
-        "isAccessibleForFree": true,
-        "inLanguage": "<?php echo esc_js(get_locale()); ?>"
-    }
-    </script>
     <?php
+    // 手で JSON を組み立てると引用符などで壊れるため、配列から wp_json_encode で出力する。
+    // 更新日時はページを開いた時刻ではなく、データセットの最終更新日時を使う。
+    $catalog_last_modified = get_lastpostmodified( 'gmt', 'poll' );
+    $catalog = array(
+        '@context'            => 'https://schema.org/',
+        '@type'               => 'DataCatalog',
+        'name'                => get_bloginfo( 'name' ) . ' 集計データカタログ',
+        'description'         => '当サイトで公開している調査の集計データを一覧で閲覧できます。各データセットはCSV、XML、YAML、JSON、SVG形式で提供されています。',
+        'url'                 => kashiwazaki_poll_get_dataset_index_url(),
+        'publisher'           => kashiwazaki_poll_ld_publisher(),
+        'license'             => 'https://creativecommons.org/licenses/by/4.0/',
+        'dateModified'        => $catalog_last_modified ? gmdate( 'c', strtotime( $catalog_last_modified . ' UTC' ) ) : gmdate( 'c' ),
+        'isAccessibleForFree' => true,
+        'inLanguage'          => get_locale(),
+    );
+    echo '<script type="application/ld+json">' . wp_json_encode( $catalog, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_HEX_TAG | JSON_HEX_AMP ) . '</script>' . "\n";
 }
 
 function kashiwazaki_poll_render_single_dataset_page( $poll_id, $file_type ) {
     $poll_id = intval($poll_id);
     $poll_post = get_post($poll_id);
 
-    if ( ! $poll_post || $poll_post->post_type !== 'poll' || $poll_post->post_status !== 'publish' ) {
+    if ( ! kashiwazaki_poll_is_public_poll( $poll_post ) ) {
         wp_die('指定されたデータが見つかりません。', '404 Not Found', array('response' => 404));
     }
 
@@ -2220,9 +1754,9 @@ function kashiwazaki_poll_prepare_dataset_page_data($poll_id, $file_type) {
     $file_content = file_get_contents($current_file_path);
     $file_mtime = filemtime($current_file_path);
 
-    $poll_title = $poll_post->post_title;
-    $poll_description = get_post_meta($poll_id, '_kashiwazaki_poll_description', true);
-    $options_data = get_post_meta($poll_id, '_kashiwazaki_poll_options', true);
+    $poll_title = kashiwazaki_poll_decode_stored_text( $poll_post->post_title );
+    $poll_description = kashiwazaki_poll_decode_stored_text( get_post_meta( $poll_id, '_kashiwazaki_poll_description', true ) );
+    $options_data = kashiwazaki_poll_get_display_options( $poll_id );
     $counts = get_post_meta($poll_id, '_kashiwazaki_poll_counts', true);
 
     // Normalize data
@@ -2297,13 +1831,13 @@ function kashiwazaki_poll_output_standalone_dataset_page($data) {
     nocache_headers();
 
     // SEOメタデータをwp_headフックで出力
-    add_action('wp_head', function() use ($data, $page_title, $site_name) {
+    add_action('wp_head', function() use ( $data, $page_title, $site_name, $color_theme, $current_theme ) {
         ?>
         <title><?php echo esc_html($page_title); ?> - <?php echo esc_html($site_name); ?></title>
         <meta name="description" content="<?php echo esc_attr($data['poll_description']); ?>">
         <?php
         // データセットキーワードをmeta keywordsとして出力
-        $poll_keywords = get_post_meta($data['poll_id'], 'dataset_keywords', true);
+        $poll_keywords = kashiwazaki_poll_decode_stored_text( get_post_meta( $data['poll_id'], 'dataset_keywords', true ) );
         if (!empty($poll_keywords)) {
             $keywords_array = array_map('trim', explode(',', $poll_keywords));
             $keywords_array = array_filter($keywords_array); // 空の要素を除去
@@ -2348,10 +1882,6 @@ function kashiwazaki_poll_output_standalone_dataset_page($data) {
         <script type="application/ld+json">
         <?php echo json_encode($data['dataset_data'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_HEX_TAG | JSON_HEX_AMP); ?>
         </script>
-
-        <!-- Chart.js CDN -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 
         <!-- CSS -->
         <style>
@@ -2529,11 +2059,7 @@ function kashiwazaki_poll_output_standalone_dataset_page($data) {
                 ?>
                 <p><strong>最終更新:</strong> <?php
                 // 最新投票時刻を取得（リストページと同じロジック）
-                $voted_ips = get_post_meta($data['poll_id'], '_kashiwazaki_poll_voted_ips', true);
-                $last_vote_time = 0;
-                if (is_array($voted_ips) && !empty($voted_ips)) {
-                    $last_vote_time = max($voted_ips);
-                }
+                $last_vote_time = kashiwazaki_poll_get_last_updated_time( $data['poll_id'] );
 
                 if ($last_vote_time > 0) {
                     echo wp_date('Y/m/d H:i:s', $last_vote_time);
@@ -2542,14 +2068,12 @@ function kashiwazaki_poll_output_standalone_dataset_page($data) {
                 }
             ?></p>
                 <p><strong>総投票数:</strong> <?php echo $data['total_votes']; ?>票</p>
-                <p><strong>投票ページ:</strong> <a href="<?php echo esc_url(get_permalink($data['poll_id'])); ?>" style="color: <?php echo $current_theme['link_color']; ?>;">投票する</a></p>
+                <?php if ( kashiwazaki_poll_is_locked( $data['poll_id'] ) ) : ?>
+                <p><strong>投票ページ:</strong> 受付終了（<a href="<?php echo esc_url(get_permalink($data['poll_id'])); ?>" style="color: <?php echo esc_attr( $current_theme['link_color'] ); ?>;">結果を見る</a>）</p>
+                <?php else : ?>
+                <p><strong>投票ページ:</strong> <a href="<?php echo esc_url(get_permalink($data['poll_id'])); ?>" style="color: <?php echo esc_attr( $current_theme['link_color'] ); ?>;">投票する</a></p>
+                <?php endif; ?>
             </div>
-
-            <?php if ($data['total_votes'] > 0): ?>
-            <div id="kashiwazaki-poll-result-<?php echo $data['poll_id']; ?>" class="kashiwazaki-poll-result-container chart-container">
-                <h2>投票結果グラフ</h2>
-            </div>
-            <?php endif; ?>
 
             <h2><?php echo $file_ext_upper; ?> データ</h2>
             <?php if ($data['file_type'] === 'svg'): ?>
@@ -2577,323 +2101,6 @@ function kashiwazaki_poll_output_standalone_dataset_page($data) {
                 <a href="<?php echo esc_url(home_url('/datasets/' . $data['file_type'] . '/')); ?>" class="back-btn"><?php echo strtoupper($data['file_type']); ?>一覧に戻る</a>
             </div>
         </div>
-
-        <!-- Frontend Script and Chart Initialization -->
-        <script>
-        // Dataset page chart initialization
-        (function() {
-            const pollId = <?php echo $data['poll_id']; ?>;
-            const ajaxUrl = "<?php echo esc_url(admin_url('admin-ajax.php')); ?>";
-            const siteName = "<?php echo esc_js($site_name); ?>";
-            const pollQuestion = "<?php echo esc_js($data['poll_title']); ?>";
-            const hasData = <?php echo $data['total_votes'] > 0 ? 'true' : 'false'; ?>;
-
-            if (!hasData) {
-                return;
-            }
-
-            const resultContainer = document.getElementById('kashiwazaki-poll-result-' + pollId);
-            if (!resultContainer) {
-                console.error('Result container not found for poll ID: ' + pollId);
-                return;
-            }
-
-            let chartInstance = null;
-
-            function fetchAndShowResults() {
-                var fd = new FormData();
-                fd.append("action", "kashiwazaki_poll_result");
-                fd.append("poll_id", pollId);
-
-                fetch(ajaxUrl, {
-                    method: "POST",
-                    body: fd,
-                    credentials: "same-origin"
-                })
-                .then(resp => {
-                    if (!resp.ok) {
-                        return Promise.reject(`HTTP error! status: ${resp.status}`);
-                    }
-                    return resp.json();
-                })
-                .then(data => {
-                    if (data.status === "ok" && data.labels && data.counts) {
-                        if (data.total > 0) {
-                            showResult(data, resultContainer, 'kashiwazaki-poll-chart-' + pollId);
-                        } else {
-                            resultContainer.innerHTML = "<p>まだ投票がありません。</p>";
-                        }
-                    } else {
-                        console.error('Error fetching results or invalid data format:', data?.message || "Unknown error");
-                        resultContainer.innerHTML = '<p style="color:red;">結果データの取得に失敗しました。</p>';
-                    }
-                })
-                .catch(err => {
-                    console.error('Fetch error for results:', err);
-                    resultContainer.innerHTML = '<p style="color:red;">結果の取得中にエラーが発生しました。</p>';
-                });
-            }
-
-            function showResult(data, targetContainer, canvasId) {
-                if (chartInstance) {
-                    try {
-                        chartInstance.destroy();
-                    } catch (e) {
-                        console.error('Error destroying previous chart instance:', e);
-                    }
-                    chartInstance = null;
-                }
-
-                targetContainer.innerHTML = '';
-
-                const chartWrapper = document.createElement('div');
-                chartWrapper.className = 'kashiwazaki-poll-chart-container';
-                const canvas = document.createElement('canvas');
-                canvas.id = canvasId;
-                chartWrapper.appendChild(canvas);
-                targetContainer.appendChild(chartWrapper);
-
-                let ctx;
-                try {
-                    if (typeof Chart === 'undefined') {
-                        throw new Error('Chart.js is not loaded.');
-                    }
-                    ctx = canvas.getContext("2d");
-                    if (!ctx) {
-                        throw new Error('Failed to get 2D context');
-                    }
-                } catch (e) {
-                    console.error('Failed to initialize canvas or Chart.js not found:', e);
-                    chartWrapper.innerHTML = '<p style="color:red;">グラフ描画に必要なライブラリ(Chart.js)が読み込まれていないか、初期化に失敗しました。</p>';
-                    return;
-                }
-
-                if (!data.labels || !data.counts || data.labels.length !== data.counts.length) {
-                    console.error('Mismatch between labels and counts length or missing data.');
-                    chartWrapper.innerHTML = '<p style="color:red;">グラフデータの形式に問題があります。</p>';
-                    return;
-                }
-
-                const chartData = {
-                    labels: data.labels,
-                    datasets: [{
-                        data: data.counts,
-                        backgroundColor: [
-                            "#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF",
-                            "#FF9F40", "#E7E9ED", "#7FFFD4", "#FF7F50", "#6495ED",
-                            "#FFD700", "#DC143C", "#00FFFF", "#00008B", "#ADFF2F",
-                            "#FF69B4", "#F0E68C", "#D2691E"
-                        ],
-                        hoverOffset: 10
-                    }]
-                };
-
-                const paddingTop = 60;
-                const paddingBottom = 80;
-
-                const customChartTextPlugin = {
-                    id: 'customChartText',
-                    afterDraw: (chart, args, options) => {
-                        try {
-                            const { ctx } = chart;
-                            const titleText = options.pollTitle || '';
-                            const currentYear = new Date().getFullYear();
-                            const siteNameText = options.siteName || '';
-                            const copyrightText = `© ${siteNameText} ${currentYear}`;
-                            const topPadding = options.paddingTop || 60;
-                            const bottomPadding = options.paddingBottom || 80;
-                            const totalVotes = options.totalVotes;
-
-                            ctx.save();
-                            if (titleText) {
-                                ctx.font = 'bold 14px Arial';
-                                ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
-                                ctx.textAlign = 'center';
-                                ctx.textBaseline = 'middle';
-                                const titleX = chart.width / 2;
-                                const titleY = topPadding / 2;
-                                ctx.fillText(titleText, titleX, titleY);
-                            }
-                            if (typeof totalVotes !== 'undefined' && totalVotes !== null) {
-                                const totalVotesText = `投票総数 ${totalVotes} 票`;
-                                ctx.font = '12px Arial';
-                                ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-                                ctx.textAlign = 'center';
-                                ctx.textBaseline = 'bottom';
-                                const totalVotesX = chart.width / 2;
-                                const totalVotesY = chart.height - (bottomPadding / 2) - 5;
-                                ctx.fillText(totalVotesText, totalVotesX, totalVotesY);
-                            }
-                            if (siteNameText) {
-                                ctx.font = '11px Arial';
-                                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-                                ctx.textAlign = 'center';
-                                ctx.textBaseline = 'bottom';
-                                const copyrightX = chart.width / 2;
-                                const copyrightY = chart.height - (bottomPadding / 5);
-                                ctx.fillText(copyrightText, copyrightX, copyrightY);
-                            }
-                            ctx.restore();
-                        } catch (e) {
-                            console.error('Error in customChartTextPlugin afterDraw:', e);
-                        }
-                    }
-                };
-
-                let useDataLabels = typeof ChartDataLabels !== 'undefined';
-
-                let chartOptions = {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: "bottom",
-                            align: "center",
-                            labels: {
-                                boxWidth: 15,
-                                padding: 20,
-                                generateLabels: function (chart) {
-                                    const data = chart.data;
-                                    if (data.labels && data.labels.length && data.datasets.length) {
-                                        const labels = data.labels;
-                                        const dataset = data.datasets[0];
-                                        const counts = dataset.data;
-                                        const backgroundColors = dataset.backgroundColor;
-                                        const totalVotes = counts.reduce((sum, count) => sum + (Number(count) || 0), 0);
-                                        const maxLabelLength = 15;
-
-                                        try {
-                                            return labels.map((label, index) => {
-                                                const voteCount = (counts && typeof counts[index] !== 'undefined') ? Number(counts[index]) : 0;
-                                                const percentage = totalVotes > 0 ? ((voteCount / totalVotes) * 100).toFixed(1) : '0.0';
-                                                const labelText = typeof label === 'string' ? label : `項目 ${index + 1}`;
-                                                const truncatedLabel = labelText.length > maxLabelLength ? labelText.substring(0, maxLabelLength) + '...' : labelText;
-                                                const text = `${truncatedLabel} (${voteCount}票 / ${percentage}%)`;
-                                                const fullText = `${labelText} (${voteCount}票 / ${percentage}%)`;
-                                                return {
-                                                    text: text,
-                                                    fullText: fullText,
-                                                    fillStyle: backgroundColors[index % backgroundColors.length],
-                                                    strokeStyle: backgroundColors[index % backgroundColors.length],
-                                                    lineWidth: 0,
-                                                    hidden: !chart.getDataVisibility(index),
-                                                    index: index
-                                                };
-                                            });
-                                        } catch (mapError) {
-                                            console.error('Error during legend labels map:', mapError);
-                                            return [];
-                                        }
-                                    }
-                                    return [];
-                                }
-                            },
-                            onHover: function(event, legendItem) {
-                                if (legendItem && legendItem.fullText && legendItem.fullText !== legendItem.text) {
-                                    let tooltip = document.getElementById('legend-tooltip');
-                                    if (!tooltip) {
-                                        tooltip = document.createElement('div');
-                                        tooltip.id = 'legend-tooltip';
-                                        tooltip.style.cssText = 'position:fixed;background:#333;color:#fff;padding:8px 12px;border-radius:4px;font-size:12px;z-index:10000;pointer-events:none;max-width:300px;word-wrap:break-word;box-shadow:0 2px 8px rgba(0,0,0,0.3);';
-                                        document.body.appendChild(tooltip);
-                                    }
-                                    tooltip.textContent = legendItem.fullText;
-                                    tooltip.style.display = 'block';
-                                    tooltip.style.left = (event.native.clientX + 10) + 'px';
-                                    tooltip.style.top = (event.native.clientY + 10) + 'px';
-                                }
-                            },
-                            onLeave: function() {
-                                const tooltip = document.getElementById('legend-tooltip');
-                                if (tooltip) { tooltip.style.display = 'none'; }
-                            }
-                        },
-                        tooltip: { enabled: true },
-                        customChartText: {
-                            pollTitle: pollQuestion,
-                            siteName: siteName,
-                            paddingTop: paddingTop,
-                            paddingBottom: paddingBottom,
-                            totalVotes: data.total
-                        },
-                        datalabels: {
-                            display: useDataLabels ? 'auto' : false,
-                            formatter: (value, context) => {
-                                try {
-                                    const dataset = context.chart.data.datasets?.[0];
-                                    const allData = dataset?.data;
-                                    if (!allData || !Array.isArray(allData)) {
-                                        return '';
-                                    }
-                                    const total = allData.reduce((a, b) => a + (Number(b) || 0), 0);
-                                    const percentage = total > 0 ? ((Number(value) || 0) / total * 100) : 0;
-                                    return percentage >= 0.1 ? percentage.toFixed(1) + '%' : '';
-                                } catch (e) {
-                                    console.error('Datalabels formatter error:', e);
-                                    return '';
-                                }
-                            },
-                            color: '#ffffff',
-                            textStrokeColor: 'black',
-                            textStrokeWidth: 1,
-                            font: { weight: 'bold', size: 12 }
-                        }
-                    },
-                    animation: false,
-                    layout: {
-                        padding: {
-                            top: paddingTop,
-                            right: 30,
-                            bottom: paddingBottom,
-                            left: 30
-                        }
-                    }
-                };
-
-                const chartPlugins = [customChartTextPlugin];
-                if (useDataLabels) {
-                    try {
-                        if (typeof ChartDataLabels === 'object' && ChartDataLabels.id === 'datalabels') {
-                            chartPlugins.push(ChartDataLabels);
-                        } else {
-                            console.warn('ChartDataLabels is NOT a valid plugin object. Disabling datalabels in options. Type:', typeof ChartDataLabels);
-                            if (chartOptions?.plugins?.datalabels) {
-                                chartOptions.plugins.datalabels.display = false;
-                            }
-                        }
-                    } catch (e) {
-                        console.error('Error while preparing ChartDataLabels for chart plugins:', e);
-                        if (chartOptions?.plugins?.datalabels) {
-                            chartOptions.plugins.datalabels.display = false;
-                        }
-                    }
-                }
-
-                try {
-                    chartInstance = new Chart(ctx, {
-                        type: "pie",
-                        data: chartData,
-                        options: chartOptions,
-                        plugins: chartPlugins
-                    });
-                } catch (error) {
-                    console.error('Error creating chart instance:', error);
-                    chartWrapper.innerHTML = '<p style="color:red;">グラフの表示に失敗しました。開発者コンソールで詳細を確認してください。</p>';
-                    console.error('Chart Data:', JSON.stringify(chartData));
-                    console.error('Chart Plugins being passed:', chartPlugins.map(p => p?.id || 'Unknown/Invalid Plugin'));
-                    return;
-                }
-            }
-
-            // Initialize chart when DOM is ready
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', fetchAndShowResults);
-            } else {
-                fetchAndShowResults();
-            }
-        })();
-        </script>
 
         <?php
         get_footer();

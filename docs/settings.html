@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>基本設定ガイド - SEO Poll マニュアル</title>
+    <title>基本設定 - SEO Poll マニュアル</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -11,96 +11,229 @@
     <nav class="sidebar">
         <div class="sidebar-header">
             <h2 style="color:#fff;">SEO Poll</h2>
-            <span class="version">v1.0.6</span>
+            <span class="version">v1.0.7</span>
             <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
         </div>
         <ul>
             <li><a href="index.html">概要</a></li>
-            <li><a href="setup.html">インストール・初期設定</a></li>
-            <li><a href="create-poll.html">アンケートの作成</a></li>
-            <li><a href="settings.html">基本設定ガイド</a></li>
-            <li><a href="voting.html">表示と投票のしくみ</a></li>
-            <li><a href="chart.html">グラフ機能</a></li>
-            <li><a href="datasets.html">データセット公開</a></li>
-            <li><a href="seo.html">SEO・構造化データ</a></li>
+            <li><a href="setup.html">導入と最初の設定</a></li>
+            <li><a href="admin-menu.html">管理メニューとタブ</a></li>
+            <li><a href="poll-list.html">データセット一覧</a></li>
+            <li><a href="create-poll.html">データセットの作成</a></li>
+            <li><a href="vote-counts.html">投票数の確認と編集</a></li>
+            <li><a href="dataset-info.html">データセット情報</a></li>
+            <li><a href="embed.html">ショートコードと掲載ページ</a></li>
+            <li><a href="lock.html">投票の受付と締め切り</a></li>
+            <li><a href="voting.html">記事での表示と投票</a></li>
+            <li><a href="chart.html">グラフとダウンロード</a></li>
+            <li><a href="datasets.html">データセットページ</a></li>
+            <li><a href="settings.html">基本設定</a></li>
+            <li><a href="maintenance.html">メンテナンス</a></li>
+            <li><a href="seo.html">構造化データとSEO</a></li>
+            <li><a href="auto-tasks.html">自動処理と権限</a></li>
+            <li><a href="faq.html">よくある質問</a></li>
             <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+            <li><a href="glossary.html">用語集</a></li>
         </ul>
     </nav>
 
     <main class="content">
-        <h1>基本設定ガイド</h1>
-        <p class="lead">左メニューの「Kashiwazaki SEO Poll」を開くと、すべてのアンケートに共通する設定と、便利な管理ツールがまとまっています。ここでは各項目を、初期値のままで良いものも含めて丁寧に説明します。</p>
+        <h1>基本設定</h1>
+        <p class="lead">「Kashiwazaki SEO Poll 基本設定」では、すべてのデータセットに共通する設定を行います。構造化データ（検索エンジン向けの情報）に出す作成者などの情報と、データセットページの見た目を決めます。下部の「メンテナンス」は <a href="maintenance.html">メンテナンス</a> で説明します。</p>
+
+        <figure class="infographic">
+            <img src="images/infographics/settings-map.png" alt="基本設定は構造化データ、データセットページ、メンテナンスの3つの区画からなる">
+            <figcaption>図: 基本設定の全体マップ。構造化データとデータセットページは「設定を保存」でまとめて保存し、メンテナンスは各ボタンですぐ実行します</figcaption>
+        </figure>
 
         <section>
-            <h2>構造化データ設定</h2>
-            <p>この一群の設定は、Google データセット検索向けの構造化データ（誰が作ったデータか、どんな地域のデータか等）に反映されます。</p>
+            <h2>画面の開き方と全体</h2>
+            <p>左メニュー「Kashiwazaki SEO Poll」→ 上部のタブ「基本設定」、またはプラグイン一覧の「設定」リンクから開きます。サイトの設定を変更できる人（通常は管理者）だけが開けます。</p>
             <figure class="screenshot">
-                <img src="images/screenshots/01-settings-structured-data.png" alt="構造化データ設定の各項目（パンくずリスト・作者情報・Creator設定・ページタイトル・カラーテーマ・地理的範囲）" class="lightbox-trigger">
-                <figcaption>図: 構造化データ設定。作者情報やカラーテーマをここで指定します</figcaption>
+                <img src="images/screenshots/30-settings-overview.png" alt="基本設定画面の全体。構造化データ、データセットページ、設定を保存ボタン、メンテナンスの3枚のカード" class="lightbox-trigger">
+                <figcaption>図: 基本設定画面の全体（メールアドレスは伏せています）</figcaption>
             </figure>
-
-            <h3>パンくずリスト構造化データ</h3>
-            <p>データセットページにパンくずリスト（BreadcrumbList）の構造化データを出力するかどうかです。初期値は OFF。他のプラグイン（Yoast SEO など）でパンくずを管理している場合は、重複を避けるため OFF のままにしてください。</p>
-
-            <h3>プラグイン作者情報（provider）</h3>
-            <p>構造化データに、プラグイン開発者の情報を <code>provider</code>（提供者）として含めるかどうかです。オンにすると、Dataset の provider に開発者情報が明記されます。</p>
-
-            <h3>Creator 設定</h3>
-            <p>データの作成者（creator）として、誰を明示するかを選びます。</p>
-            <ul>
-                <li><strong>Organization のみ</strong>（初期値）：組織名だけを creator にします。</li>
-                <li><strong>Person のみ</strong>：個人名だけを creator にします。</li>
-                <li><strong>両方</strong>：個人と組織の両方を creator にします。</li>
-            </ul>
-            <p>選んだ種類に応じて、下に「Person の名前・URL」「Organization の名前・URL・メールアドレス」の入力欄が表示されます。組織名・URL・メールアドレスの初期値には、サイトの名称・URL・管理者メールが自動で入ります。</p>
-
-            <h3>データセットページタイトル</h3>
-            <p><code>/datasets/</code> の一覧ページに表示されるタイトルです（初期値は「集計データ一覧」）。パンくずやページ見出しに使われます。</p>
-
-            <h3>データセットページ カラーテーマ</h3>
-            <p>データセット詳細ページ（SVG 画像や一覧の配色）の色合いを、6種類から選べます。</p>
-            <ul>
-                <li><strong>ミニマル</strong>（初期値・白ベース、グレーのアクセント）</li>
-                <li><strong>ブルー</strong>（青ヘッダー、白背景）</li>
-                <li><strong>グリーン</strong>（緑ヘッダー、白背景）</li>
-                <li><strong>オレンジ</strong>（オレンジヘッダー、白背景）</li>
-                <li><strong>パープル</strong>（紫ヘッダー、白背景）</li>
-                <li><strong>ダーク</strong>（黒背景、白文字）</li>
-            </ul>
-
-            <h3>データセット地理的範囲</h3>
-            <p>データが対象とする地理的範囲を入力します（初期値は「日本」）。構造化データの <code>spatialCoverage</code> に反映されます。例：日本、東京都、全世界 など。</p>
+            <table>
+                <thead><tr><th>番号</th><th>区画</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>1</td><td>構造化データ</td><td>パンくずリスト、プラグイン作者情報、作成者（Creator）、個人の情報、組織の情報</td></tr>
+                    <tr><td>2</td><td>データセットページ</td><td>一覧ページのタイトル、カラーテーマ、地理的範囲</td></tr>
+                    <tr><td>3</td><td>設定を保存</td><td>1と2をまとめて保存。保存すると「設定を保存しました。」と表示されます</td></tr>
+                    <tr><td>4</td><td>メンテナンス</td><td>3枚のカード（<a href="maintenance.html">メンテナンス</a>）</td></tr>
+                </tbody>
+            </table>
+            <figure class="screenshot">
+                <img src="images/screenshots/35-settings-saved.png" alt="設定を保存しました。の通知" class="lightbox-trigger">
+                <figcaption>図: 「設定を保存」を押した後</figcaption>
+            </figure>
         </section>
 
         <section>
-            <h2>管理ツール</h2>
-            <p>設定ページの下部には、運用に役立つ3つのツールがあります。</p>
+            <h2>区画「構造化データ」</h2>
+            <p>画面の説明: 「データセットページと投票フォームに出力する構造化データ（Dataset）の設定です。」</p>
             <figure class="screenshot">
-                <img src="images/screenshots/02-settings-tools.png" alt="投票制限の解除・サイトマップ再生成・データセット一括生成の3つのツール" class="lightbox-trigger">
-                <figcaption>図: 投票制限の解除・サイトマップ・データセット一括生成</figcaption>
+                <img src="images/screenshots/31-settings-section1.png" alt="構造化データの区画。パンくずリスト、プラグイン作者情報、作成者、個人の情報、組織の情報" class="lightbox-trigger">
+                <figcaption>図: 「構造化データ」の区画</figcaption>
             </figure>
 
-            <h3>投票制限の解除</h3>
-            <p>「リセット日時を現在に更新」を押すと、<strong>これまで投票した人も、もう一度投票できるようになります</strong>。過去の投票データ自体は消えずに残ります。定期アンケート（毎月同じ質問をとる等）で、全員に再投票してもらいたいときに使います。現在のリセット日時も表示されます。</p>
+            <h3>パンくずリスト</h3>
+            <table>
+                <thead><tr><th>項目</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>表示</td><td>チェックボックス「パンくずリストの構造化データ (BreadcrumbList) を出力する」</td></tr>
+                    <tr><td>画面の説明</td><td>「他のプラグインでパンくずリストを管理している場合は、重複を避けるためOFFにしてください。デフォルトはOFFです。」</td></tr>
+                    <tr><td>既定値</td><td>OFF</td></tr>
+                    <tr><td>ON にすると</td><td>データセット一覧（2階層: サイト名 → 一覧ページのタイトル）、形式別の一覧（3階層: … → 形式名）、形式別ページ（4階層: … → データセット名）に、パンくずリストの構造化データを出力します</td></tr>
+                    <tr><td>出力しないページ</td><td>詳細ページ（ON でも出しません）</td></tr>
+                </tbody>
+            </table>
             <div class="callout callout-note">
-                <p>特定の1つのアンケートだけをリセットしたい場合は、この共通ツールではなく、各アンケート編集画面の「投票データリセット」を使います（<a href="create-poll.html">アンケートの作成</a>参照）。</p>
+                <p class="callout-title">画面に見えるパンくずとは別です</p>
+                <p>この設定は検索エンジン向けの情報だけを出力します。ページ上に見えるパンくずリストは、テーマや別のプラグインが表示するものです。</p>
             </div>
 
-            <h3>サイトマップ</h3>
-            <p>データセット専用サイトマップ <code>sitemap-poll-datasets.xml</code> の URL と、ファイルの存在状況が表示されます。サイトマップは投票時やデータ一括生成時に自動更新されますが、「サイトマップを再生成する」で手動更新もできます。Google Search Console には、この URL を登録してください。</p>
+            <h3>プラグイン作者情報</h3>
+            <table>
+                <thead><tr><th>項目</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>表示</td><td>チェックボックス「構造化データにプラグイン開発者の情報 (provider) を含める」</td></tr>
+                    <tr><td>画面の説明</td><td>「このプラグインの作者（柏崎剛）を Dataset の `provider` として明記します。」</td></tr>
+                    <tr><td>既定値</td><td>OFF</td></tr>
+                    <tr><td>ON にすると</td><td>記事の投票ブロック・詳細ページ・形式別ページの構造化データに、提供者としてプラグイン作者の情報を加えます。データセット一覧のカタログ情報には加えません</td></tr>
+                </tbody>
+            </table>
 
-            <h3>データセット一括生成</h3>
-            <p>「データファイルを一括生成する」を押すと、公開中のすべてのアンケートについて、最新の集計結果をもとに5形式（CSV・XML・YAML・JSON・SVG）のデータファイルとサイトマップをまとめて生成・更新します。プラグイン導入直後や、大量のデータを一度に作り直したいときに便利です。データ数が多い場合は処理に時間がかかることがあります。</p>
+            <h3>連絡先メールアドレス</h3>
+            <table>
+                <thead><tr><th>項目</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>表示</td><td>チェックボックス「構造化データに組織のメールアドレスを含める」</td></tr>
+                    <tr><td>画面の説明</td><td>「ON にすると、下の「組織の情報」のメールアドレスを、作成者・発行者の連絡先として公開ページの構造化データに出力します（誰でも見られます）。既定は OFF で、メールアドレスは出力しません。」</td></tr>
+                    <tr><td>既定値</td><td>OFF</td></tr>
+                    <tr><td>ON にすると</td><td>「組織の情報」のメールアドレスを、記事の投票ブロック・詳細ページ・形式別ページ・データセット一覧の構造化データに出力します（メールアドレスが空なら出力しません）</td></tr>
+                    <tr><td>OFF のとき</td><td>メールアドレスは一切出力しません。入力したメールアドレスは消えずに残ります</td></tr>
+                </tbody>
+            </table>
+            <div class="callout callout-note">
+                <p class="callout-title">1.0.6 以前から更新した場合</p>
+                <p>更新後はこの設定が OFF になり、メールアドレスは出力されなくなります。これまでどおり出力したい場合は ON にして「設定を保存」を押してください。</p>
+            </div>
+
+            <h3>作成者（Creator）</h3>
+            <p>画面の説明: 「構造化データに含める Creator の種類を選択します。」 データの作成者として、誰を出力するかを選びます。</p>
+            <table>
+                <thead><tr><th>選択肢</th><th>出力される作成者</th><th>表示される入力欄</th></tr></thead>
+                <tbody>
+                    <tr><td>組織（Organization）のみ（既定）</td><td>組織（名前・URL・問い合わせ用メールアドレス）</td><td>組織の情報</td></tr>
+                    <tr><td>個人（Person）のみ</td><td>個人（名前・URL）</td><td>個人の情報</td></tr>
+                    <tr><td>個人と組織の両方</td><td>個人と組織の両方（個人が先）</td><td>個人の情報と組織の情報</td></tr>
+                </tbody>
+            </table>
+            <p>選び直すと、下の入力欄がその場で表示・非表示に切り替わります。画面上の見た目（記事やデータセットページの文字）は変わりません。</p>
+
+            <h3>個人の情報</h3>
+            <p>画面の説明: 「Person Creator の設定を行います。」</p>
+            <table>
+                <thead><tr><th>入力欄</th><th>既定値</th><th>空のとき</th></tr></thead>
+                <tbody>
+                    <tr><td>Person の名前</td><td>空</td><td>「Unknown」と出力</td></tr>
+                    <tr><td>Person の URL</td><td>空</td><td>サイトのトップページの URL</td></tr>
+                </tbody>
+            </table>
+
+            <h3>組織の情報</h3>
+            <p>画面の説明: 「Organization Creator の設定を行います。」</p>
+            <table>
+                <thead><tr><th>入力欄</th><th>既定値</th><th>空のとき</th></tr></thead>
+                <tbody>
+                    <tr><td>Organization の名前</td><td>有効化したときのサイト名</td><td>サイト名。形式別ページの引用表記にも使われます</td></tr>
+                    <tr><td>Organization の URL</td><td>サイトのトップページの URL</td><td>サイトのトップページの URL</td></tr>
+                    <tr><td>Organization のメールアドレス</td><td>空</td><td>構造化データにメールアドレスを出さない（「連絡先メールアドレス」が ON でも出さない）</td></tr>
+                </tbody>
+            </table>
+            <div class="callout callout-warning">
+                <p class="callout-title">メールアドレスの公開</p>
+                <p>「連絡先メールアドレス」を ON にすると、組織のメールアドレスは作成者と発行者（publisher）の情報として、記事やデータセットページの HTML の中に構造化データで書き出され、誰でも見られます。ON にする場合は、公開してよい問い合わせ用のアドレスを設定してください。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>区画「データセットページ」</h2>
+            <p>画面の説明: 「集計結果を公開するデータセットページ（/datasets/）の表示設定です。」</p>
+            <figure class="screenshot">
+                <img src="images/screenshots/32-settings-section2.png" alt="データセットページの区画。一覧ページのタイトル、カラーテーマの6つの選択肢、地理的範囲" class="lightbox-trigger">
+                <figcaption>図: 「データセットページ」の区画</figcaption>
+            </figure>
+
+            <h3>一覧ページのタイトル</h3>
+            <table>
+                <thead><tr><th>項目</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>画面の説明</td><td>「データセット一覧ページのタイトルを設定してください。パンくずナビゲーションやページタイトルに使用されます。」</td></tr>
+                    <tr><td>既定値</td><td>集計データ一覧（空で保存してもこの名前で表示）</td></tr>
+                    <tr><td>使われる場所</td><td><code>/datasets/</code> の見出しとページタイトル、形式別の一覧の見出し（例: 「CSV 集計データ一覧」）、「〜に戻る」のリンク、パンくずリストの構造化データ</td></tr>
+                </tbody>
+            </table>
+
+            <h3>カラーテーマ</h3>
+            <p>画面の説明: 「データセットページの表・カード・リンク・ボタンの色合いを選択してください（ページの背景やヘッダーの色はテーマに従います）。」</p>
+            <table>
+                <thead><tr><th>選択肢</th><th>画面の補足</th></tr></thead>
+                <tbody>
+                    <tr><td>ミニマル（白ベース）（既定）</td><td>グレーのアクセント</td></tr>
+                    <tr><td>ブルー</td><td>青のアクセント</td></tr>
+                    <tr><td>グリーン</td><td>緑のアクセント</td></tr>
+                    <tr><td>オレンジ</td><td>オレンジのアクセント</td></tr>
+                    <tr><td>パープル</td><td>紫のアクセント</td></tr>
+                    <tr><td>ダーク</td><td>濃い色のカード・明るい文字</td></tr>
+                </tbody>
+            </table>
+            <p>色が変わるのは、データセット一覧（<code>/datasets/</code>）のカード、詳細ページの集計表と「掲載中のページ」欄、形式別の一覧、形式別ページの一部、記事の「フォーマット別データダウンロード」のリンクです。ページの背景やヘッダー、グラフ、SVG ファイルの色は変わりません。場所ごとの詳細は <a href="datasets.html">データセットページ</a> を参照してください。</p>
+            <div class="callout callout-tip">
+                <p class="callout-title">おすすめ</p>
+                <p>サイトのテーマの基調色に近い色を選ぶと、データセットページがサイトになじみます。ダークは背景の濃いテーマ向けです。</p>
+            </div>
+
+            <h3>地理的範囲</h3>
+            <table>
+                <thead><tr><th>項目</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>画面の説明</td><td>「データセットが対象とする地理的範囲を設定してください。例：日本、東京都、全世界など。」</td></tr>
+                    <tr><td>既定値</td><td>日本（空のときも日本）</td></tr>
+                    <tr><td>使われる場所</td><td>記事の投票ブロック・詳細ページ・形式別ページの構造化データ（対象地域）</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>構造化データとの関係</h2>
+            <figure class="infographic">
+                <img src="images/infographics/structured-data.png" alt="Dataset を中心に、名前・説明、作成者、提供者、配布形式、地理的範囲、更新日時、別にパンくずリスト">
+                <figcaption>図: 構造化データの主な中身。パンくずリストと提供者の出力は、この画面で切り替えます</figcaption>
+            </figure>
+            <p>どのページに何が出力されるかは <a href="seo.html">構造化データとSEO</a> で説明しています。</p>
+        </section>
+
+        <section>
+            <h2>この画面で出るメッセージ</h2>
+            <table>
+                <thead><tr><th>メッセージ</th><th>出るとき</th></tr></thead>
+                <tbody>
+                    <tr><td>設定を保存しました。</td><td>「設定を保存」を押した後</td></tr>
+                    <tr><td>このページにアクセスする権限がありません。（WordPress 標準）</td><td>サイトの設定を変更できない人がこの画面を開いたとき</td></tr>
+                </tbody>
+            </table>
+            <p>メンテナンスのボタンで出るメッセージは <a href="maintenance.html">メンテナンス</a> にあります。</p>
         </section>
 
         <nav class="page-nav">
-            <a href="create-poll.html" class="prev">&laquo; アンケートの作成</a>
-            <a href="voting.html" class="next">表示と投票のしくみ &raquo;</a>
+            <a href="datasets.html" class="prev">&laquo; データセットページ</a>
+            <a href="maintenance.html" class="next">メンテナンス &raquo;</a>
         </nav>
 
         <footer class="manual-footer">
             <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
-            <p>プラグイン: Kashiwazaki SEO Poll v1.0.6 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.7 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
         </footer>
     </main>
 

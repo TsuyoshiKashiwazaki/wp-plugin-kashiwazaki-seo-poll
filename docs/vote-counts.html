@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投票数の確認と編集 - SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2 style="color:#fff;">SEO Poll</h2>
+            <span class="version">v1.0.7</span>
+            <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
+        </div>
+        <ul>
+            <li><a href="index.html">概要</a></li>
+            <li><a href="setup.html">導入と最初の設定</a></li>
+            <li><a href="admin-menu.html">管理メニューとタブ</a></li>
+            <li><a href="poll-list.html">データセット一覧</a></li>
+            <li><a href="create-poll.html">データセットの作成</a></li>
+            <li><a href="vote-counts.html">投票数の確認と編集</a></li>
+            <li><a href="dataset-info.html">データセット情報</a></li>
+            <li><a href="embed.html">ショートコードと掲載ページ</a></li>
+            <li><a href="lock.html">投票の受付と締め切り</a></li>
+            <li><a href="voting.html">記事での表示と投票</a></li>
+            <li><a href="chart.html">グラフとダウンロード</a></li>
+            <li><a href="datasets.html">データセットページ</a></li>
+            <li><a href="settings.html">基本設定</a></li>
+            <li><a href="maintenance.html">メンテナンス</a></li>
+            <li><a href="seo.html">構造化データとSEO</a></li>
+            <li><a href="auto-tasks.html">自動処理と権限</a></li>
+            <li><a href="faq.html">よくある質問</a></li>
+            <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+            <li><a href="glossary.html">用語集</a></li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <h1>投票数の確認と編集</h1>
+        <p class="lead">編集画面の「投票数」ボックスでは、選択肢ごとの投票数と割合を確認し、数字を直接書き換えて保存できます。紙のアンケートの結果を足したい、テストで入れた票を取り除きたい、といった場面で使います。</p>
+
+        <figure class="screenshot">
+            <img src="images/screenshots/12-box-counts.png" alt="投票数ボックス。選択肢、投票数の入力欄、割合、合計" class="lightbox-trigger">
+            <figcaption>図: 「投票数」ボックス</figcaption>
+        </figure>
+
+        <section>
+            <h2>画面の地図</h2>
+            <table>
+                <thead><tr><th>番号</th><th>領域</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>1</td><td>冒頭の説明</td><td>「数値を書き換えて「更新」を押すと投票数が保存されます。書き換えていない選択肢は、編集中に入った投票もそのまま残ります。」</td></tr>
+                    <tr><td>2</td><td>表</td><td>列「選択肢」「投票数」「割合」。選択肢ごとに1行</td></tr>
+                    <tr><td>3</td><td>合計の行</td><td>全選択肢の合計（例: 6 票）</td></tr>
+                    <tr><td>4</td><td>下部の注意書き</td><td>「選択肢を書き換えたときは、先に「更新」で選択肢を保存してから投票数を編集してください（同時に変更すると投票数の編集は保存されません）。投票数を編集しても、投票済みの人の再投票制限は変わりません。」</td></tr>
+                </tbody>
+            </table>
+            <div class="callout callout-note">
+                <p class="callout-title">新規追加の直後</p>
+                <p>選択肢をまだ保存していないときは、表の代わりに「選択肢を入力して保存すると、ここで選択肢ごとの投票数を確認・編集できます。」と表示されます。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>各項目</h2>
+            <table>
+                <thead><tr><th>項目</th><th>内容</th><th>入力できる範囲</th></tr></thead>
+                <tbody>
+                    <tr><td>選択肢</td><td>「設問と選択肢」で保存した選択肢の名前</td><td>表示のみ</td></tr>
+                    <tr><td>投票数（右に「票」）</td><td>その選択肢の票数。書き換えて保存できます</td><td>0〜999,999,999 の整数（半角数字）</td></tr>
+                    <tr><td>割合</td><td>合計に対する割合（小数第1位まで）。合計が0なら「—」</td><td>表示のみ。入力中もその場で計算し直します</td></tr>
+                    <tr><td>合計</td><td>全選択肢の合計票数</td><td>表示のみ。入力中もその場で計算し直します</td></tr>
+                </tbody>
+            </table>
+            <figure class="screenshot">
+                <img src="images/screenshots/20-counts-live.png" alt="投票数を12、30、8に書き換えた状態。割合と合計がその場で変わっている" class="lightbox-trigger">
+                <figcaption>図: 数字を書き換えると、保存する前に割合と合計が変わります</figcaption>
+            </figure>
+        </section>
+
+        <section>
+            <h2>操作手順</h2>
+            <div class="step"><div class="step-number">1</div><div class="step-content"><p>直したい選択肢の「投票数」欄の数字を書き換えます。</p></div></div>
+            <div class="step"><div class="step-number">2</div><div class="step-content"><p>割合と合計が意図どおりか確認します。</p></div></div>
+            <div class="step"><div class="step-number">3</div><div class="step-content"><p>右上の「更新」（下書きなら「下書きとして保存」、未公開なら「公開」）を押します。</p></div></div>
+            <div class="step"><div class="step-number">4</div><div class="step-content"><p>画面上部に「投票数を更新しました。」と出れば完了です。</p></div></div>
+            <figure class="screenshot">
+                <img src="images/screenshots/21-counts-saved.png" alt="投票数を更新しました。の通知が出た編集画面" class="lightbox-trigger">
+                <figcaption>図: 保存に成功したときの表示</figcaption>
+            </figure>
+        </section>
+
+        <section>
+            <h2>保存されるもの・されないもの</h2>
+            <figure class="infographic">
+                <img src="images/infographics/vote-count-edit.png" alt="数字を書き換えて更新を押すと、変更した行だけが保存される。書き換えていない行は編集中に入った票もそのまま残る">
+                <figcaption>図: 書き換えた行だけが保存されます</figcaption>
+            </figure>
+            <ol>
+                <li><strong>書き換えた行だけが保存されます。</strong>画面を開いたときと同じ数字のままの行は「書き換えていない」とみなし、保存のときの最新の票数をそのまま残します。編集している間に来訪者が投票しても、その票は消えません。</li>
+                <li><strong>書き換えた行は、入力した数字で上書きされます。</strong>編集中にその選択肢へ入った票は、入力した数字に置き換わります。</li>
+                <li><strong>受け付けるのは 0〜999,999,999 の整数だけです。</strong>空欄・小数・マイナス・記号・全角数字は保存しません。</li>
+                <li><strong>選択肢の変更と同時には保存しません。</strong>同じ保存で選択肢も変えた場合や、画面を開いた後に別の人（別のタブ）が選択肢を変えていた場合、投票数の書き換えはすべて保存しません。</li>
+                <li><strong>保存すると「最終更新」の時刻が今になります。</strong>この時刻は「投票の受付と集計」ボックスの「最終更新」や、データセットページの「最終更新」「集計時点」に使われます。</li>
+                <li><strong>公開中なら、データファイルとサイトマップも作り直します。</strong>CSV などのダウンロードにも新しい数字が反映されます。</li>
+            </ol>
+            <div class="callout callout-warning">
+                <p class="callout-title">取り消しはできません</p>
+                <p>保存した票数は元に戻せません。大きく書き換える前に、データセットページの CSV をダウンロードしておくと、元の数字を確認できます。</p>
+            </div>
+            <div class="callout callout-note">
+                <p class="callout-title">再投票の制限は変わりません</p>
+                <p>投票数を0に書き換えても、すでに投票した人が再び投票できるようにはなりません。投票した人の記録ごと消して最初からやり直したいときは、「集計データを全削除する」を使います（<a href="lock.html">投票の受付と締め切り</a>）。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>この画面で出るメッセージ</h2>
+            <table>
+                <thead><tr><th>メッセージ</th><th>種類</th><th>意味と対処</th></tr></thead>
+                <tbody>
+                    <tr><td>投票数を更新しました。</td><td><span class="status-ok">成功</span></td><td>書き換えた投票数をすべて保存しました。</td></tr>
+                    <tr><td>投票数を更新しましたが、0以上の整数でない入力は保存しませんでした。</td><td><span class="status-warning">警告</span></td><td>正しい数字の行は保存しましたが、正しくない入力の行は保存していません。表の数字を確認し、必要なら入力し直してください。</td></tr>
+                    <tr><td>投票数は0以上の整数で入力してください。投票数は変更していません。</td><td><span class="status-error">エラー</span></td><td>書き換えた行がすべて正しくない入力でした。半角数字で入力し直してください。</td></tr>
+                    <tr><td>選択肢が変更されたため、投票数の編集は保存しませんでした。表示されている投票数を確認して、もう一度編集してください。</td><td><span class="status-warning">警告</span></td><td>選択肢の変更と同時だったため、投票数は保存していません。選択肢の保存は済んでいるので、表示されている票数を見て、もう一度書き換えて保存してください。</td></tr>
+                    <tr><td>設定を保存できませんでした。選択肢・投票数・データセット情報・受付の状態は変更していません（タイトルと本文は保存されています）。もう一度「更新」を押してください。</td><td><span class="status-error">エラー</span></td><td>データベースへの保存に失敗したため、元の状態に戻しました。もう一度保存してください。使えない文字が含まれていないかも確認してください。</td></tr>
+                    <tr><td>他の処理（投票など）と重なったため、選択肢・投票数・データセット情報・受付の状態は保存しませんでした（タイトルと本文は保存されています）。少し待ってから、もう一度「更新」を押してください。</td><td><span class="status-error">エラー</span></td><td>投票などが集中している間は、票の食い違いを防ぐため保存を見送ります。少し待ってから保存し直してください。</td></tr>
+                    <tr><td>画面を開いた後に設定が変わったか、画面の読み込みに失敗したため、選択肢・投票数・データセット情報・受付の状態は保存しませんでした（タイトルと本文は保存されています）。ページを再読み込みして内容を確認してから、もう一度「更新」を押してください。</td><td><span class="status-error">エラー</span></td><td>編集画面を開いている間に、別の画面（一覧からの受付の切り替えや、別の人の編集など）で設定が変わったか、画面を開いたときに設定を読み込めなかったため、古い内容や空の内容で上書きしないよう保存を見送りました。ページを再読み込みし、表示された内容を確認してから保存し直してください。</td></tr>
+                </tbody>
+            </table>
+            <figure class="screenshot">
+                <img src="images/screenshots/22-counts-invalid.png" alt="投票数は0以上の整数で入力してください。投票数は変更していません。の赤い通知" class="lightbox-trigger">
+                <figcaption>図: 正しくない入力だけだったとき（エラー）</figcaption>
+            </figure>
+            <figure class="screenshot">
+                <img src="images/screenshots/23-counts-partial.png" alt="投票数を更新しましたが、0以上の整数でない入力は保存しませんでした。の黄色い通知" class="lightbox-trigger">
+                <figcaption>図: 正しい入力と正しくない入力が混ざっていたとき（警告）</figcaption>
+            </figure>
+            <figure class="screenshot">
+                <img src="images/screenshots/24-counts-skipped.png" alt="選択肢が変更されたため、投票数の編集は保存しませんでした。の黄色い通知と、選択肢がどれも好きを含む5つになった表" class="lightbox-trigger">
+                <figcaption>図: 選択肢と投票数を同時に変えたとき（警告）。選択肢だけが保存されています</figcaption>
+            </figure>
+            <div class="callout callout-note">
+                <p class="callout-title">ブラウザのメッセージ</p>
+                <p>投票数の欄は数字専用の入力欄です。範囲外の数や小数を入れると、多くのブラウザでは保存する前に入力欄の横に注意が表示され、送信が止まります。その場合は上の表のメッセージは出ません。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>よくある使い方</h2>
+            <h3>紙で集めた票を足したい</h3>
+            <p>各選択肢の現在の票数に紙の票数を足した数を入力し、「更新」を押します。書き換えなかった選択肢は、その間に入った Web の票も含めて残ります。</p>
+            <h3>選択肢の誤字を直したい（票を残したい）</h3>
+            <div class="step"><div class="step-number">1</div><div class="step-content"><p>直す前の票数をメモします。</p></div></div>
+            <div class="step"><div class="step-number">2</div><div class="step-content"><p>「選択肢」の文字を直して「更新」を押します（直した選択肢は0票になります）。</p></div></div>
+            <div class="step"><div class="step-number">3</div><div class="step-content"><p>「投票数」の表で、直した選択肢にメモした票数を入力し、もう一度「更新」を押します。</p></div></div>
+            <h3>テスト投票を取り除きたい</h3>
+            <p>テストで入れた分を引いた数を入力して保存します。投票した記録（再投票の制限）も消したいときは「集計データを全削除する」を使います。</p>
+        </section>
+
+        <nav class="page-nav">
+            <a href="create-poll.html" class="prev">&laquo; データセットの作成</a>
+            <a href="dataset-info.html" class="next">データセット情報 &raquo;</a>
+        </nav>
+
+        <footer class="manual-footer">
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.7 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+        </footer>
+    </main>
+
+    <div class="lightbox"></div>
+    <script src="js/manual.js"></script>
+</body>
+</html>

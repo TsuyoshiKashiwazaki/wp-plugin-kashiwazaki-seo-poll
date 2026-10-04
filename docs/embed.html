@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ショートコードと掲載ページ - SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2 style="color:#fff;">SEO Poll</h2>
+            <span class="version">v1.0.7</span>
+            <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
+        </div>
+        <ul>
+            <li><a href="index.html">概要</a></li>
+            <li><a href="setup.html">導入と最初の設定</a></li>
+            <li><a href="admin-menu.html">管理メニューとタブ</a></li>
+            <li><a href="poll-list.html">データセット一覧</a></li>
+            <li><a href="create-poll.html">データセットの作成</a></li>
+            <li><a href="vote-counts.html">投票数の確認と編集</a></li>
+            <li><a href="dataset-info.html">データセット情報</a></li>
+            <li><a href="embed.html">ショートコードと掲載ページ</a></li>
+            <li><a href="lock.html">投票の受付と締め切り</a></li>
+            <li><a href="voting.html">記事での表示と投票</a></li>
+            <li><a href="chart.html">グラフとダウンロード</a></li>
+            <li><a href="datasets.html">データセットページ</a></li>
+            <li><a href="settings.html">基本設定</a></li>
+            <li><a href="maintenance.html">メンテナンス</a></li>
+            <li><a href="seo.html">構造化データとSEO</a></li>
+            <li><a href="auto-tasks.html">自動処理と権限</a></li>
+            <li><a href="faq.html">よくある質問</a></li>
+            <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+            <li><a href="glossary.html">用語集</a></li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <h1>ショートコードと掲載ページ</h1>
+        <p class="lead">編集画面の「ショートコードと掲載ページ」ボックスでは、投票を記事に載せるためのショートコードをコピーし、そのショートコードがどの記事に貼られているかを確認できます。</p>
+
+        <figure class="screenshot">
+            <img src="images/screenshots/14-box-embed.png" alt="ショートコードと掲載ページボックス。ショートコード欄、コピーボタン、掲載中のページの一覧" class="lightbox-trigger">
+            <figcaption>図: 「ショートコードと掲載ページ」ボックス</figcaption>
+        </figure>
+
+        <section>
+            <h2>記事に投票を載せる流れ</h2>
+            <figure class="infographic">
+                <img src="images/infographics/embed-flow.png" alt="ショートコードをコピーし、記事に貼り、公開すると投票フォームが表示される">
+                <figcaption>図: ショートコードで記事に投票を載せる流れ</figcaption>
+            </figure>
+            <div class="step"><div class="step-number">1</div><div class="step-content"><h3>コピーする</h3><p>「ショートコード」欄の右の「コピー」を押します。横に「コピーしました」と2秒間表示されます。</p></div></div>
+            <div class="step"><div class="step-number">2</div><div class="step-content"><h3>記事に貼る</h3><p>投票を載せたい投稿・固定ページなどの本文の、表示したい位置に貼り付けます。ブロックエディタでは「ショートコード」ブロックや段落に貼り付けます。</p></div></div>
+            <div class="step"><div class="step-number">3</div><div class="step-content"><h3>記事を保存する</h3><p>記事を公開（更新）すると、その位置に投票フォームが表示されます。</p></div></div>
+            <figure class="screenshot">
+                <img src="images/screenshots/14c-box-embed-copied.png" alt="コピーボタンの横にコピーしましたと表示されている" class="lightbox-trigger">
+                <figcaption>図: 「コピー」を押した直後</figcaption>
+            </figure>
+        </section>
+
+        <section>
+            <h2>ショートコード</h2>
+            <table>
+                <thead><tr><th>項目</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>形式</td><td><code>[tk_poll id="123"]</code>（数字はデータセットごとの番号）</td></tr>
+                    <tr><td>欄</td><td>読み取り専用（書き換えられません）。新規追加画面でも番号が入った状態で表示されます</td></tr>
+                    <tr><td>指定できる項目</td><td>番号（id）だけです</td></tr>
+                    <tr><td>画面の説明</td><td>「投稿や固定ページの本文に貼り付けると、投票フォームが表示されます。」</td></tr>
+                    <tr><td>同じ記事に複数</td><td>別々のデータセットのショートコードを1つの記事に並べて貼れます</td></tr>
+                </tbody>
+            </table>
+            <div class="callout callout-warning">
+                <p class="callout-title">データセットが公開されていないと表示されません</p>
+                <p>番号が間違っている、またはデータセットが下書き・非公開・ゴミ箱の場合、記事には「データが見つかりません。」と表示されます。番号が空や0のときは何も表示されません。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>掲載中のページ</h2>
+            <p>このデータセットのショートコードを本文に含むページの一覧です。公開済みだけでなく、下書き・非公開・レビュー待ちの記事も表示されます。</p>
+            <table>
+                <thead><tr><th>表示</th><th>意味</th></tr></thead>
+                <tbody>
+                    <tr><td>タイトル</td><td>記事のタイトル（無い場合は「(タイトルなし)」）。押すと記事の編集画面が開きます</td></tr>
+                    <tr><td>種類</td><td>投稿・固定ページなど</td></tr>
+                    <tr><td>状態</td><td>公開済み以外は「下書き」「非公開」「レビュー待ち」を強調表示</td></tr>
+                    <tr><td>N回使用</td><td>同じ記事に2回以上貼られているとき</td></tr>
+                    <tr><td>・更新 年/月/日 時:分</td><td>記事の最終更新日時</td></tr>
+                    <tr><td>表示 ↗</td><td>公開済みの記事を新しいタブで開く</td></tr>
+                    <tr><td>合計 N 件</td><td>掲載ページの件数</td></tr>
+                    <tr><td>現在このショートコードを掲載しているページはありません。</td><td>どの記事にも貼られていないとき</td></tr>
+                </tbody>
+            </table>
+            <div class="callout callout-note">
+                <p class="callout-title">予約投稿は表示されません</p>
+                <p>公開予約中の記事は一覧に含まれません。公開された後に表示されます。</p>
+            </div>
+            <h3>掲載ページの情報を再取得</h3>
+            <p>一覧は最大1時間保存して使い回します。記事に貼った直後に出てこないときは、一覧の下の「掲載ページの情報を再取得」を押してください。画面が再読み込みされ、「掲載ページの情報を再取得しました。」と表示されます。</p>
+            <div class="callout callout-warning">
+                <p class="callout-title">保存していない入力は消えます</p>
+                <p>「掲載ページの情報を再取得」は画面を読み込み直します。編集中の内容があれば、先に「更新」で保存してください。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>「不正なリクエストです。（nonce）」と表示される場合</h2>
+            <p>ボックスの最下部にある折りたたみを開くと、投票時にこのメッセージが出るときの対処が表示されます。</p>
+            <figure class="screenshot">
+                <img src="images/screenshots/14b-box-embed-help.png" alt="折りたたみを開いた状態。キャッシュの削除などの4つの対処が書かれている" class="lightbox-trigger">
+                <figcaption>図: 折りたたみを開いた状態</figcaption>
+            </figure>
+            <p>画面の説明: 「多くの場合、ページキャッシュが原因です。次の対応を試してください。」</p>
+            <ol>
+                <li>キャッシュプラグイン（WP-Optimize、WP Super Cache など）のキャッシュを削除する。</li>
+                <li>サーバー側のキャッシュ（ホスティング会社の機能）をクリアする。</li>
+                <li>CDN（Cloudflare など）のキャッシュをパージする。</li>
+                <li>おすすめ: 投票フォームを表示しているページのURLを、キャッシュの対象から除外する。</li>
+            </ol>
+            <p>理由と詳しい対処は <a href="troubleshooting.html">トラブルシューティング</a> を参照してください。</p>
+        </section>
+
+        <section>
+            <h2>この画面で出るメッセージ</h2>
+            <table>
+                <thead><tr><th>メッセージ</th><th>出るとき</th><th>対処</th></tr></thead>
+                <tbody>
+                    <tr><td>コピーしました</td><td>「コピー」を押した直後（2秒間）</td><td>不要</td></tr>
+                    <tr><td>掲載ページの情報を再取得しました。</td><td>「掲載ページの情報を再取得」を押した後</td><td>不要</td></tr>
+                    <tr><td>セキュリティチェックに失敗しました。</td><td>再取得の確認が通らなかったとき</td><td>編集画面を開き直してもう一度押す</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>よくある使い方</h2>
+            <h3>同じ投票を複数の記事に載せたい</h3>
+            <p>同じショートコードを複数の記事に貼れます。どの記事から投票しても同じデータセットに集計され、「掲載中のページ」にそれぞれの記事が表示されます。</p>
+            <div class="callout callout-note">
+                <p class="callout-title">1つの記事に同じ投票を2回貼った場合</p>
+                <p>2つとも表示され、それぞれグラフの表示や保存ができます。どちらかで投票すると、もう一方で投票しようとしたときは「既に投票しています」になります。</p>
+            </div>
+            <h3>古い記事から投票を外したい</h3>
+            <p>記事の本文からショートコードを削除して保存します。データセットや票は残ります。</p>
+        </section>
+
+        <nav class="page-nav">
+            <a href="dataset-info.html" class="prev">&laquo; データセット情報</a>
+            <a href="lock.html" class="next">投票の受付と締め切り &raquo;</a>
+        </nav>
+
+        <footer class="manual-footer">
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.7 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+        </footer>
+    </main>
+
+    <div class="lightbox"></div>
+    <script src="js/manual.js"></script>
+</body>
+</html>

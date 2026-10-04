@@ -206,3 +206,64 @@
         gap: 5px;
     }
 }
+
+/* ===== 編集画面: Kashiwazaki SEO Poll パネル ===== */
+.kashiwazaki-poll-top-boxes { margin-top: 20px; }
+.kashiwazaki-poll-top-boxes .postbox .hndle,
+#kashiwazaki_poll_status .hndle { color: #1d2327; }
+.kashiwazaki-poll-top-boxes .postbox,
+#kashiwazaki_poll_status { border-left: 4px solid #2271b1; }
+.kspoll-help { color: #50575e; margin: 0 0 8px; }
+.kspoll-form-table { margin-top: 0; }
+.kspoll-form-table th { width: 160px; padding-top: 14px; padding-bottom: 14px; }
+.kspoll-form-table td { padding-top: 10px; padding-bottom: 10px; }
+.kspoll-form-table fieldset .description { margin-left: 6px; }
+
+.kspoll-counts-table { max-width: 720px; margin: 8px 0; }
+.kspoll-counts-table th[scope="row"] { font-weight: normal; }
+.kspoll-counts-table .kspoll-col-count { width: 150px; white-space: nowrap; }
+.kspoll-counts-table .kspoll-col-percent { width: 80px; text-align: right; }
+.kspoll-counts-table input.kspoll-count-input { width: 100px; }
+.kspoll-counts-table tfoot th,
+.kspoll-counts-table tfoot td { font-weight: 600; }
+
+.kspoll-shortcode-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.kspoll-shortcode-row .kspoll-label { font-weight: 600; }
+.kspoll-copy-done { color: #008a20; }
+.kspoll-subheading { margin: 16px 0 6px; }
+.kspoll-usage-list { margin: 0; }
+.kspoll-usage-list li { padding: 6px 0; border-bottom: 1px solid #f0f0f1; margin: 0; }
+.kspoll-usage-meta { display: block; color: #646970; font-size: 12px; }
+.kspoll-warn { color: #d63638; }
+.kspoll-usage-footer { color: #646970; font-size: 12px; }
+.kspoll-details { margin-top: 12px; }
+.kspoll-details summary { cursor: pointer; color: #2271b1; }
+.kspoll-details ul { list-style: disc; margin-left: 1.5em; }
+.kspoll-danger summary { color: #b32d2e; }
+
+/* サイドバー: 投票の受付と集計 */
+.kspoll-status-badge { display: inline-block; margin: 0 0 8px; padding: 3px 10px; border-radius: 12px; font-weight: 600; }
+.kspoll-status-badge.is-open { background: #edfaef; color: #008a20; }
+.kspoll-status-badge.is-locked { background: #fcf0f1; color: #b32d2e; }
+.kspoll-lock-field label { line-height: 2; }
+.kspoll-summary { width: 100%; margin: 10px 0; border-collapse: collapse; }
+.kspoll-summary th, .kspoll-summary td { padding: 4px 0; border-bottom: 1px solid #f0f0f1; text-align: left; font-weight: normal; }
+.kspoll-summary td { text-align: right; font-weight: 600; }
+
+/* 一覧 */
+.column-poll_status { width: 80px; }
+.column-poll_votes { width: 90px; }
+.kspoll-list-badge { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 12px; }
+.kspoll-list-badge.is-open { background: #edfaef; color: #008a20; }
+.kspoll-list-badge.is-locked { background: #fcf0f1; color: #b32d2e; }
+
+/* 基本設定 */
+
+.kashiwazaki-poll-settings-wrap h2 { margin-top: 28px; padding-bottom: 6px; border-bottom: 1px solid #dcdcde; }
+.kspoll-maint-grid { display: flex; flex-wrap: wrap; gap: 16px; }
+.kspoll-maint-grid .kspoll-card { flex: 1 1 300px; max-width: none; margin-top: 0; }
+.kspoll-maint-grid .kspoll-card h3 { margin-top: 0.5em; }
+
+/* 一覧と基本設定のタブ */
+.kspoll-tabs-wrap { margin: 12px 20px 8px 2px; }
+.kspoll-tabs-wrap .nav-tab-wrapper { margin-bottom: 0; }

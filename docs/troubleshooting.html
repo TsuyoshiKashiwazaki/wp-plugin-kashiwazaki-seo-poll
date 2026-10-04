@@ -11,155 +11,136 @@
     <nav class="sidebar">
         <div class="sidebar-header">
             <h2 style="color:#fff;">SEO Poll</h2>
-            <span class="version">v1.0.6</span>
+            <span class="version">v1.0.7</span>
             <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
         </div>
         <ul>
             <li><a href="index.html">概要</a></li>
-            <li><a href="setup.html">インストール・初期設定</a></li>
-            <li><a href="create-poll.html">アンケートの作成</a></li>
-            <li><a href="settings.html">基本設定ガイド</a></li>
-            <li><a href="voting.html">表示と投票のしくみ</a></li>
-            <li><a href="chart.html">グラフ機能</a></li>
-            <li><a href="datasets.html">データセット公開</a></li>
-            <li><a href="seo.html">SEO・構造化データ</a></li>
+            <li><a href="setup.html">導入と最初の設定</a></li>
+            <li><a href="admin-menu.html">管理メニューとタブ</a></li>
+            <li><a href="poll-list.html">データセット一覧</a></li>
+            <li><a href="create-poll.html">データセットの作成</a></li>
+            <li><a href="vote-counts.html">投票数の確認と編集</a></li>
+            <li><a href="dataset-info.html">データセット情報</a></li>
+            <li><a href="embed.html">ショートコードと掲載ページ</a></li>
+            <li><a href="lock.html">投票の受付と締め切り</a></li>
+            <li><a href="voting.html">記事での表示と投票</a></li>
+            <li><a href="chart.html">グラフとダウンロード</a></li>
+            <li><a href="datasets.html">データセットページ</a></li>
+            <li><a href="settings.html">基本設定</a></li>
+            <li><a href="maintenance.html">メンテナンス</a></li>
+            <li><a href="seo.html">構造化データとSEO</a></li>
+            <li><a href="auto-tasks.html">自動処理と権限</a></li>
+            <li><a href="faq.html">よくある質問</a></li>
             <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+            <li><a href="glossary.html">用語集</a></li>
         </ul>
     </nav>
 
     <main class="content">
         <h1>トラブルシューティング</h1>
-        <p class="lead">よくある問題とその解決方法をまとめています。困ったときは、まず該当する項目を確認してください。</p>
+        <p class="lead">うまく動かないときに、症状から原因と対処を探せるようにまとめました。まず下の確認順で基本的な点を確かめ、それでも直らないときは症状別の表を見てください。</p>
+
+        <figure class="infographic">
+            <img src="images/infographics/troubleshoot-flow.png" alt="公開済みか、受付中か、ショートコードの番号、キャッシュ、データファイルの一括生成の順に確認する">
+            <figcaption>図: 困ったときの確認順</figcaption>
+        </figure>
 
         <section>
-            <h2>よくある問題と解決策</h2>
-
-            <h3>投票しようとすると「不正なリクエストです（nonce）」と出る</h3>
-            <p><strong>原因:</strong> アンケートを表示しているページがキャッシュされ、古いセキュリティトークン（nonce）が使われていることが多いです。</p>
-            <div class="step">
-                <div class="step-number">1</div>
-                <div class="step-content">
-                    <p>キャッシュプラグイン（WP-Optimize、WP Super Cache など）でキャッシュを削除する。</p>
-                </div>
-            </div>
-            <div class="step">
-                <div class="step-number">2</div>
-                <div class="step-content">
-                    <p>サーバー側やホスティング会社のキャッシュ、CDN（Cloudflare など）のキャッシュをパージする。</p>
-                </div>
-            </div>
-            <div class="callout callout-tip">
-                <p>おすすめの対策は、<strong>アンケートを設置したページの URL をキャッシュ対象から除外する</strong>ことです。設定方法はご利用のキャッシュプラグイン／CDN の各ドキュメントを参照してください。</p>
-            </div>
-
-            <h3>リバースプロキシ／CDN 配下で最初の1人しか投票できない</h3>
-            <p><strong>原因:</strong> CDN やリバースプロキシ経由だと全アクセスがプロキシの IP に見え、全員が同一 IP と判定されるためです。</p>
-            <div class="step">
-                <div class="step-number">1</div>
-                <div class="step-content">
-                    <p><code>wp-config.php</code> に <code>define( 'KASHIWAZAKI_POLL_TRUST_PROXY', true );</code> を追加し、実クライアント IP ヘッダーを信頼する設定を有効にする。</p>
-                </div>
-            </div>
-            <div class="callout callout-warning">
-                <p>この設定は、信頼できるリバースプロキシ／CDN を経由している環境でのみ有効にしてください。経由していない環境で有効にすると、ヘッダー偽装で重複投票防止を回避される恐れがあります。</p>
-            </div>
-
-            <h3>投票できない（重複投票と判定される）</h3>
-            <p><strong>原因:</strong> 同じ IP アドレスまたは Cookie で、すでに投票済みと判定されています。</p>
-            <div class="step">
-                <div class="step-number">1</div>
-                <div class="step-content">
-                    <p>ブラウザの Cookie をクリアして、再度投票を試す。</p>
-                </div>
-            </div>
-            <div class="step">
-                <div class="step-number">2</div>
-                <div class="step-content">
-                    <p>社内 LAN など共有 IP 環境では、他の人がすでに投票している可能性があります。全員に再投票してもらう場合は、基本設定の「投票制限の解除」を使います。</p>
-                </div>
-            </div>
-
-            <h3>グラフが表示されない</h3>
-            <p><strong>原因:</strong> グラフ描画に使う Chart.js（CDN 経由）が読み込めていない可能性があります。</p>
-            <div class="step">
-                <div class="step-number">1</div>
-                <div class="step-content">
-                    <p>ブラウザの拡張機能（広告ブロッカー等）や、CDN をブロックする設定を一時的に無効にして確認する。</p>
-                </div>
-            </div>
-            <div class="step">
-                <div class="step-number">2</div>
-                <div class="step-content">
-                    <p>他の JavaScript のエラーで描画が止まっていないか、ブラウザのコンソールを確認する。</p>
-                </div>
-            </div>
-
-            <h3>データセットページが 404 になる</h3>
-            <p><strong>原因:</strong> <code>/datasets/</code> の URL ルール（リライトルール）が更新されていない可能性があります。</p>
-            <div class="step">
-                <div class="step-number">1</div>
-                <div class="step-content">
-                    <p>「設定」→「パーマリンク」を開き、何も変更せずに「変更を保存」を押す。これで URL ルールが再構築されます。</p>
-                </div>
-            </div>
-
-            <h3>データセットファイル（CSV 等）が生成されない</h3>
-            <p><strong>原因:</strong> 投票データがない、またはファイル書き込み権限の問題が考えられます。</p>
-            <div class="step">
-                <div class="step-number">1</div>
-                <div class="step-content">
-                    <p>そのアンケートに1件以上の投票があることを確認する。</p>
-                </div>
-            </div>
-            <div class="step">
-                <div class="step-number">2</div>
-                <div class="step-content">
-                    <p>基本設定ページの「データセット一括生成」を実行して、まとめて生成し直す。</p>
-                </div>
-            </div>
-            <div class="callout callout-note">
-                <p>データファイルはアップロードディレクトリ配下に保存されるため、プラグインを更新してもデータが消えることはありません。旧バージョンからの更新直後は、データベースに残る投票データから全データファイルが自動的に再生成されます。反映まで少し時間がかかる場合は、管理画面を一度開くか、上記の「データセット一括生成」を実行してください。</p>
-            </div>
+            <h2>まず確認すること</h2>
+            <div class="step"><div class="step-number">1</div><div class="step-content"><h3>データセットは公開済みか</h3><p>一覧の「日付」列が「公開済み」か確認します。下書きや非公開では記事に表示されません。</p></div></div>
+            <div class="step"><div class="step-number">2</div><div class="step-content"><h3>受付中か</h3><p>一覧の「受付」列が「受付中」か確認します。「🔒 締切」なら、記事にはグラフとリンクだけが表示されます。</p></div></div>
+            <div class="step"><div class="step-number">3</div><div class="step-content"><h3>ショートコードの番号は正しいか</h3><p>記事に貼った <code>[tk_poll id="番号"]</code> の番号が、編集画面の「ショートコード」欄と同じか確認します。</p></div></div>
+            <div class="step"><div class="step-number">4</div><div class="step-content"><h3>キャッシュを消したか</h3><p>キャッシュ系のプラグイン、サーバーのキャッシュ、CDN を使っている場合は、キャッシュを削除してから確認します。</p></div></div>
+            <div class="step"><div class="step-number">5</div><div class="step-content"><h3>データファイルを一括生成したか</h3><p>ダウンロードやデータセットページの表示がおかしいときは、基本設定の「メンテナンス」で「データファイルを一括生成する」を押します。</p></div></div>
         </section>
 
         <section>
-            <h2>動作要件</h2>
+            <h2>症状別の原因と対処</h2>
+            <h3>記事の表示</h3>
             <table>
-                <thead>
-                    <tr>
-                        <th>項目</th>
-                        <th>要件</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>症状</th><th>原因</th><th>対処</th></tr></thead>
                 <tbody>
-                    <tr><td>WordPress</td><td>5.0 以上</td></tr>
-                    <tr><td>PHP</td><td>7.4 以上</td></tr>
-                    <tr><td>グラフ描画</td><td>Chart.js 4.4.8 / chartjs-plugin-datalabels 2.2.0（CDN 経由）</td></tr>
+                    <tr><td>「データが見つかりません。」と表示される</td><td>データセットが下書き・非公開・ゴミ箱、または番号が違う</td><td>データセットを公開する。ショートコードの番号を確認する</td></tr>
+                    <tr><td>「選択肢がありません。」と表示される</td><td>選択肢が保存されていない</td><td>編集画面で選択肢を入力して「更新」</td></tr>
+                    <tr><td>何も表示されない</td><td>ショートコードの番号が空、または0</td><td>正しい番号を入れる</td></tr>
+                    <tr><td><code>[tk_poll id="…"]</code> の文字がそのまま表示される</td><td>プラグインが停止している、または本文以外の場所に貼っている</td><td>プラグインを有効化する。投稿・固定ページの本文に貼る</td></tr>
+                    <tr><td>選択肢が出ず、グラフとリンクだけが表示される</td><td>受付を締め切っている</td><td>受付を再開する（<a href="lock.html">投票の受付と締め切り</a>）</td></tr>
+                    <tr><td>グラフの部分に赤い文字で「グラフ描画に必要なライブラリ(Chart.js)が…」と出る</td><td>グラフを描く部品を読み込めない（通信の遮断、スクリプトの最適化・遅延読み込みの設定など）</td><td>最適化系のプラグインで該当スクリプトを除外する。別のブラウザ・回線で確認する</td></tr>
+                    <tr><td>集計データを拡大ボタンと小さなグラフが無い</td><td>まだ1票も無い</td><td>正常です。最初の投票が入ると表示されます</td></tr>
                 </tbody>
+            </table>
+
+            <h3>投票</h3>
+            <table>
+                <thead><tr><th>症状</th><th>原因</th><th>対処</th></tr></thead>
+                <tbody>
+                    <tr><td>「不正なリクエストです。（nonce）」と出て投票できない</td><td>ページがキャッシュされ、投票の確認に使う古い情報が配られている</td><td>キャッシュを削除する。投票フォームを置いたページの URL をキャッシュの対象から外す（いちばん確実です）</td></tr>
+                    <tr><td>初めての人なのに「既に投票しています」になる</td><td>同じ回線（会社・学校・家庭）から誰かが投票済み</td><td>1人1回の制限による正常な動作です（<a href="voting.html">記事での表示と投票</a>）</td></tr>
+                    <tr><td>最初の1人しか投票できない</td><td>CDN やプロキシの影響で、すべての来訪者が同じ接続元に見えている</td><td>サイトの設定ファイルで「プロキシを信頼する」設定を有効にする必要があります。サイトを管理している技術担当者に相談してください</td></tr>
+                    <tr><td>「選択肢が変更されました。ページを再読み込みしてから投票してください。」と出る</td><td>選択肢を変えた後に、古い（キャッシュされた）ページから投票した</td><td>ページのキャッシュを削除する。選択肢を変えたらキャッシュも削除する</td></tr>
+                    <tr><td>「無効な選択肢です。」「この設問では1つだけ選択できます。」と出る</td><td>選択肢や投票形式を変えた後に、古いページから投票した</td><td>ページを再読み込みしてから投票する。キャッシュを削除する</td></tr>
+                    <tr><td>テスト投票した自分が、もう投票できない</td><td>1人1回の制限</td><td>「集計データを全削除する」で記録ごと消す（<a href="lock.html">投票の受付と締め切り</a>）</td></tr>
+                    <tr><td>投票しても票が増えない</td><td>受付を締め切った後に、締め切る前に開いたページから投票した</td><td>正常です。締め切り中の投票は数えません</td></tr>
+                </tbody>
+            </table>
+
+            <h3>管理画面</h3>
+            <table>
+                <thead><tr><th>症状</th><th>原因</th><th>対処</th></tr></thead>
+                <tbody>
+                    <tr><td>投票数を書き換えたのに保存されない</td><td>同時に選択肢も変えた、正しくない数字を入れた</td><td>表示されたメッセージを確認し、選択肢を保存してから投票数をもう一度入力する（<a href="vote-counts.html">投票数の確認と編集</a>）</td></tr>
+                    <tr><td>選択肢の誤字を直したら票が0になった</td><td>文字を変えた選択肢は別の選択肢として扱われる</td><td>「投票数」ボックスで票数を入力し直す</td></tr>
+                    <tr><td>「使用記事」「掲載中のページ」に記事が出ない</td><td>情報を最大1時間使い回している、記事が予約投稿、または一覧の「使用記事」は公開済みの記事だけを数えるため（下書き・非公開は編集画面の「掲載中のページ」で確認できます）</td><td>「掲載ページ情報を再取得」を押す。予約投稿は公開後に表示されます</td></tr>
+                    <tr><td>「基本設定」タブが無い</td><td>サイトの設定を変更できる権限が無い</td><td>管理者に依頼する</td></tr>
+                    <tr><td>「公開」を押したのに下書きのまま</td><td>ほかのプラグインとの組み合わせで、押したボタンの情報が送られなかった可能性</td><td>このプラグインには対策が入っています。続く場合は、ほかのプラグインを一時的に停止して確認する</td></tr>
+                </tbody>
+            </table>
+
+            <h3>データセットページ・ダウンロード</h3>
+            <table>
+                <thead><tr><th>症状</th><th>原因</th><th>対処</th></tr></thead>
+                <tbody>
+                    <tr><td><code>/datasets/</code> が表示されない（見つからない）</td><td>パーマリンク設定が「基本」、または URL の設定が古い</td><td>「設定」→「パーマリンク」で「基本」以外を選び、「変更を保存」を押す</td></tr>
+                    <tr><td>「利用可能な形式」が出ない・形式別ページが「指定されたデータセットが見つかりません。」</td><td>データファイルが作られていない（サーバーの書き込みの失敗、旧版からの更新直後など）</td><td>「データファイルを一括生成する」を押す（<a href="maintenance.html">メンテナンス</a>）</td></tr>
+                    <tr><td>「サイトマップを書き込めませんでした。」と出る、状態が「⚠ ファイルが存在しません」</td><td>サイトのフォルダに書き込めない</td><td>サーバーの書き込み権限をサーバー管理者に確認する</td></tr>
+                    <tr><td>一括生成で「書き込めないファイルがありました」と出る</td><td>データファイルの保存用フォルダに書き込めない</td><td>メディアのアップロード用フォルダの書き込み権限をサーバー管理者に確認する</td></tr>
+                    <tr><td>ダウンロードの数字が古い</td><td>ブラウザや CDN に古いファイルが残っている</td><td>キャッシュを削除する。「データファイルを一括生成する」を押す</td></tr>                </tbody>
             </table>
         </section>
 
         <section>
-            <h2>技術仕様</h2>
-            <ul>
-                <li>投票データはカスタム投稿タイプ「データセット（poll）」の投稿メタとして保存</li>
-                <li>重複投票防止: IP アドレス + Cookie の組み合わせ</li>
-                <li>データ形式: CSV / XML / YAML / JSON / SVG の5種類を自動生成（アップロードディレクトリ配下に保存）</li>
-                <li>構造化データ: Schema.org Dataset 型 JSON-LD / Dublin Core / BreadcrumbList / DataCatalog</li>
-                <li>専用サイトマップ: sitemap-poll-datasets.xml を自動生成</li>
-                <li>外部通信: グラフ描画用の Chart.js を CDN から読み込み（サーバー間の外部送信はなし）</li>
-                <li>メール送信・定期実行（Cron）は使用しません</li>
-            </ul>
+            <h2>しくみの全体像</h2>
+            <p>原因を考えるときの参考に、投票から結果の公開までのしくみを示します。</p>
+            <figure class="infographic">
+                <img src="images/infographics/architecture.png" alt="来訪者の投票が集計・保存され、構造化データ、5形式のファイル、円グラフに使われる">
+                <figcaption>図: 投票データが使われる流れ</figcaption>
+            </figure>
+        </section>
+
+        <section>
+            <h2>ページキャッシュの設定について</h2>
+            <p>投票の確認には、ページを開いたときに配られる一時的な情報を使います。ページがキャッシュされると、古い情報が配られ続けて「不正なリクエストです。（nonce）」の原因になります。次のどれかで対処できます。</p>
+            <ol>
+                <li>キャッシュプラグイン（WP-Optimize、WP Super Cache など）のキャッシュを削除する。</li>
+                <li>サーバー側のキャッシュ（ホスティング会社の機能）をクリアする。</li>
+                <li>CDN（Cloudflare など）のキャッシュを削除する。</li>
+                <li>おすすめ: 投票フォームを表示しているページの URL を、キャッシュの対象から除外する。</li>
+            </ol>
+            <div class="callout callout-tip">
+                <p class="callout-title">グラフの数字はキャッシュの影響を受けません</p>
+                <p>グラフはページを開くたびに最新の集計を読み込むため、ページがキャッシュされていても最新の数字が表示されます。ただし、詳細ページの集計表と「集計時点」、「既に投票しています」や受付終了の表示はページと一緒にキャッシュされるため、古いまま表示されることがあります。</p>
+            </div>
         </section>
 
         <nav class="page-nav">
-            <a href="seo.html" class="prev">&laquo; SEO・構造化データ</a>
-            <span></span>
+            <a href="faq.html" class="prev">&laquo; よくある質問</a>
+            <a href="glossary.html" class="next">用語集 &raquo;</a>
         </nav>
 
         <footer class="manual-footer">
             <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
-            <p>プラグイン: Kashiwazaki SEO Poll v1.0.6 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.7 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
         </footer>
     </main>
 

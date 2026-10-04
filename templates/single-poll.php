@@ -13,6 +13,10 @@ add_action('wp_head', function() {
     if (!$poll_post || $poll_post->post_type !== 'poll') {
         return;
     }
+    // パスワード保護されたデータセットは、パスワードを入れるまで構造化データ・説明を出さない。
+    if ( post_password_required( $poll_post ) ) {
+        return;
+    }
 
     // 既存の構造化データ関数を活用
     if (function_exists('kashiwazaki_poll_get_single_dataset_structured_data')) {
@@ -25,8 +29,8 @@ add_action('wp_head', function() {
     }
 
     // Dublin Core メタタグ
-    $poll_description = get_post_meta($poll_id, '_kashiwazaki_poll_description', true);
-    $poll_keywords = get_post_meta($poll_id, 'dataset_keywords', true);
+    $poll_description = kashiwazaki_poll_decode_stored_text( get_post_meta( $poll_id, '_kashiwazaki_poll_description', true ) );
+    $poll_keywords = kashiwazaki_poll_decode_stored_text( get_post_meta( $poll_id, 'dataset_keywords', true ) );
 
     echo '<meta name="DC.title" content="' . esc_attr(get_the_title()) . '">' . "\n";
     echo '<meta name="DC.description" content="' . esc_attr($poll_description) . '">' . "\n";
@@ -42,6 +46,15 @@ add_action('wp_head', function() {
 get_header(); ?>
 
 <?php while (have_posts()) : the_post(); ?>
+
+    <?php if ( post_password_required() ) : ?>
+    <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+        <header class="entry-header">
+            <h1 class="entry-title"><?php the_title(); ?></h1>
+        </header>
+        <div class="entry-content"><?php echo get_the_password_form(); ?><p>パスワード保護されたデータセットでは、投票の受付とデータファイルの配布は行いません。</p></div>
+    </article>
+    <?php continue; endif; ?>
 
     <?php if (function_exists('kspb_display_breadcrumbs')) : kspb_display_breadcrumbs(); endif; ?>
 
@@ -79,7 +92,7 @@ get_header(); ?>
         <div class="entry-content">
             <?php
             // 説明文を表示
-            $poll_description = get_post_meta(get_the_ID(), '_kashiwazaki_poll_description', true);
+            $poll_description = kashiwazaki_poll_decode_stored_text( get_post_meta( get_the_ID(), '_kashiwazaki_poll_description', true ) );
             if ($poll_description) {
                 echo '<div class="poll-description">';
                 echo '<p>' . esc_html($poll_description) . '</p>';

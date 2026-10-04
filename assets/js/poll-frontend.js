@@ -29,12 +29,14 @@
             const viewResultArea = pollBlock.querySelector('#kashiwazaki-poll-view-result-area-' + pollId);
             const firstSubmitBtn = pollBlock.querySelector('.kashiwazaki-poll-submit'); // For initial check
 
-            if (!resultContainer || !previewContainer || !form || !viewResultArea) {
+            // 受付終了（ロック中）のブロックは、集計グラフの入れ物と詳細ページへのリンクだけを持つ。
+            let compact = !!pollData.locked;
+            if (!resultContainer || (!compact && (!previewContainer || !form || !viewResultArea))) {
                 console.error(`${logPrefix} One or more required container elements not found within the poll block. Initialization aborted.`);
                 return;
             }
 
-            if (!firstSubmitBtn && !pollData.alreadyVoted) { // Check if at least one submit button exists
+            if (!firstSubmitBtn && !pollData.alreadyVoted && !compact) { // Check if at least one submit button exists
                 console.warn(`${logPrefix} Submit button element not found! Voting will not work.`);
             }
 
@@ -76,7 +78,10 @@
                 if (chartInstance) { try { chartInstance.destroy(); } catch (e) { console.error(`${logPrefix} Error destroying previous chart instance:`, e); } chartInstance = null; }
                 targetContainer.innerHTML = '';
 
-                if (!isPreview) {
+                if (!isPreview && compact) {
+                    // 受付終了の表示はグラフだけ（ダウンロード・投票に戻る・形式別リンクは出さない）。
+                    targetContainer.classList.remove('initial-chart-preview'); targetContainer.style.display = 'block';
+                } else if (!isPreview) {
                     targetContainer.classList.remove('initial-chart-preview'); targetContainer.style.display = 'block';
                     const downloadBtn = document.createElement('button'); downloadBtn.type = 'button'; downloadBtn.id = 'download-btn-' + data.poll_id; downloadBtn.textContent = 'グラフをダウンロード'; downloadBtn.className = 'button kashiwazaki-poll-download-btn'; targetContainer.appendChild(downloadBtn);
                     if (!alreadyVoted && form && !form.classList.contains('kashiwazaki-poll-form-disabled')) { const backBtn = document.createElement('button'); backBtn.type = 'button'; backBtn.className = 'button kashiwazaki-poll-back-to-vote'; backBtn.textContent = '投票に戻る'; targetContainer.appendChild(backBtn); }
@@ -84,8 +89,8 @@
 
                 const chartWrapper = document.createElement('div'); chartWrapper.className = 'kashiwazaki-poll-chart-container'; const canvas = document.createElement('canvas'); canvas.id = canvasId; chartWrapper.appendChild(canvas); targetContainer.appendChild(chartWrapper);
 
-                // 各フォーマットの個別ページリンクを追加（フルビューのみ）
-                if (!isPreview) {
+                // 各フォーマットの個別ページリンクを追加（フルビューのみ。受付終了の表示では出さない）
+                if (!isPreview && !compact) {
                     const linksContainer = document.createElement('div'); linksContainer.className = 'kashiwazaki-poll-format-links'; linksContainer.innerHTML = '<div class="format-links-title">📊 フォーマット別データダウンロード</div><p>同じアンケートデータを異なるファイル形式で取得できます</p>';
                     const formatLinks = document.createElement('div'); formatLinks.className = 'format-links-list';
                     const formats = [
@@ -238,7 +243,8 @@
             } // end of showResult
 
             function downloadChart(canvasId, poll_id) {
-                const canvas = document.getElementById(canvasId);
+                // 同じ投票が1ページに複数あってもボタンを押したブロックのグラフを保存する。
+                const canvas = pollBlock.querySelector('#' + canvasId) || document.getElementById(canvasId);
                 if (!canvas) { console.error(`${logPrefix} Canvas element with id "${canvasId}" not found for download.`); alert('グラフ要素が見つからず、ダウンロードできませんでした。'); return; }
                 if (canvas.offsetParent === null) { console.warn(`${logPrefix} Canvas element "${canvasId}" seems to be hidden. Download might fail or produce blank image.`); }
                 try {
@@ -288,6 +294,15 @@
                                 pollBlock.insertBefore(votedMsg, resultContainer || pollBlock.firstChild);
                                 // Submit buttons are inside the form, which is now hidden. No need to remove them individually.
                                 if (viewResultArea) viewResultArea.style.display = 'none';
+                            } else if (data.locked) {
+                                // 表示後に受付が締め切られた場合（キャッシュ済みページ等）は、
+                                // 受付終了の表示（集計グラフと詳細ページへのリンクだけ）に切り替える。
+                                alreadyVoted = true;
+                                compact = true;
+                                pollBlock.classList.add('kashiwazaki-poll-locked');
+                                [form, viewResultArea, previewContainer].forEach(el => { if (el) el.style.display = 'none'; });
+                                pollBlock.querySelectorAll('.kashiwazaki-poll-title, .voted-msg').forEach(el => { el.style.display = 'none'; });
+                                fetchAndShowResults(true);
                             } else {
                                 if (data.message) alert(data.message); else alert("投票に失敗しました。");
                                 target.disabled = false; // Re-enable the clicked button
@@ -329,6 +344,7 @@
 
             // --- 初期表示処理 ---
             const initializePollView = () => {
+                if (compact) { fetchAndShowResults(true); return; }
                 if (!resultContainer || !previewContainer || !form || !viewResultArea) {
                     console.error(`${logPrefix} Skipping initialization due to missing elements.`);
                     return;

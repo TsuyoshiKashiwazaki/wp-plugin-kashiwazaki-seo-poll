@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEO・構造化データ - SEO Poll マニュアル</title>
+    <title>構造化データとSEO - SEO Poll マニュアル</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -11,84 +11,115 @@
     <nav class="sidebar">
         <div class="sidebar-header">
             <h2 style="color:#fff;">SEO Poll</h2>
-            <span class="version">v1.0.6</span>
+            <span class="version">v1.0.7</span>
             <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
         </div>
         <ul>
             <li><a href="index.html">概要</a></li>
-            <li><a href="setup.html">インストール・初期設定</a></li>
-            <li><a href="create-poll.html">アンケートの作成</a></li>
-            <li><a href="settings.html">基本設定ガイド</a></li>
-            <li><a href="voting.html">表示と投票のしくみ</a></li>
-            <li><a href="chart.html">グラフ機能</a></li>
-            <li><a href="datasets.html">データセット公開</a></li>
-            <li><a href="seo.html">SEO・構造化データ</a></li>
+            <li><a href="setup.html">導入と最初の設定</a></li>
+            <li><a href="admin-menu.html">管理メニューとタブ</a></li>
+            <li><a href="poll-list.html">データセット一覧</a></li>
+            <li><a href="create-poll.html">データセットの作成</a></li>
+            <li><a href="vote-counts.html">投票数の確認と編集</a></li>
+            <li><a href="dataset-info.html">データセット情報</a></li>
+            <li><a href="embed.html">ショートコードと掲載ページ</a></li>
+            <li><a href="lock.html">投票の受付と締め切り</a></li>
+            <li><a href="voting.html">記事での表示と投票</a></li>
+            <li><a href="chart.html">グラフとダウンロード</a></li>
+            <li><a href="datasets.html">データセットページ</a></li>
+            <li><a href="settings.html">基本設定</a></li>
+            <li><a href="maintenance.html">メンテナンス</a></li>
+            <li><a href="seo.html">構造化データとSEO</a></li>
+            <li><a href="auto-tasks.html">自動処理と権限</a></li>
+            <li><a href="faq.html">よくある質問</a></li>
             <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+            <li><a href="glossary.html">用語集</a></li>
         </ul>
     </nav>
 
     <main class="content">
-        <h1>SEO・構造化データ</h1>
-        <p class="lead">このプラグインは、集めたアンケート結果を検索エンジンや生成 AI に「データセット」として正しく理解してもらうための構造化データを自動出力します。ここでは、その中身と設定のポイントを解説します。</p>
-
-        <section>
-            <h2>Schema.org Dataset 型 JSON-LD</h2>
-            <p>各アンケートのデータセットページには、Schema.org の <code>Dataset</code> 型 JSON-LD が自動で出力されます。これは Google データセット検索が読み取る、もっとも重要な構造化データです。主に次の情報が含まれます。</p>
-            <ul>
-                <li><strong>name / description</strong>：質問文と、作成画面で入力した「詳細な説明」（150文字以上）</li>
-                <li><strong>creator / publisher / provider</strong>：基本設定の Creator 設定・作者情報に基づく作成者・公開者・提供者</li>
-                <li><strong>license</strong>：作成画面で選んだクリエイティブ・コモンズ等のライセンス</li>
-                <li><strong>variableMeasured</strong>：各選択肢を測定変数として明示</li>
-                <li><strong>distribution</strong>：CSV / XML / YAML / JSON / SVG の配布形式（実在するファイルのみ）</li>
-                <li><strong>temporalCoverage</strong>：調査期間（最初の投票日〜最後の投票日）</li>
-                <li><strong>spatialCoverage</strong>：基本設定の地理的範囲（初期値「日本」）</li>
-            </ul>
-            <div class="callout callout-warning">
-                <p>構造化データを十分に機能させるには、<strong>作成画面の「詳細な説明」を150文字以上</strong>入力することが重要です。説明が短いと、データセットとしての情報が不足します。</p>
-            </div>
-        </section>
-
-        <section>
-            <h2>そのほかの構造化データ・メタタグ</h2>
-            <ul>
-                <li><strong>Dublin Core メタタグ</strong>：DC.title / DC.description / DC.type（Dataset）/ DC.format / DC.language / DC.subject などを出力します。</li>
-                <li><strong>パンくずリスト（BreadcrumbList）</strong>：基本設定でオンにした場合のみ出力します。他プラグインでパンくずを管理している場合は、重複を避けるためオフのままにしてください。</li>
-                <li><strong>DataCatalog</strong>：<code>/datasets/</code> 一覧ページに、データセットの目録（DataCatalog）としての構造化データを出力します。</li>
-                <li><strong>調査期間（temporalCoverage）</strong>：最初の投票日と最後の投票日から自動算出され、詳細ページの「調査期間」バッジや構造化データに反映されます。</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>専用サイトマップ</h2>
-            <p>データセット専用のサイトマップ <code>sitemap-poll-datasets.xml</code> が自動生成されます。投票時やデータ一括生成時に自動更新され、基本設定ページから手動再生成もできます。</p>
-            <div class="callout callout-tip">
-                <p>Google Search Console の「サイトマップ」に <code>https://（あなたのサイト）/sitemap-poll-datasets.xml</code> を登録すると、データセットページのインデックスが促進されます。URL は基本設定ページで確認できます。</p>
-            </div>
-        </section>
-
-        <section>
-            <h2>GEO（生成 AI 検索）への応用</h2>
-            <p>構造化データと5形式の機械可読なデータ配布は、従来の検索エンジンだけでなく、生成 AI が情報源として引用しやすい形にもつながります。独自に集めたアンケート結果は、他にはない一次データとして、記事の信頼性・独自性を高める材料になります。</p>
-            <ul>
-                <li>質問文・説明・キーワードを具体的に設定し、何のデータかを明確にする</li>
-                <li>ライセンスを明示し、引用・再利用の条件をはっきりさせる</li>
-                <li>調査期間や地理的範囲を設定し、データの文脈を伝える</li>
-            </ul>
-        </section>
+        <h1>構造化データとSEO</h1>
+        <p class="lead">このプラグインは、投票の集計結果を「データセット」として検索エンジンや AI が理解しやすい形で出力します。このページでは、どのページに何が出力されるかと、設定で変えられる部分をまとめます。</p>
 
         <figure class="infographic">
-            <img src="images/infographics/architecture.png" alt="投票データから構造化データ・5形式・サイトマップが生成される仕組み">
-            <figcaption>図: 投票データから構造化データ・データファイル・サイトマップが生成される流れ</figcaption>
+            <img src="images/infographics/structured-data.png" alt="Dataset の主な中身。名前・説明、作成者、提供者、配布形式、地理的範囲、更新日時。別にパンくずリスト">
+            <figcaption>図: 構造化データの主な中身。パンくずリストと提供者の出力は基本設定で切り替えます</figcaption>
         </figure>
 
+        <section>
+            <h2>構造化データとは</h2>
+            <p>構造化データは、ページの内容を検索エンジン向けに決まった形式で書いた情報です。来訪者の画面には表示されません。このプラグインは、schema.org という共通の語彙の「Dataset（データセット）」などを使って、データの名前・説明・作成者・ライセンス・ファイルの場所などを書き出します。</p>
+        </section>
+
+        <section>
+            <h2>ページごとの出力</h2>
+            <table>
+                <thead><tr><th>ページ</th><th>出力される構造化データ</th><th>そのほかの情報</th></tr></thead>
+                <tbody>
+                    <tr><td>投票ブロックを置いた記事</td><td>Dataset（名前・説明・記事の URL・作成者・発行者・公開日・ライセンス・選択肢ごとの票数・キーワード・地理的範囲・データファイルの場所・提供者）</td><td>—</td></tr>
+                    <tr><td>データセット一覧（/datasets/）</td><td>データカタログ（サイト名の「集計データカタログ」）、パンくずリスト（設定が ON のとき）</td><td>ページの説明文、検索エンジン向けの索引許可、正規の URL、Dublin Core（書誌情報の共通形式）</td></tr>
+                    <tr><td>詳細ページ</td><td>Dataset（名前・説明・作成者・発行者・公開日・更新日時・ライセンス・地理的範囲・調査期間・調査方法・所属カタログ・選択肢ごとの票数・キーワード・提供者）</td><td>Dublin Core</td></tr>
+                    <tr><td>形式別の一覧</td><td>パンくずリスト（設定が ON のとき）</td><td>ページの説明文、索引許可、正規の URL、Dublin Core</td></tr>
+                    <tr><td>形式別ページ</td><td>Dataset（その形式のファイルだけを配布形式として記載）、パンくずリスト（設定が ON のとき）</td><td>ページの説明文、キーワード、索引許可、正規の URL（詳細ページを指す）、Dublin Core、引用表記など</td></tr>
+                </tbody>
+            </table>
+            <div class="callout callout-note">
+                <p class="callout-title">二重出力を避ける仕組み</p>
+                <p>詳細ページの中にも投票ブロックが表示されますが、詳細ページでは投票ブロック側の構造化データを出さず、ページ全体の Dataset だけを出力します。</p>
+                <p>詳細ページの Dataset の更新日時には、集計の最終更新（最後の投票、または投票数を手で直した日時）が入ります。どちらも無いときは、データセットを最後に更新した日時です。形式別ページでは、そのファイルを作った日時です。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>どの設定が何に反映されるか</h2>
+            <table>
+                <thead><tr><th>設定</th><th>設定する場所</th><th>反映先</th></tr></thead>
+                <tbody>
+                    <tr><td>設問（タイトル）</td><td>編集画面</td><td>Dataset の名前（詳細ページ・形式別ページでは「設問 - HTML形式の集計データ」のように形式名が付きます）</td></tr>
+                    <tr><td>詳細な説明</td><td>編集画面「データセット情報」</td><td>Dataset の説明（詳細ページ・形式別ページでは決まった導入文のあとに「データの説明: 」として付きます）、ページの説明文</td></tr>
+                    <tr><td>ライセンス</td><td>編集画面「データセット情報」</td><td>Dataset のライセンス、データファイル</td></tr>
+                    <tr><td>キーワード</td><td>編集画面「データセット情報」</td><td>記事・詳細ページ・形式別ページのキーワード</td></tr>
+                    <tr><td>記事のタグ</td><td>記事の編集画面</td><td>キーワードが空のときだけ、記事に置いた投票ブロックの Dataset のキーワード</td></tr>
+                    <tr><td>バージョン</td><td>編集画面「データセット情報」</td><td>詳細ページ・形式別ページの Dataset の版</td></tr>
+                    <tr><td>作成者（Creator）・個人／組織の情報</td><td>基本設定</td><td>Dataset の作成者</td></tr>
+                    <tr><td>プラグイン作者情報</td><td>基本設定</td><td>Dataset の提供者</td></tr>
+                    <tr><td>パンくずリスト</td><td>基本設定</td><td>データセット一覧・形式別の一覧・形式別ページのパンくずリスト</td></tr>
+                    <tr><td>地理的範囲</td><td>基本設定</td><td>記事・詳細ページ・形式別ページの対象地域</td></tr>
+                </tbody>
+            </table>
+            <div class="callout callout-note">
+                <p class="callout-title">固定の値</p>
+                <p>データカタログのライセンスは常に CC BY 4.0 と出力されます。発行者（publisher）にはサイト名・サイトのアドレスと、基本設定の組織のメールアドレス（「連絡先メールアドレス」が ON で、入力されているときだけ）が使われます。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>サイトマップ</h2>
+            <p>データセット専用のサイトマップ（<code>/sitemap-poll-datasets.xml</code>）を自動で作ります。登録方法は <a href="maintenance.html">メンテナンス</a> を参照してください。</p>
+        </section>
+
+        <section>
+            <h2>より伝わりやすくするために</h2>
+            <ul>
+                <li><strong>詳細な説明を充実させる</strong>: 調査の目的・対象・期間・活用方法を書きます。150文字以上がおすすめです。</li>
+                <li><strong>作成者を正しく設定する</strong>: 誰が作ったデータかを示します。組織の名前・URL を実在のものにします。</li>
+                <li><strong>ライセンスを明示する</strong>: 引用・二次利用の条件が明確になります。</li>
+                <li><strong>パンくずリストの重複を避ける</strong>: SEO プラグインやテーマがすでにパンくずリストの構造化データを出している場合は、この設定を OFF のままにします。</li>
+            </ul>
+            <div class="callout callout-note">
+                <p class="callout-title">効果について</p>
+                <p>構造化データは、検索エンジンや AI がデータを理解する助けになる情報です。検索結果での表示や順位、AI での引用は各サービスの判断によるため、効果を保証するものではありません。出力内容は Google のリッチリザルト テストなどの公式ツールで確認できます。</p>
+            </div>
+        </section>
+
         <nav class="page-nav">
-            <a href="datasets.html" class="prev">&laquo; データセット公開</a>
-            <a href="troubleshooting.html" class="next">トラブルシューティング &raquo;</a>
+            <a href="maintenance.html" class="prev">&laquo; メンテナンス</a>
+            <a href="auto-tasks.html" class="next">自動処理と権限 &raquo;</a>
         </nav>
 
         <footer class="manual-footer">
             <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
-            <p>プラグイン: Kashiwazaki SEO Poll v1.0.6 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.7 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
         </footer>
     </main>
 

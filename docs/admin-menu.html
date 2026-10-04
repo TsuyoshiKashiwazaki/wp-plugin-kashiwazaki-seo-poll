@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理メニューとタブ - SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2 style="color:#fff;">SEO Poll</h2>
+            <span class="version">v1.0.7</span>
+            <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
+        </div>
+        <ul>
+            <li><a href="index.html">概要</a></li>
+            <li><a href="setup.html">導入と最初の設定</a></li>
+            <li><a href="admin-menu.html">管理メニューとタブ</a></li>
+            <li><a href="poll-list.html">データセット一覧</a></li>
+            <li><a href="create-poll.html">データセットの作成</a></li>
+            <li><a href="vote-counts.html">投票数の確認と編集</a></li>
+            <li><a href="dataset-info.html">データセット情報</a></li>
+            <li><a href="embed.html">ショートコードと掲載ページ</a></li>
+            <li><a href="lock.html">投票の受付と締め切り</a></li>
+            <li><a href="voting.html">記事での表示と投票</a></li>
+            <li><a href="chart.html">グラフとダウンロード</a></li>
+            <li><a href="datasets.html">データセットページ</a></li>
+            <li><a href="settings.html">基本設定</a></li>
+            <li><a href="maintenance.html">メンテナンス</a></li>
+            <li><a href="seo.html">構造化データとSEO</a></li>
+            <li><a href="auto-tasks.html">自動処理と権限</a></li>
+            <li><a href="faq.html">よくある質問</a></li>
+            <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+            <li><a href="glossary.html">用語集</a></li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <h1>管理メニューとタブ</h1>
+        <p class="lead">管理画面の左メニューには「Kashiwazaki SEO Poll」が1つだけ表示されます。データセットの一覧と基本設定は、同じメニューの中でタブを使って切り替えます。</p>
+
+        <figure class="infographic">
+            <img src="images/infographics/menu-tabs.png" alt="左メニューの Kashiwazaki SEO Poll から開く画面の上部に、データセット一覧と基本設定のタブがある">
+            <figcaption>図: メニューは1つ、中身はタブで切り替え</figcaption>
+        </figure>
+
+        <section>
+            <h2>左メニュー「Kashiwazaki SEO Poll」</h2>
+            <p>円グラフのアイコンが付いた「Kashiwazaki SEO Poll」をクリックすると、データセット一覧が開きます。データセットの編集画面・新規追加画面・基本設定を開いている間も、このメニューが選択中（強調表示）になります。</p>
+            <figure class="screenshot">
+                <img src="images/screenshots/01-menu-location.png" alt="管理画面の左メニューで Kashiwazaki SEO Poll が赤枠で示されている" class="lightbox-trigger">
+                <figcaption>図: 左メニューの「Kashiwazaki SEO Poll」（赤枠）</figcaption>
+            </figure>
+            <table>
+                <thead><tr><th>項目</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>表示される人</td><td>投稿を書ける権限を持つ人（通常は寄稿者以上）</td></tr>
+                    <tr><td>クリックした先</td><td>データセット一覧</td></tr>
+                    <tr><td>サブメニュー</td><td>表示しません。新規追加は一覧画面のボタンから、基本設定はタブから開きます</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>タブ「データセット一覧」「基本設定」</h2>
+            <p>データセット一覧と基本設定の画面の上部に、2つのタブが表示されます。いま開いている画面のタブが白く強調されます。</p>
+            <figure class="screenshot">
+                <img src="images/screenshots/03-list-tabs.png" alt="データセット一覧タブと基本設定タブ、その下に見出しデータセットと新しいデータセットを追加ボタン" class="lightbox-trigger">
+                <figcaption>図: 画面上部のタブ</figcaption>
+            </figure>
+            <table>
+                <thead><tr><th>タブ</th><th>押すと開く画面</th><th>表示される人</th></tr></thead>
+                <tbody>
+                    <tr><td>データセット一覧</td><td>データセットの一覧（<a href="poll-list.html">データセット一覧</a>）</td><td>左メニューが見える人全員</td></tr>
+                    <tr><td>基本設定</td><td>「Kashiwazaki SEO Poll 基本設定」（<a href="settings.html">基本設定</a>）</td><td>サイトの設定を変更できる人（通常は管理者）だけ</td></tr>
+                </tbody>
+            </table>
+            <div class="callout callout-note">
+                <p class="callout-title">タブが出ない画面</p>
+                <p>データセットの編集画面と新規追加画面にはタブを表示しません。一覧に戻るときは左メニューの「Kashiwazaki SEO Poll」を押してください。</p>
+            </div>
+            <div class="callout callout-warning">
+                <p class="callout-title">管理者以外が基本設定を開いた場合</p>
+                <p>サイトの設定を変更できない人が基本設定の URL を直接開くと、WordPress 標準の「このページにアクセスする権限がありません。」が表示され、画面は開きません。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>そのほかの入口</h2>
+            <table>
+                <thead><tr><th>入口</th><th>開く画面</th></tr></thead>
+                <tbody>
+                    <tr><td>プラグイン一覧の「設定」リンク</td><td>基本設定</td></tr>
+                    <tr><td>一覧画面の「新しいデータセットを追加」ボタン</td><td>新規追加画面</td></tr>
+                    <tr><td>管理バーの「+ 新規」→「データセット」</td><td>新規追加画面</td></tr>
+                    <tr><td>編集画面の「データセットページを見る ↗」（公開中のみ）</td><td>サイト側のデータセット詳細ページ（新しいタブ）</td></tr>
+                </tbody>
+            </table>
+            <figure class="screenshot">
+                <img src="images/screenshots/09-plugin-settings-link.png" alt="プラグイン一覧の Kashiwazaki SEO Poll の行に設定リンクがある" class="lightbox-trigger">
+                <figcaption>図: プラグイン一覧の「設定」リンク</figcaption>
+            </figure>
+        </section>
+
+        <section>
+            <h2>画面の名前の対応表</h2>
+            <p>WordPress の画面に出る名前と、このマニュアルでの呼び方の対応です。</p>
+            <table>
+                <thead><tr><th>画面に出る名前</th><th>このマニュアルでの呼び方</th></tr></thead>
+                <tbody>
+                    <tr><td>データセット（一覧画面の見出し）</td><td>データセット一覧</td></tr>
+                    <tr><td>データセットを編集</td><td>編集画面</td></tr>
+                    <tr><td>新しいデータセットを追加</td><td>新規追加画面</td></tr>
+                    <tr><td>Kashiwazaki SEO Poll 基本設定</td><td>基本設定</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <nav class="page-nav">
+            <a href="setup.html" class="prev">&laquo; 導入と最初の設定</a>
+            <a href="poll-list.html" class="next">データセット一覧 &raquo;</a>
+        </nav>
+
+        <footer class="manual-footer">
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.7 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+        </footer>
+    </main>
+
+    <div class="lightbox"></div>
+    <script src="js/manual.js"></script>
+</body>
+</html>

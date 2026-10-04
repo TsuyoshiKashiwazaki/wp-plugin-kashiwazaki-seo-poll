@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用語集 - SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2 style="color:#fff;">SEO Poll</h2>
+            <span class="version">v1.0.7</span>
+            <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
+        </div>
+        <ul>
+            <li><a href="index.html">概要</a></li>
+            <li><a href="setup.html">導入と最初の設定</a></li>
+            <li><a href="admin-menu.html">管理メニューとタブ</a></li>
+            <li><a href="poll-list.html">データセット一覧</a></li>
+            <li><a href="create-poll.html">データセットの作成</a></li>
+            <li><a href="vote-counts.html">投票数の確認と編集</a></li>
+            <li><a href="dataset-info.html">データセット情報</a></li>
+            <li><a href="embed.html">ショートコードと掲載ページ</a></li>
+            <li><a href="lock.html">投票の受付と締め切り</a></li>
+            <li><a href="voting.html">記事での表示と投票</a></li>
+            <li><a href="chart.html">グラフとダウンロード</a></li>
+            <li><a href="datasets.html">データセットページ</a></li>
+            <li><a href="settings.html">基本設定</a></li>
+            <li><a href="maintenance.html">メンテナンス</a></li>
+            <li><a href="seo.html">構造化データとSEO</a></li>
+            <li><a href="auto-tasks.html">自動処理と権限</a></li>
+            <li><a href="faq.html">よくある質問</a></li>
+            <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+            <li><a href="glossary.html">用語集</a></li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <h1>用語集</h1>
+        <p class="lead">このマニュアルと画面に出てくる言葉の意味をまとめました。</p>
+
+        <figure class="infographic">
+            <img src="images/infographics/glossary-map.png" alt="データセットを中心に、設問、選択肢、投票数、ショートコード、掲載ページ、受付、データセットページ、データファイル、構造化データ、サイトマップが関係している">
+            <figcaption>図: 用語の関係</figcaption>
+        </figure>
+
+        <section>
+            <h2>基本の用語</h2>
+            <table>
+                <thead><tr><th>用語</th><th>意味</th></tr></thead>
+                <tbody>
+                    <tr><td>データセット</td><td>1つの投票のまとまり（設問・選択肢・集計結果）。管理画面ではこの名前で一覧・編集します</td></tr>
+                    <tr><td>設問（質問文）</td><td>投票フォームに表示される問い。編集画面のタイトル欄に入力します</td></tr>
+                    <tr><td>選択肢</td><td>回答の候補。1行に1つ入力します</td></tr>
+                    <tr><td>投票形式</td><td>単一選択（1つだけ選べる）か複数選択（いくつでも選べる）か</td></tr>
+                    <tr><td>投票数（票数）</td><td>選択肢ごとの票の数</td></tr>
+                    <tr><td>総投票数</td><td>全選択肢の票の合計。複数選択では延べ票数</td></tr>
+                    <tr><td>投票者数（IP）</td><td>投票した接続元（IP アドレス）の数</td></tr>
+                    <tr><td>割合</td><td>総投票数に対する、その選択肢の票の割合</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>設置と表示の用語</h2>
+            <table>
+                <thead><tr><th>用語</th><th>意味</th></tr></thead>
+                <tbody>
+                    <tr><td>ショートコード</td><td>記事の本文に貼ると投票フォームに置き換わる短い文字列。<code>[tk_poll id="123"]</code> の形</td></tr>
+                    <tr><td>投票ブロック</td><td>記事に表示される投票のまとまり（設問・選択肢・グラフ・リンク）</td></tr>
+                    <tr><td>掲載ページ（使用記事）</td><td>ショートコードを本文に含む記事</td></tr>
+                    <tr><td>受付／締め切り（ロック）</td><td>投票を受け付けるか止めるかの状態。締め切り中は記事にグラフとリンクだけが表示されます</td></tr>
+                    <tr><td>集計データを拡大</td><td>投票前に大きなグラフを表示するボタン</td></tr>
+                    <tr><td>1人1回の制限</td><td>同じ接続元・同じブラウザからの2回目の投票を受け付けない仕組み</td></tr>
+                    <tr><td>リセット日時</td><td>これより前の投票を「投票済み」と数えなくなる日時。メンテナンスの「リセット日時を現在に更新」と、各データセットの「集計データを全削除する」で決まります</td></tr>
+                    <tr><td>IP アドレス（接続元）</td><td>インターネット上で通信元を表す番号。同じ回線を使う人は同じになることがあります</td></tr>
+                    <tr><td>Cookie</td><td>ブラウザに保存される小さな記録。投票したことを覚えておくために使います</td></tr>
+                    <tr><td>ページキャッシュ</td><td>表示を速くするため、ページを作り置きして使い回す仕組み。投票時のエラーの原因になることがあります</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>公開とデータの用語</h2>
+            <table>
+                <thead><tr><th>用語</th><th>意味</th></tr></thead>
+                <tbody>
+                    <tr><td>データセットページ</td><td><code>/datasets/</code> 以下に自動で作られる、集計結果を公開するページ（一覧・詳細・形式別）</td></tr>
+                    <tr><td>詳細ページ</td><td>データセットごとのページ（<code>/datasets/detail-番号/</code>）。集計表と投票ブロックを表示します</td></tr>
+                    <tr><td>形式別ページ</td><td>ファイル形式ごとのページ（<code>/datasets/csv/detail-番号/</code> など）。ファイルの中身を表示し、ダウンロードできます</td></tr>
+                    <tr><td>データファイル</td><td>集計結果を書き出したファイル。CSV・XML・YAML・JSON・SVG の5形式</td></tr>
+                    <tr><td>CSV</td><td>カンマ区切りの表形式。Excel などの表計算ソフトで開けます</td></tr>
+                    <tr><td>JSON／XML／YAML</td><td>プログラムやシステムで読み込みやすいデータ形式</td></tr>
+                    <tr><td>SVG</td><td>拡大しても粗くならない図の形式。円グラフの図として書き出します</td></tr>
+                    <tr><td>調査期間</td><td>接続元ごとに記録された最後の投票日時のうち、最も古い日から最も新しい日まで</td></tr>
+                    <tr><td>集計時点／最終更新</td><td>最後に投票があった日時、または投票数を手で直した日時の新しい方</td></tr>
+                    <tr><td>ライセンス</td><td>データを他の人が使うときの条件。クリエイティブ・コモンズのライセンスから選びます</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>SEO の用語</h2>
+            <table>
+                <thead><tr><th>用語</th><th>意味</th></tr></thead>
+                <tbody>
+                    <tr><td>構造化データ</td><td>ページの内容を検索エンジン向けに決まった形式で書いた情報。画面には表示されません</td></tr>
+                    <tr><td>Dataset</td><td>「データセットである」ことを表す構造化データの種類</td></tr>
+                    <tr><td>作成者（Creator）</td><td>データを作った人・組織として構造化データに書く情報</td></tr>
+                    <tr><td>提供者（provider）</td><td>このプラグインの作者（柏崎剛）を提供者として構造化データに書く情報。基本設定の「プラグイン作者情報」で出力を切り替えます（内容は変更できません）</td></tr>
+                    <tr><td>パンくずリスト（BreadcrumbList）</td><td>ページがサイトのどの階層にあるかを示す情報</td></tr>
+                    <tr><td>Dublin Core</td><td>文書やデータの書誌情報（題名・作成者・形式など）を書く共通の形式</td></tr>
+                    <tr><td>サイトマップ</td><td>検索エンジンに知らせたいページの一覧のファイル。このプラグインはデータセット専用のものを作ります</td></tr>
+                    <tr><td>パーマリンク</td><td>ページの URL の形式。「基本」以外にする必要があります</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <nav class="page-nav">
+            <a href="troubleshooting.html" class="prev">&laquo; トラブルシューティング</a>
+            <span></span>
+        </nav>
+
+        <footer class="manual-footer">
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.7 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+        </footer>
+    </main>
+
+    <div class="lightbox"></div>
+    <script src="js/manual.js"></script>
+</body>
+</html>

@@ -11,98 +11,167 @@
     <nav class="sidebar">
         <div class="sidebar-header">
             <h2 style="color:#fff;">SEO Poll</h2>
-            <span class="version">v1.0.6</span>
+            <span class="version">v1.0.7</span>
             <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
         </div>
         <ul>
             <li><a href="index.html">概要</a></li>
-            <li><a href="setup.html">インストール・初期設定</a></li>
-            <li><a href="create-poll.html">アンケートの作成</a></li>
-            <li><a href="settings.html">基本設定ガイド</a></li>
-            <li><a href="voting.html">表示と投票のしくみ</a></li>
-            <li><a href="chart.html">グラフ機能</a></li>
-            <li><a href="datasets.html">データセット公開</a></li>
-            <li><a href="seo.html">SEO・構造化データ</a></li>
+            <li><a href="setup.html">導入と最初の設定</a></li>
+            <li><a href="admin-menu.html">管理メニューとタブ</a></li>
+            <li><a href="poll-list.html">データセット一覧</a></li>
+            <li><a href="create-poll.html">データセットの作成</a></li>
+            <li><a href="vote-counts.html">投票数の確認と編集</a></li>
+            <li><a href="dataset-info.html">データセット情報</a></li>
+            <li><a href="embed.html">ショートコードと掲載ページ</a></li>
+            <li><a href="lock.html">投票の受付と締め切り</a></li>
+            <li><a href="voting.html">記事での表示と投票</a></li>
+            <li><a href="chart.html">グラフとダウンロード</a></li>
+            <li><a href="datasets.html">データセットページ</a></li>
+            <li><a href="settings.html">基本設定</a></li>
+            <li><a href="maintenance.html">メンテナンス</a></li>
+            <li><a href="seo.html">構造化データとSEO</a></li>
+            <li><a href="auto-tasks.html">自動処理と権限</a></li>
+            <li><a href="faq.html">よくある質問</a></li>
             <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+            <li><a href="glossary.html">用語集</a></li>
         </ul>
     </nav>
 
     <main class="content">
         <h1>Kashiwazaki SEO Poll マニュアル</h1>
-        <p class="lead">WordPress でアンケート（投票）を作成・設置し、集計結果を円グラフで表示できるプラグインです。さらに、集めたデータを CSV・XML・YAML・JSON・SVG の5形式で自動生成し、Google データセット検索に対応した構造化データとして公開できます。このマニュアルは、はじめての方でも迷わないよう、画面付きで一つずつ手順を解説します。</p>
+        <img src="images/main-visual.png" alt="SEO Poll メインビジュアル" style="width:100%; border-radius:8px; margin-bottom:24px;">
+        <p class="lead">Kashiwazaki SEO Poll は、WordPress の記事に投票（アンケート）を設置し、集まった結果を円グラフと表で公開するプラグインです。集計結果は「データセット」として専用ページにまとめられ、CSV・XML・YAML・JSON・SVG の5つのファイル形式でダウンロードできます。検索エンジン向けの構造化データ（Dataset）も自動で出力します。</p>
+        <p>このマニュアルでは、管理画面とサイト上に表示されるすべての画面・項目・ボタン・メッセージを、画面写真付きで説明します。はじめて使う方は「導入と最初の設定」から順に、特定の機能だけを知りたい方は左のメニューから該当ページを開いてください。</p>
 
         <div class="callout callout-tip">
             <p class="callout-title">このマニュアルの読み方</p>
-            <p>上から順に読み進めれば、インストール → アンケート作成 → 表示 → データ公開まで一通り理解できる構成になっています。特定の機能だけ知りたい場合は、左のメニューから該当ページへ直接お進みください。</p>
+            <p>各ページは「その画面で何ができるか → 画面の地図 → 項目ごとの説明 → 表示されるメッセージ → よくある使い方」の順に並んでいます。画面写真はクリックすると拡大できます。</p>
         </div>
 
         <section>
-            <h2>主要機能</h2>
+            <h2>できること</h2>
             <div class="feature-cards">
                 <div class="feature-card">
-                    <h3>アンケート投票</h3>
-                    <p>単一選択・複数選択のアンケートを作成し、ショートコード <code>[tk_poll id="123"]</code> で任意の記事・固定ページに設置。投票結果は Chart.js の円グラフでリアルタイムに表示されます。IP アドレスと Cookie による重複投票防止付き。</p>
+                    <h3>投票を作って記事に載せる</h3>
+                    <p>設問と選択肢を入力し、ショートコード <code>[tk_poll id="123"]</code> を記事に貼るだけで投票フォームが表示されます。単一選択・複数選択に対応し、同じ接続元・同じブラウザからの二重投票を防ぎます。</p>
                 </div>
                 <div class="feature-card">
-                    <h3>5形式のデータ自動生成</h3>
-                    <p>投票が入るたびに、集計データを CSV・XML・YAML・JSON・SVG の5つのファイル形式で自動生成。<code>/datasets/</code> 配下の専用ページから閲覧・ダウンロードできます。</p>
+                    <h3>投票数の編集と受付の締め切り</h3>
+                    <p>管理画面で選択肢ごとの投票数を直接書き換えられます。投票の受付はいつでも締め切り（ロック）・再開でき、締め切り中の記事にはグラフと詳細ページへのリンクだけが表示されます。</p>
                 </div>
                 <div class="feature-card">
-                    <h3>SEO 構造化データ</h3>
-                    <p>Schema.org の Dataset 型 JSON-LD、Dublin Core メタタグ、パンくずリスト構造化データ、専用サイトマップを自動出力。Google データセット検索での発見性を高めます。</p>
+                    <h3>データセットとして公開</h3>
+                    <p>集計結果は <code>/datasets/</code> 以下の専用ページに自動で公開され、5つのファイル形式でダウンロードできます。構造化データと専用サイトマップも出力されます。</p>
                 </div>
             </div>
         </section>
 
         <figure class="infographic">
-            <img src="images/infographics/overview-flow.png" alt="アンケート作成から集計・データ公開までの全体の流れ">
-            <figcaption>図: アンケート作成から集計・データ公開までの全体の流れ</figcaption>
+            <img src="images/infographics/overview-flow.png" alt="投票の作成から記事への設置、来訪者の投票、グラフ表示とデータファイル生成までの流れ">
+            <figcaption>図: 投票の作成から、グラフ表示・データファイルの公開までの全体の流れ</figcaption>
         </figure>
 
         <section>
-            <h2>このプラグインでできること</h2>
-            <ul>
-                <li>記事・固定ページにアンケートフォームを設置し、来訪者に投票してもらう</li>
-                <li>投票結果を円グラフ（割合ラベル・凡例付き）で見せる</li>
-                <li>同じ人による重複投票を、IP アドレスと Cookie の組み合わせで抑制する</li>
-                <li>集計データを5つのファイル形式（CSV / XML / YAML / JSON / SVG）で配布する</li>
-                <li>Google データセット検索に必要な構造化データ・専用サイトマップを自動生成する</li>
-                <li>どの記事にアンケートを設置したかを管理画面で自動追跡する</li>
-            </ul>
+            <h2>データセットの一生</h2>
+            <p>このプラグインでは、1つの投票（設問・選択肢・集計結果のまとまり）を「データセット」と呼びます。データセットは次の6つの段階をたどります。締め切った後でも、受付を再開すれば再び投票を集められます。</p>
+            <figure class="infographic">
+                <img src="images/infographics/poll-lifecycle.png" alt="作成、公開、埋め込み、投票受付、締め切り、結果の公開の6段階">
+                <figcaption>図: データセットの6つの段階（締め切り後の再開も可能）</figcaption>
+            </figure>
+            <table>
+                <thead><tr><th>段階</th><th>すること</th><th>説明しているページ</th></tr></thead>
+                <tbody>
+                    <tr><td>1. 作成</td><td>設問（タイトル）・投票形式・選択肢を入力する</td><td><a href="create-poll.html">データセットの作成</a></td></tr>
+                    <tr><td>2. 公開</td><td>「公開」ボタンを押す。公開すると投票フォームとデータセットページが使えるようになる</td><td><a href="create-poll.html">データセットの作成</a></td></tr>
+                    <tr><td>3. 埋め込み</td><td>ショートコードをコピーして記事に貼る</td><td><a href="embed.html">ショートコードと掲載ページ</a></td></tr>
+                    <tr><td>4. 投票受付</td><td>来訪者が投票する。グラフはその場で更新される</td><td><a href="voting.html">記事での表示と投票</a></td></tr>
+                    <tr><td>5. 締め切り</td><td>受付を締め切る（ロック）。必要なら投票数を手で直す</td><td><a href="lock.html">投票の受付と締め切り</a>・<a href="vote-counts.html">投票数の確認と編集</a></td></tr>
+                    <tr><td>6. 結果の公開</td><td>グラフ・表・データファイルで結果を見せる</td><td><a href="chart.html">グラフとダウンロード</a>・<a href="datasets.html">データセットページ</a></td></tr>
+                </tbody>
+            </table>
         </section>
 
         <section>
-            <h2>目次</h2>
-            <ul>
-                <li><a href="index.html">概要</a> - プラグインの概要と主要機能の紹介</li>
-                <li><a href="setup.html">インストール・初期設定</a> - インストール手順と最初のアンケート作成まで</li>
-                <li><a href="create-poll.html">アンケートの作成</a> - 投票形式・選択肢・ライセンスなど作成画面の全項目</li>
-                <li><a href="settings.html">基本設定ガイド</a> - 構造化データ設定・カラーテーマ・一括生成などの管理ツール</li>
-                <li><a href="voting.html">表示と投票のしくみ</a> - ショートコードの設置、投票フォーム、重複投票防止</li>
-                <li><a href="chart.html">グラフ機能</a> - 円グラフ・凡例・画像ダウンロード・プレビュー</li>
-                <li><a href="datasets.html">データセット公開</a> - 5形式のデータ生成と専用ページ・URL 構造</li>
-                <li><a href="seo.html">SEO・構造化データ</a> - Dataset JSON-LD・サイトマップ・GEO への応用</li>
-                <li><a href="troubleshooting.html">トラブルシューティング</a> - よくある問題と解決方法・動作要件</li>
-            </ul>
+            <h2>画面の地図</h2>
+            <p>管理画面の左メニューには「Kashiwazaki SEO Poll」が1つだけ表示されます。クリックすると「データセット一覧」が開き、上部のタブで「基本設定」に切り替えられます。</p>
+            <figure class="infographic">
+                <img src="images/infographics/menu-tabs.png" alt="左メニューの Kashiwazaki SEO Poll から、データセット一覧タブと基本設定タブに分かれる構成">
+                <figcaption>図: 管理メニューとタブの構成</figcaption>
+            </figure>
+            <table>
+                <thead><tr><th>画面</th><th>開き方</th><th>主な内容</th></tr></thead>
+                <tbody>
+                    <tr><td>データセット一覧</td><td>左メニュー「Kashiwazaki SEO Poll」</td><td>データセットの一覧、受付状態と総投票数、受付の締め切り・再開</td></tr>
+                    <tr><td>編集画面（新規追加）</td><td>一覧の「新しいデータセットを追加」、またはタイトルをクリック</td><td>設問と選択肢、投票数、データセット情報、ショートコード、受付と集計</td></tr>
+                    <tr><td>基本設定</td><td>一覧の上部タブ「基本設定」（管理者のみ）</td><td>構造化データ、データセットページの表示、メンテナンス</td></tr>
+                    <tr><td>記事の投票フォーム</td><td>ショートコードを貼った記事</td><td>投票、グラフ、ダウンロード、詳細ページへのリンク</td></tr>
+                    <tr><td>データセットページ</td><td><code>/datasets/</code> 以下</td><td>一覧、詳細（集計表）、形式別ページ、ファイルのダウンロード</td></tr>
+                </tbody>
+            </table>
         </section>
 
         <section>
-            <h2>動作要件</h2>
+            <h2>SEO / GEO における強み</h2>
+            <p>投票結果を「調査データ」として扱える形で公開できる点が、このプラグインの特長です。</p>
             <ul>
-                <li>WordPress 5.0 以上</li>
-                <li>PHP 7.4 以上</li>
-                <li>グラフ表示に Chart.js 4.4.8 / chartjs-plugin-datalabels 2.2.0（CDN 経由で自動読み込み）</li>
+                <li><strong>構造化データ（Dataset）の自動出力</strong>: 投票フォームを置いた記事、データセットの詳細ページ、形式別ページに、データセットであることを示す情報を出力します。検索エンジンや AI がデータの内容・作成者・ライセンスを読み取りやすい構造を作る助けになります。</li>
+                <li><strong>機械が読める5つの形式</strong>: 同じ集計結果を CSV・XML・YAML・JSON・SVG で公開します。引用や二次利用がしやすくなる可能性があります。</li>
+                <li><strong>専用サイトマップ</strong>: 形式別ページの一覧をまとめたサイトマップを自動で作り、検索エンジンに知らせる手段を用意します。</li>
             </ul>
+            <div class="callout callout-note">
+                <p class="callout-title">効果について</p>
+                <p>構造化データやサイトマップは、検索エンジンがデータを見つけて理解するための手がかりです。検索結果への表示や順位は検索エンジンの判断によるため、効果を保証するものではありません。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>動作環境</h2>
+            <table>
+                <thead><tr><th>項目</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>WordPress</td><td>5.6 以上</td></tr>
+                    <tr><td>PHP</td><td>7.4 以上</td></tr>
+                    <tr><td>グラフの表示</td><td>来訪者のブラウザで JavaScript が動くこと。グラフ描画用のライブラリをインターネット上の配信元から読み込みます</td></tr>
+                    <tr><td>パーマリンク設定</td><td>「基本」以外（データセットページの URL を使うため）</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>このマニュアルの目次</h2>
+            <table>
+                <thead><tr><th>ページ</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td><a href="setup.html">導入と最初の設定</a></td><td>インストールから最初の投票を記事に載せるまで</td></tr>
+                    <tr><td><a href="admin-menu.html">管理メニューとタブ</a></td><td>左メニュー、タブ、プラグイン一覧の「設定」リンク</td></tr>
+                    <tr><td><a href="poll-list.html">データセット一覧</a></td><td>一覧の列・行の操作・上部のボタン・通知</td></tr>
+                    <tr><td><a href="create-poll.html">データセットの作成</a></td><td>編集画面の全体、設問と選択肢</td></tr>
+                    <tr><td><a href="vote-counts.html">投票数の確認と編集</a></td><td>投票数の表、書き換えのルール、通知</td></tr>
+                    <tr><td><a href="dataset-info.html">データセット情報</a></td><td>詳細な説明・ライセンス・バージョン・キーワード</td></tr>
+                    <tr><td><a href="embed.html">ショートコードと掲載ページ</a></td><td>コピー、掲載中のページ、キャッシュの注意</td></tr>
+                    <tr><td><a href="lock.html">投票の受付と締め切り</a></td><td>受付と集計ボックス、ロック、集計データの全削除</td></tr>
+                    <tr><td><a href="voting.html">記事での表示と投票</a></td><td>投票前・結果拡大・投票済み・受付終了の表示、1人1回の制限</td></tr>
+                    <tr><td><a href="chart.html">グラフとダウンロード</a></td><td>グラフの見方、画像の保存、5つの形式</td></tr>
+                    <tr><td><a href="datasets.html">データセットページ</a></td><td>一覧・詳細・形式別ページ・データファイルの中身</td></tr>
+                    <tr><td><a href="settings.html">基本設定</a></td><td>構造化データとデータセットページの設定</td></tr>
+                    <tr><td><a href="maintenance.html">メンテナンス</a></td><td>投票制限の解除、サイトマップ、データファイルの一括生成</td></tr>
+                    <tr><td><a href="seo.html">構造化データとSEO</a></td><td>どのページに何が出力されるか</td></tr>
+                    <tr><td><a href="auto-tasks.html">自動処理と権限</a></td><td>自動で行われる処理、操作に必要な権限</td></tr>
+                    <tr><td><a href="faq.html">よくある質問</a></td><td>運用でよく出る疑問</td></tr>
+                    <tr><td><a href="troubleshooting.html">トラブルシューティング</a></td><td>症状別の原因と対処</td></tr>
+                    <tr><td><a href="glossary.html">用語集</a></td><td>このマニュアルで使う言葉</td></tr>
+                </tbody>
+            </table>
         </section>
 
         <nav class="page-nav">
             <span></span>
-            <a href="setup.html" class="next">インストール・初期設定 &raquo;</a>
+            <a href="setup.html" class="next">導入と最初の設定 &raquo;</a>
         </nav>
 
         <footer class="manual-footer">
             <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
-            <p>プラグイン: Kashiwazaki SEO Poll v1.0.6 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.7 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
         </footer>
     </main>
 

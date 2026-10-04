@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>データセット公開 - SEO Poll マニュアル</title>
+    <title>データセットページ - SEO Poll マニュアル</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -11,96 +11,224 @@
     <nav class="sidebar">
         <div class="sidebar-header">
             <h2 style="color:#fff;">SEO Poll</h2>
-            <span class="version">v1.0.6</span>
+            <span class="version">v1.0.7</span>
             <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
         </div>
         <ul>
             <li><a href="index.html">概要</a></li>
-            <li><a href="setup.html">インストール・初期設定</a></li>
-            <li><a href="create-poll.html">アンケートの作成</a></li>
-            <li><a href="settings.html">基本設定ガイド</a></li>
-            <li><a href="voting.html">表示と投票のしくみ</a></li>
-            <li><a href="chart.html">グラフ機能</a></li>
-            <li><a href="datasets.html">データセット公開</a></li>
-            <li><a href="seo.html">SEO・構造化データ</a></li>
+            <li><a href="setup.html">導入と最初の設定</a></li>
+            <li><a href="admin-menu.html">管理メニューとタブ</a></li>
+            <li><a href="poll-list.html">データセット一覧</a></li>
+            <li><a href="create-poll.html">データセットの作成</a></li>
+            <li><a href="vote-counts.html">投票数の確認と編集</a></li>
+            <li><a href="dataset-info.html">データセット情報</a></li>
+            <li><a href="embed.html">ショートコードと掲載ページ</a></li>
+            <li><a href="lock.html">投票の受付と締め切り</a></li>
+            <li><a href="voting.html">記事での表示と投票</a></li>
+            <li><a href="chart.html">グラフとダウンロード</a></li>
+            <li><a href="datasets.html">データセットページ</a></li>
+            <li><a href="settings.html">基本設定</a></li>
+            <li><a href="maintenance.html">メンテナンス</a></li>
+            <li><a href="seo.html">構造化データとSEO</a></li>
+            <li><a href="auto-tasks.html">自動処理と権限</a></li>
+            <li><a href="faq.html">よくある質問</a></li>
             <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+            <li><a href="glossary.html">用語集</a></li>
         </ul>
     </nav>
 
     <main class="content">
-        <h1>データセット公開</h1>
-        <p class="lead">このプラグインの大きな特徴は、集めた投票結果を「データセット」として5つのファイル形式で自動生成し、専用ページから公開できることです。ここでは各形式の用途と、公開ページの構造を解説します。</p>
+        <h1>データセットページ</h1>
+        <p class="lead">公開したデータセットは、サイトの <code>/datasets/</code> 以下に専用ページとして自動で公開されます。一覧ページ、データセットごとの詳細ページ、ファイル形式ごとのページがあり、集計結果を表やファイルで見せられます。</p>
+
+        <figure class="infographic">
+            <img src="images/infographics/dataset-pages.png" alt="データセット一覧から詳細ページへ、詳細ページから CSV、XML、YAML、JSON、SVG の形式別ページへつながる構成。形式別の一覧と専用サイトマップもある">
+            <figcaption>図: データセットページの構成</figcaption>
+        </figure>
 
         <section>
-            <h2>5つのファイル形式</h2>
-            <p>投票が入るたびに、集計データが次の5形式で自動的に生成・更新されます（保存先はアップロードディレクトリ配下で、プラグイン更新でも消えません）。</p>
-            <figure class="screenshot">
-                <img src="images/screenshots/09-dataset-download.png" alt="CSV・XML・YAML・JSON・SVG の5つのダウンロードボタン" class="lightbox-trigger">
-                <figcaption>図: 各アンケートの下部に表示される、5形式のダウンロードリンク</figcaption>
-            </figure>
+            <h2>ページの一覧</h2>
             <table>
-                <thead>
-                    <tr>
-                        <th>形式</th>
-                        <th>主な用途</th>
-                        <th>特徴</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>URL</th><th>ページ</th></tr></thead>
                 <tbody>
-                    <tr><td>CSV</td><td>Excel・表計算ソフト</td><td>BOM 付き。タイトル・選択肢・得票数・割合・調査期間・著作権/ライセンス情報を含む。数式インジェクション対策済み</td></tr>
-                    <tr><td>XML</td><td>システム間のデータ交換</td><td>メタデータ（タイトル・更新日時・調査期間・著作権・ライセンス）と集計を構造化</td></tr>
-                    <tr><td>YAML</td><td>設定ファイル・自動化</td><td>人が読みやすい形式。スカラー値と選択肢リスト</td></tr>
-                    <tr><td>JSON</td><td>API 連携・プログラム処理</td><td>ID・タイトル・調査期間・総投票数・選択肢配列などを整形出力（Unicode そのまま）</td></tr>
-                    <tr><td>SVG</td><td>ベクター画像・印刷</td><td>円グラフ画像。Dublin Core／CC のメタデータを埋め込み</td></tr>
+                    <tr><td><code>/datasets/</code></td><td>データセット一覧（公開中のすべて、10件ずつ）</td></tr>
+                    <tr><td><code>/datasets/page-2/</code> …</td><td>一覧の2ページ目以降</td></tr>
+                    <tr><td><code>/datasets/detail-番号/</code></td><td>データセットの詳細ページ</td></tr>
+                    <tr><td><code>/datasets/csv/</code>（xml・yaml・json・svg も同様）</td><td>形式別の一覧（その形式のファイルがあるものだけ、10件ずつ）</td></tr>
+                    <tr><td><code>/datasets/csv/detail-番号/</code> など</td><td>形式別ページ（ファイルの中身を表示し、ダウンロードできる）</td></tr>
+                    <tr><td><code>/sitemap-poll-datasets.xml</code></td><td>データセット専用のサイトマップ</td></tr>
                 </tbody>
             </table>
             <div class="callout callout-note">
-                <p>各形式には、割合（小数点2桁で丸め）や調査期間（最初の投票〜最後の投票）といった共通情報が含まれ、どの形式でも同じ集計内容を得られます。</p>
+                <p class="callout-title">サイトのデザインの中に表示されます</p>
+                <p>どのページも、お使いのテーマのヘッダーとフッターの間に表示されます。画面写真の見た目はテーマによって異なります。パンくずリストの表示は、テーマや別のプラグインの機能です（このプラグインは、構造化データのパンくずリストだけを出力できます）。</p>
+            </div>
+            <div class="callout callout-note">
+                <p class="callout-title">古い URL からの転送</p>
+                <p>以前の版の URL（<code>/datasets/poll/番号/csv/</code> や <code>/datasets/csv/番号/</code> の形）を開くと、新しい URL へ自動で転送されます。</p>
             </div>
         </section>
 
         <section>
-            <h2>専用ページと URL 構造</h2>
-            <p>プラグインは <code>/datasets/</code> 配下に、閲覧用の専用ページを自動生成します。</p>
+            <h2>データセット一覧（/datasets/）</h2>
+            <figure class="screenshot">
+                <img src="images/screenshots/50-datasets-list.png" alt="データセット一覧ページ。見出し、導入文、データセットごとのカード" class="lightbox-trigger">
+                <figcaption>図: データセット一覧（上部）</figcaption>
+            </figure>
             <table>
-                <thead>
-                    <tr>
-                        <th>URL</th>
-                        <th>内容</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>要素</th><th>内容</th></tr></thead>
                 <tbody>
-                    <tr><td><code>/datasets/</code></td><td>全データセットの一覧ページ</td></tr>
-                    <tr><td><code>/datasets/detail-123/</code></td><td>個別アンケートの詳細ページ（円グラフ・集計表・5形式のダウンロード）</td></tr>
-                    <tr><td><code>/datasets/csv/</code></td><td>CSV 形式のデータセット一覧（xml / yaml / json / svg も同様）</td></tr>
-                    <tr><td><code>/datasets/csv/detail-123/</code></td><td>個別データの形式別ページ</td></tr>
+                    <tr><td>見出し</td><td>基本設定の「一覧ページのタイトル」（既定「集計データ一覧」）</td></tr>
+                    <tr><td>導入文</td><td>「以下は、当サイトで実施された調査の集計データセットです。各データをクリックすると、詳細なデータが様々な形式で閲覧・ダウンロードできます。」</td></tr>
+                    <tr><td>カード（1件ごと）</td><td>データセット名（詳細ページへのリンク）、「最終更新: 年/月/日 時:分」または「投票待ち」、詳細な説明、「利用可能な形式:」と形式ごとのリンク、「掲載中のページ」と記事へのリンク</td></tr>
+                    <tr><td>並び順</td><td>最終更新が新しい順（まだ投票が無いものは後ろ）</td></tr>
+                    <tr><td>ページ送り</td><td>10件を超えると「前のページ」・番号・「次のページ」</td></tr>
+                    <tr><td>0件のとき</td><td>「登録されているデータはありません。」</td></tr>
+                    <tr><td>最下部</td><td>「（サイト名）に戻る」ボタン</td></tr>
                 </tbody>
             </table>
-            <p>形式別ページ（例：<code>/datasets/csv/detail-123/</code>）の正規 URL（canonical）は、中央の詳細ページ <code>/datasets/detail-123/</code> に集約されます。これにより、5形式のページが1つの正規 URL にまとまり、SEO 上の重複が避けられます。</p>
+            <p>「利用可能な形式」のリンク名: 「CSV（Excel対応の表形式データ）」「XML（構造化マークアップデータ）」「YAML（人間が読みやすい設定形式）」「JSON（API連携用軽量データ）」「SVG（ベクターグラフ画像）」。ファイルが作られている形式だけが表示されます。</p>
+            <div class="callout callout-note">
+                <p class="callout-title">色合い</p>
+                <p>カードの枠・リンク・ボタンなどの色は、基本設定の「カラーテーマ」に合わせて表示されます。ページの背景や見出しの書体はお使いのテーマに従います。</p>
+            </div>
         </section>
 
         <section>
-            <h2>データセット一覧ページ</h2>
-            <p><code>/datasets/</code> には、公開中のアンケートがカード形式で並びます。各カードには質問文・説明・5形式へのリンク・掲載中の記事へのリンク・最終更新日時が表示されます。</p>
+            <h2>詳細ページ（/datasets/detail-番号/）</h2>
             <figure class="screenshot">
-                <img src="images/screenshots/11-datasets-list.png" alt="データセット一覧ページ。各アンケートがカードで並び、5形式のリンクが付いている" class="lightbox-trigger">
-                <figcaption>図: データセット一覧ページ（/datasets/）</figcaption>
+                <img src="images/screenshots/51-dataset-detail.png" alt="詳細ページ。見出し、投稿日や調査期間のバッジ、説明、集計結果の表、投票ブロック、データセットのダウンロード、掲載中のページ、一覧に戻るボタン" class="lightbox-trigger">
+                <figcaption>図: 詳細ページ（受付中）</figcaption>
             </figure>
+            <table>
+                <thead><tr><th>要素</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>見出し</td><td>データセット名</td></tr>
+                    <tr><td>バッジ</td><td>「投稿 年月日」「更新 年月日」、「調査期間 年月日〜年月日」（まだ投票が無ければ「まだ投票がありません」）、作成者名</td></tr>
+                    <tr><td>説明</td><td>詳細な説明（空なら表示しません）</td></tr>
+                    <tr><td>集計結果</td><td>表（列「選択肢」「得票数」「割合」、最下行「総投票数」）と「集計時点: 年/月/日 時:分:秒」。割合は小数第2位まで</td></tr>
+                    <tr><td>投票ブロック</td><td>記事と同じ投票ブロック（受付中なら投票できます）。「このデータセットの詳細ページを見る」は表示しません</td></tr>
+                    <tr><td>データセットのダウンロード</td><td>「集計データを様々な形式でダウンロード・閲覧できます。」と、形式別ページへのリンク（「CSV - Excel対応の表形式データ」など）</td></tr>
+                    <tr><td>掲載中のページ</td><td>投票ブロックを置いている公開済みの記事（無ければ表示しません）</td></tr>
+                    <tr><td>最下部</td><td>「データセット一覧に戻る」ボタン</td></tr>
+                </tbody>
+            </table>
+            <figure class="screenshot">
+                <img src="images/screenshots/52-dataset-detail-locked.png" alt="受付終了中の詳細ページ。投票ブロックがグラフだけになっている" class="lightbox-trigger">
+                <figcaption>図: 受付終了中の詳細ページ。投票ブロックはグラフだけになります</figcaption>
+            </figure>
+            <div class="callout callout-tip">
+                <p class="callout-title">調査期間の決まり方</p>
+                <p>調査期間は、接続元ごとに記録された最後の投票日時のうち、最も古い日から最も新しい日までです。投票制限の解除後に同じ接続元が投票し直すと、以前の日時は上書きされます。管理画面で入力した投票数は含みません。</p>
+            </div>
         </section>
 
         <section>
-            <h2>データをまとめて生成する</h2>
-            <p>通常はアンケートに投票が入るたびに各ファイルが自動更新されますが、導入直後や大量のデータを一度に作り直したいときは、基本設定ページの「データセット一括生成」で、公開中の全アンケート分をまとめて生成できます（<a href="settings.html">基本設定ガイド</a>参照）。</p>
+            <h2>形式別の一覧（/datasets/csv/ など）</h2>
+            <figure class="screenshot">
+                <img src="images/screenshots/54-format-list-csv.png" alt="CSV データセット一覧ページ。見出し、導入文、データセットごとのカードと CSV リンク" class="lightbox-trigger">
+                <figcaption>図: CSV 形式の一覧</figcaption>
+            </figure>
+            <table>
+                <thead><tr><th>要素</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>見出し</td><td>「CSV 集計データ一覧」のように、形式名と「一覧ページのタイトル」</td></tr>
+                    <tr><td>導入文</td><td>「CSV形式の集計データ一覧です。以下のデータセットをCSV形式で閲覧・ダウンロードできます。」（形式名が入ります）</td></tr>
+                    <tr><td>カード</td><td>データセット名、「最終更新」または「投票待ち」、説明、「CSVデータ:」と形式別ページへのリンク</td></tr>
+                    <tr><td>ページ送り</td><td>10件を超えると「←前のページ」・番号・「次のページ→」</td></tr>
+                    <tr><td>0件のとき</td><td>「CSV形式のデータはありません。」</td></tr>
+                    <tr><td>最下部</td><td>「（一覧ページのタイトル）に戻る」「ホームに戻る」</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>形式別ページ（/datasets/csv/detail-番号/ など）</h2>
+            <figure class="screenshot">
+                <img src="images/screenshots/53-format-detail-csv.png" alt="CSV データセットのページ。見出し、説明、調査期間や最終更新の情報枠、CSV データの中身、掲載中のページ、CSV Download と CSV一覧に戻るボタン" class="lightbox-trigger">
+                <figcaption>図: CSV の形式別ページ</figcaption>
+            </figure>
+            <table>
+                <thead><tr><th>要素</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>見出し</td><td>「データセット名 - CSV データセット」</td></tr>
+                    <tr><td>説明</td><td>詳細な説明</td></tr>
+                    <tr><td>情報枠</td><td>「調査期間」「最終更新」（無ければ「投票待ち」）「総投票数」「投票ページ: 投票する」。受付終了中は「投票ページ: 受付終了（結果を見る）」。リンク先は詳細ページです</td></tr>
+                    <tr><td>（形式） データ</td><td>ファイルの中身をそのまま表示（SVG は画像として表示）</td></tr>
+                    <tr><td>掲載中のページ</td><td>投票ブロックを置いている公開済みの記事</td></tr>
+                    <tr><td>（形式） Download</td><td>ファイルをダウンロードする青いボタン（例: 「CSV Download」「XML Download」）</td></tr>
+                    <tr><td>（形式）一覧に戻る</td><td>形式別の一覧へ戻る（例: 「CSV一覧に戻る」）</td></tr>
+                </tbody>
+            </table>
+            <table>
+                <thead><tr><th>見つからないとき</th><th>表示</th></tr></thead>
+                <tbody>
+                    <tr><td>データセットが無い・公開されていない</td><td>「指定されたデータが見つかりません。」（404）</td></tr>
+                    <tr><td>その形式のファイルがまだ無い</td><td>「指定されたデータセットが見つかりません。」（404）</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>データファイルの中身</h2>
+            <table>
+                <thead><tr><th>形式</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>CSV</td><td>1行目に設問、次に見出し行（選択肢・票数・割合）、選択肢ごとの行、合計票数、調査期間（票があるとき）、著作権表示、ライセンスの URL。Excel で文字化けしにくい形式で保存されます。数式と誤解される書き出しの文字には対策がしてあります</td></tr>
+                    <tr><td>XML</td><td>設問・最終更新・調査期間・著作権・ライセンスなどの情報、合計票数、選択肢ごとの名前・票数・割合</td></tr>
+                    <tr><td>YAML／JSON</td><td>番号、設問、最終更新、調査期間（開始・終了）、著作権、ライセンス、合計票数、選択肢ごとの名前・票数・割合</td></tr>
+                    <tr><td>SVG</td><td>800×600 の円グラフの図。上に設問、凡例「選択肢 (xx%)」。0票の選択肢は凡例に出ません。1票も無いときは灰色の円に「No votes yet」</td></tr>
+                </tbody>
+            </table>
+            <ul>
+                <li>割合は小数第2位で四捨五入します。最終更新はファイルを作った日時です。</li>
+                <li>ファイルはメディアのアップロード用フォルダの中に保存されるため、プラグインを更新しても消えません。</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>データファイルが更新されるタイミング</h2>
+            <table>
+                <thead><tr><th>きっかけ</th><th>更新されるもの</th></tr></thead>
+                <tbody>
+                    <tr><td>投票があったとき（公開中）</td><td>そのデータセットの5つのファイルとサイトマップ</td></tr>
+                    <tr><td>編集画面で選択肢か投票数を変えて保存したとき（公開中）</td><td>同上</td></tr>
+                    <tr><td>「集計データを全削除する」を実行したとき（公開中）</td><td>同上（0票の内容で作り直し）</td></tr>
+                    <tr><td>基本設定の「データファイルを一括生成する」</td><td>公開中のすべてのデータセットのファイルとサイトマップ</td></tr>
+                    <tr><td>データセットを公開したとき</td><td>そのデータセットの5つのファイルを作り、サイトマップに載せる</td></tr>
+                    <tr><td>データセットを下書き・非公開・ゴミ箱にしたとき</td><td>そのデータセットの5つのファイルを削除し、サイトマップから外す</td></tr>
+                    <tr><td>1.0.5 以前から更新したとき（初回の1回だけ）</td><td>自動で全ファイルを作り直します（<a href="auto-tasks.html">自動処理と権限</a>）。それ以降の更新では作り直しません</td></tr>
+                </tbody>
+            </table>
+            <div class="callout callout-note">
+                <p class="callout-title">非公開・ゴミ箱にしたとき</p>
+                <p>データセットを下書き・非公開・ゴミ箱にすると、データセットページが表示されなくなり、データファイルも自動で削除され、サイトマップからも外れます。もう一度公開すると、その時点の集計でファイルが作り直されます。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>カラーテーマが効く場所</h2>
+            <table>
+                <thead><tr><th>ページ</th><th>色が変わる部分</th></tr></thead>
+                <tbody>
+                    <tr><td>詳細ページ</td><td>「掲載中のページ」欄と集計表</td></tr>
+                    <tr><td>形式別の一覧</td><td>見出しの下線、カードの枠、「最終更新」の表示、リンク、ページ送り</td></tr>
+                    <tr><td>形式別ページ</td><td>「掲載中のページ」欄、「投票ページ」のリンク（ダウンロードボタンと情報枠は青のまま）</td></tr>
+                    <tr><td>記事の投票ブロック</td><td>「フォーマット別データダウンロード」のリンクの枠と文字</td></tr>
+                    <tr><td>データセット一覧（/datasets/）</td><td>カードの枠と背景、リンク、ボタン、補足の文字</td></tr>
+                </tbody>
+            </table>
+            <p>設定方法は <a href="settings.html">基本設定</a> を参照してください。</p>
         </section>
 
         <nav class="page-nav">
-            <a href="chart.html" class="prev">&laquo; グラフ機能</a>
-            <a href="seo.html" class="next">SEO・構造化データ &raquo;</a>
+            <a href="chart.html" class="prev">&laquo; グラフとダウンロード</a>
+            <a href="settings.html" class="next">基本設定 &raquo;</a>
         </nav>
 
         <footer class="manual-footer">
             <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
-            <p>プラグイン: Kashiwazaki SEO Poll v1.0.6 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.7 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
         </footer>
     </main>
 

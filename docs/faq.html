@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>よくある質問 - SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2 style="color:#fff;">SEO Poll</h2>
+            <span class="version">v1.0.7</span>
+            <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
+        </div>
+        <ul>
+            <li><a href="index.html">概要</a></li>
+            <li><a href="setup.html">導入と最初の設定</a></li>
+            <li><a href="admin-menu.html">管理メニューとタブ</a></li>
+            <li><a href="poll-list.html">データセット一覧</a></li>
+            <li><a href="create-poll.html">データセットの作成</a></li>
+            <li><a href="vote-counts.html">投票数の確認と編集</a></li>
+            <li><a href="dataset-info.html">データセット情報</a></li>
+            <li><a href="embed.html">ショートコードと掲載ページ</a></li>
+            <li><a href="lock.html">投票の受付と締め切り</a></li>
+            <li><a href="voting.html">記事での表示と投票</a></li>
+            <li><a href="chart.html">グラフとダウンロード</a></li>
+            <li><a href="datasets.html">データセットページ</a></li>
+            <li><a href="settings.html">基本設定</a></li>
+            <li><a href="maintenance.html">メンテナンス</a></li>
+            <li><a href="seo.html">構造化データとSEO</a></li>
+            <li><a href="auto-tasks.html">自動処理と権限</a></li>
+            <li><a href="faq.html">よくある質問</a></li>
+            <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+            <li><a href="glossary.html">用語集</a></li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <h1>よくある質問</h1>
+        <p class="lead">運用中によく出る疑問をまとめました。操作の詳しい手順は、各回答のリンク先を参照してください。</p>
+
+        <figure class="infographic">
+            <img src="images/infographics/poll-lifecycle.png" alt="作成、公開、埋め込み、投票受付、締め切り、結果の公開の6段階">
+            <figcaption>図: データセットの6つの段階。質問はこの流れに沿って並べています</figcaption>
+        </figure>
+
+        <section>
+            <h2>作成と設置</h2>
+            <h3>Q. 1つの記事に複数の投票を置けますか？</h3>
+            <p>A. はい。別々のデータセットのショートコードを並べて貼れます。同じデータセットを2回貼っても両方表示されます（<a href="embed.html">ショートコードと掲載ページ</a>）。</p>
+            <h3>Q. 同じ投票を複数の記事に載せられますか？</h3>
+            <p>A. はい。どの記事から投票しても同じデータセットに集計されます。</p>
+            <h3>Q. 選択肢の順番を入れ替えると票はどうなりますか？</h3>
+            <p>A. 票は同じ文字の選択肢に付いたまま移動します。文字を書き換えた選択肢は別の選択肢として0票から始まります（<a href="create-poll.html">データセットの作成</a>）。</p>
+            <h3>Q. 選択肢に画像やリンクを入れられますか？</h3>
+            <p>A. いいえ。選択肢は文字だけです（HTML のタグは取り除かれます）。</p>
+            <h3>Q. ブロックエディタで編集できますか？</h3>
+            <p>A. データセットの編集画面は、タイトルと入力ボックスが並ぶ従来型の画面です。記事側はブロックエディタでもクラシックエディタでも、ショートコードを貼れば表示されます。</p>
+        </section>
+
+        <section>
+            <h2>投票</h2>
+            <h3>Q. 1人1回の制限はどう判定していますか？</h3>
+            <p>A. 同じ接続元（IP アドレス）からの投票と、同じブラウザに残る投票の記録で判定します。同じ回線を複数人で使っていると、2人目以降は投票できません（<a href="voting.html">記事での表示と投票</a>）。</p>
+            <h3>Q. ログインしていない人も投票できますか？</h3>
+            <p>A. はい。公開中のデータセットには、だれでもログインなしで投票できます。</p>
+            <h3>Q. もう一度全員に投票してもらいたいのですが？</h3>
+            <p>A. 基本設定の「メンテナンス」で「リセット日時を現在に更新」を押すと、すべてのデータセットで、それまでに投票した人も再び投票できます。票数は残ります。1つのデータセットだけを0からやり直すなら「集計データを全削除する」を使います（<a href="maintenance.html">メンテナンス</a>・<a href="lock.html">投票の受付と締め切り</a>）。</p>
+            <h3>Q. 投票期間を自動で締め切れますか？</h3>
+            <p>A. 日時を指定した自動の締め切りはありません。期間が終わったら、一覧の「受付を締め切る」か、編集画面の「締め切る（ロック）」で締め切ってください。</p>
+        </section>
+
+        <section>
+            <h2>投票数の編集と締め切り</h2>
+            <h3>Q. 投票数を書き換えても大丈夫ですか？</h3>
+            <p>A. 書き換えた行だけが保存され、書き換えていない行は編集中に入った票も残ります。保存した値は元に戻せないため、必要なら先に CSV をダウンロードしてください（<a href="vote-counts.html">投票数の確認と編集</a>）。</p>
+            <h3>Q. 締め切ると記事には何が表示されますか？</h3>
+            <p>A. 円グラフと「このデータセットの詳細ページを見る」だけです。「受付は終了しました」のような文言は表示しません（<a href="lock.html">投票の受付と締め切り</a>）。</p>
+            <h3>Q. 締め切った後に再開すると、投票済みの人はまた投票できますか？</h3>
+            <p>A. いいえ。投票した記録は残っているため、投票済みの人は引き続き投票できません。まだ投票していない人は投票できます。</p>
+        </section>
+
+        <section>
+            <h2>データセットページとデータ</h2>
+            <h3>Q. データセットページを表示させたくありません。</h3>
+            <p>A. データセットページを個別に止める設定はありません。データセットを公開すると、記事の投票フォームとデータセットページが両方使えるようになります。</p>
+            <h3>Q. CSV を Excel で開くと文字化けしませんか？</h3>
+            <p>A. Excel で文字化けしにくい形式で保存しています。</p>
+            <h3>Q. データファイルはどこに保存されますか？</h3>
+            <p>A. WordPress のメディアをアップロードするフォルダの中に保存されます。プラグインを更新しても消えません。</p>
+            <h3>Q. データセットページの色を変えたい。</h3>
+            <p>A. 基本設定の「カラーテーマ」で6種類から選べます。データセット一覧（<code>/datasets/</code>）はテーマの色で表示されます（<a href="settings.html">基本設定</a>）。</p>
+        </section>
+
+        <section>
+            <h2>SEO と運用</h2>
+            <h3>Q. 構造化データはどこで確認できますか？</h3>
+            <p>A. Google のリッチリザルト テストなどの公式ツールに、記事やデータセットページの URL を入れて確認できます（<a href="seo.html">構造化データとSEO</a>）。</p>
+            <h3>Q. 他の SEO プラグインとパンくずリストが重複しませんか？</h3>
+            <p>A. このプラグインのパンくずリストの構造化データは既定で OFF です。他のプラグインで出している場合は OFF のままにしてください。</p>
+            <h3>Q. プラグインを更新したら、ダウンロードが表示されなくなりました。</h3>
+            <p>A. 1.0.5 以前から初めて更新したときは自動で1回だけファイルを作り直しますが、それ以外の更新では作り直しません。表示されない場合は「データファイルを一括生成する」を押してください（<a href="maintenance.html">メンテナンス</a>）。</p>
+            <h3>Q. プラグインを削除すると投票データは消えますか？</h3>
+            <p>A. 消えません。投票データ・設定・データファイルはサイトに残ります（<a href="auto-tasks.html">自動処理と権限</a>）。</p>
+        </section>
+
+        <nav class="page-nav">
+            <a href="auto-tasks.html" class="prev">&laquo; 自動処理と権限</a>
+            <a href="troubleshooting.html" class="next">トラブルシューティング &raquo;</a>
+        </nav>
+
+        <footer class="manual-footer">
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.7 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+        </footer>
+    </main>
+
+    <div class="lightbox"></div>
+    <script src="js/manual.js"></script>
+</body>
+</html>

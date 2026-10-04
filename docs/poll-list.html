@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>データセット一覧 - SEO Poll マニュアル</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button class="hamburger-btn" aria-label="メニューを開く">&#9776;</button>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2 style="color:#fff;">SEO Poll</h2>
+            <span class="version">v1.0.7</span>
+            <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
+        </div>
+        <ul>
+            <li><a href="index.html">概要</a></li>
+            <li><a href="setup.html">導入と最初の設定</a></li>
+            <li><a href="admin-menu.html">管理メニューとタブ</a></li>
+            <li><a href="poll-list.html">データセット一覧</a></li>
+            <li><a href="create-poll.html">データセットの作成</a></li>
+            <li><a href="vote-counts.html">投票数の確認と編集</a></li>
+            <li><a href="dataset-info.html">データセット情報</a></li>
+            <li><a href="embed.html">ショートコードと掲載ページ</a></li>
+            <li><a href="lock.html">投票の受付と締め切り</a></li>
+            <li><a href="voting.html">記事での表示と投票</a></li>
+            <li><a href="chart.html">グラフとダウンロード</a></li>
+            <li><a href="datasets.html">データセットページ</a></li>
+            <li><a href="settings.html">基本設定</a></li>
+            <li><a href="maintenance.html">メンテナンス</a></li>
+            <li><a href="seo.html">構造化データとSEO</a></li>
+            <li><a href="auto-tasks.html">自動処理と権限</a></li>
+            <li><a href="faq.html">よくある質問</a></li>
+            <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+            <li><a href="glossary.html">用語集</a></li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <h1>データセット一覧</h1>
+        <p class="lead">作成したデータセット（投票）を一覧で確認する画面です。受付中か締め切り中か、総投票数、どの記事に掲載されているかがひと目で分かり、受付の締め切り・再開もこの画面からワンクリックで行えます。</p>
+
+        <figure class="screenshot">
+            <img src="images/screenshots/02-list-overview.png" alt="データセット一覧の全体。タブ、見出し、絞り込み、表" class="lightbox-trigger">
+            <figcaption>図: データセット一覧の全体</figcaption>
+        </figure>
+
+        <section>
+            <h2>画面の地図</h2>
+            <figure class="infographic">
+                <img src="images/infographics/list-guide.png" alt="一覧の表の各列と、行の操作リンク、上部の掲載ページ情報を再取得ボタンの位置">
+                <figcaption>図: 一覧の列と操作の見方</figcaption>
+            </figure>
+            <table>
+                <thead><tr><th>番号</th><th>領域</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>1</td><td>タブ</td><td>「データセット一覧」「基本設定」の切り替え（<a href="admin-menu.html">管理メニューとタブ</a>）</td></tr>
+                    <tr><td>2</td><td>見出しとボタン</td><td>「データセット」と「新しいデータセットを追加」</td></tr>
+                    <tr><td>3</td><td>状態の切り替え</td><td>すべて／公開済み／下書き／ゴミ箱 など（WordPress 標準）</td></tr>
+                    <tr><td>4</td><td>上部の操作</td><td>一括操作、日付の絞り込み、「掲載ページ情報を再取得」、ページ送り</td></tr>
+                    <tr><td>5</td><td>表</td><td>データセットごとの行。列の説明は下の表</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>表の列</h2>
+            <figure class="screenshot">
+                <img src="images/screenshots/04-list-row.png" alt="一覧の1行。タイトル、投稿者、受付中、6票、使用記事、日付" class="lightbox-trigger">
+                <figcaption>図: 一覧の1行。タイトルの下に操作リンクが並びます</figcaption>
+            </figure>
+            <table>
+                <thead><tr><th>列</th><th>表示内容</th><th>補足</th></tr></thead>
+                <tbody>
+                    <tr><td>タイトル</td><td>データセットの名前（＝投票フォームの設問）</td><td>押すと編集画面が開きます。並べ替えできます</td></tr>
+                    <tr><td>投稿者</td><td>作成したユーザー</td><td>WordPress 標準の列</td></tr>
+                    <tr><td>受付</td><td>「受付中」（緑）または「🔒 締切」（赤）</td><td>受付の状態。並べ替えはできません</td></tr>
+                    <tr><td>総投票数</td><td>全選択肢の合計票数（例: 6 票）</td><td>複数選択の場合は延べ票数です。並べ替えはできません</td></tr>
+                    <tr><td>データセットキーワード</td><td>編集画面の「キーワード」の内容</td><td>未入力なら「—」。並べ替えできます。画面幅が狭いと非表示</td></tr>
+                    <tr><td>使用記事</td><td>このデータセットのショートコードを本文に含む公開済みの記事</td><td>下の説明を参照。並べ替えできます。画面幅が狭いと非表示</td></tr>
+                    <tr><td>日付</td><td>公開日時など</td><td>WordPress 標準の列</td></tr>
+                </tbody>
+            </table>
+            <h3>「使用記事」列の見方</h3>
+            <ul>
+                <li>記事を最大5件まで表示します。6件以上あると「+ 他 N件の記事で使用中」と表示されます。</li>
+                <li>各行には、記事タイトル（25文字を超えると「...」で省略）、種類（「投稿」「固定ページ」「商品」「イベント」、それ以外は投稿の種類の名前）、投稿日、同じ記事に2回以上貼られていれば「N回使用」、「表示」リンク（新しいタブで記事を開く）が並びます。</li>
+                <li>記事を編集できる人には、タイトルが記事の編集画面へのリンクになります。</li>
+                <li>どの記事にも貼られていなければ「未使用」と表示されます。</li>
+            </ul>
+            <div class="callout callout-note">
+                <p class="callout-title">表示が古いことがあります</p>
+                <p>「使用記事」の内容は最大1時間保存して使い回します。記事に貼った直後に反映されないときは、上部の「掲載ページ情報を再取得」を押してください。並べ替えに使う件数は別に管理しているため、表示と並び順が一時的にずれることがあります。</p>
+            </div>
+            <div class="callout callout-tip">
+                <p class="callout-title">列を隠したいとき</p>
+                <p>右上の「表示オプション」で、表示する列や1ページの件数を変えられます（WordPress 標準の機能）。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>行の操作リンク</h2>
+            <p>タイトルにマウスを載せると、タイトルの下に操作リンクが表示されます。</p>
+            <table>
+                <thead><tr><th>リンク</th><th>押すと起きること</th><th>注意点</th></tr></thead>
+                <tbody>
+                    <tr><td>編集</td><td>編集画面を開く</td><td>—</td></tr>
+                    <tr><td>クイック編集</td><td>タイトルや状態などをその場で変更する（WordPress 標準）</td><td>このプラグインの項目（選択肢・投票数・受付など）は変わりません</td></tr>
+                    <tr><td>ゴミ箱へ移動</td><td>データセットをゴミ箱に移す</td><td>記事の投票フォームは「データが見つかりません。」になります</td></tr>
+                    <tr><td>表示（下書きは「プレビュー」）</td><td>データセットの詳細ページを開く</td><td>—</td></tr>
+                    <tr><td>受付を締め切る</td><td>すぐに投票の受付を止め、一覧に戻る</td><td>受付中の行にだけ表示。確認のダイアログは出ません</td></tr>
+                    <tr><td>受付を再開</td><td>すぐに投票の受付を再開し、一覧に戻る</td><td>締め切り中の行にだけ表示</td></tr>
+                </tbody>
+            </table>
+            <figure class="screenshot">
+                <img src="images/screenshots/07-list-lock-notice.png" alt="受付を締め切った後の一覧。上部に通知、2行目の受付列が締切、操作リンクが受付を再開に変わっている" class="lightbox-trigger">
+                <figcaption>図: 「受付を締め切る」を押した後。通知が出て、受付列が「🔒 締切」、操作リンクが「受付を再開」に変わります</figcaption>
+            </figure>
+            <figure class="screenshot">
+                <img src="images/screenshots/08-list-unlock-notice.png" alt="投票の受付を再開しました。の通知" class="lightbox-trigger">
+                <figcaption>図: 「受付を再開」を押した後の通知</figcaption>
+            </figure>
+            <p>締め切ると記事の投票フォームがどう変わるかは、<a href="lock.html">投票の受付と締め切り</a> で説明しています。</p>
+        </section>
+
+        <section>
+            <h2>上部の操作</h2>
+            <figure class="screenshot">
+                <img src="images/screenshots/05-list-tablenav.png" alt="一括操作、適用、すべての日付、絞り込み、掲載ページ情報を再取得、ページ送り" class="lightbox-trigger">
+                <figcaption>図: 表の上の操作欄</figcaption>
+            </figure>
+            <table>
+                <thead><tr><th>操作</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>一括操作／適用</td><td>チェックした行をまとめて編集・ゴミ箱へ移動（WordPress 標準）</td></tr>
+                    <tr><td>すべての日付／絞り込み</td><td>月で絞り込む（WordPress 標準）。受付状態での絞り込みはありません</td></tr>
+                    <tr><td>掲載ページ情報を再取得</td><td>「使用記事」列の情報を作り直します。マウスを載せると「「使用記事」列が正しく表示されないときに使います」と表示されます。サイトの設定を変更できる人（通常は管理者）にだけ表示されます</td></tr>
+                    <tr><td>データセットを検索</td><td>右上の検索欄。タイトルなどで検索します</td></tr>
+                    <tr><td>ページ送り</td><td>件数が多いときのページ移動</td></tr>
+                </tbody>
+            </table>
+            <figure class="screenshot">
+                <img src="images/screenshots/06-list-refresh-notice.png" alt="全データセットの掲載ページ情報を再取得しました。の通知" class="lightbox-trigger">
+                <figcaption>図: 「掲載ページ情報を再取得」を押した後の通知</figcaption>
+            </figure>
+        </section>
+
+        <section>
+            <h2>この画面で出るメッセージ</h2>
+            <table>
+                <thead><tr><th>メッセージ</th><th>出るとき</th><th>対処</th></tr></thead>
+                <tbody>
+                    <tr><td>全データセットの掲載ページ情報を再取得しました。</td><td>「掲載ページ情報を再取得」を押した後</td><td>不要</td></tr>
+                    <tr><td>投票の受付を締め切りました（ロック）。</td><td>「受付を締め切る」を押した後</td><td>不要</td></tr>
+                    <tr><td>投票の受付を再開しました。</td><td>「受付を再開」を押した後</td><td>不要</td></tr>
+                    <tr><td>他の処理（投票など）と重なったため、受付の状態は変えませんでした。少し待ってから、もう一度お試しください。</td><td>投票などと同時に受付を切り替えようとしたとき</td><td>少し待ってから押し直す</td></tr>
+                    <tr><td>受付の状態を保存できませんでした。もう一度お試しください。</td><td>データベースへの保存に失敗したとき</td><td>押し直す</td></tr>
+                    <tr><td>この操作を行う権限がありません。</td><td>そのデータセットを編集できない人が受付の切り替えを行おうとしたとき</td><td>編集できる人に依頼する</td></tr>
+                    <tr><td>不正なリクエストです。</td><td>受付の切り替えのリンクが正しくないとき（URL を手で作った場合など）</td><td>一覧画面のリンクから操作し直す</td></tr>
+                    <tr><td>データセットはありません</td><td>データセットが1件も無いとき（ゴミ箱の表示では「ゴミ箱にデータセットはありません」）</td><td>「新しいデータセットを追加」から作成する</td></tr>
+                    <tr><td>セキュリティチェックに失敗しました。</td><td>「掲載ページ情報を再取得」の確認が通らなかったとき</td><td>画面を再読み込みしてもう一度押す</td></tr>
+                    <tr><td>このリンクは期限切れです（WordPress 標準の確認画面）</td><td>画面を長く開いたままにしてから操作したとき</td><td>画面を再読み込みしてもう一度操作する</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>よくある使い方</h2>
+            <h3>アンケート期間が終わったので締め切りたい</h3>
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content"><p>一覧で対象のデータセットのタイトルにマウスを載せます。</p></div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content"><p>「受付を締め切る」を押します。受付列が「🔒 締切」になれば完了です。</p></div>
+            </div>
+            <h3>どの記事に貼ったか確認したい</h3>
+            <p>「使用記事」列を見ます。もっと詳しく（下書きの記事も含めて）見たいときは、編集画面の「ショートコードと掲載ページ」を開きます（<a href="embed.html">ショートコードと掲載ページ</a>）。</p>
+        </section>
+
+        <nav class="page-nav">
+            <a href="admin-menu.html" class="prev">&laquo; 管理メニューとタブ</a>
+            <a href="create-poll.html" class="next">データセットの作成 &raquo;</a>
+        </nav>
+
+        <footer class="manual-footer">
+            <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.7 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+        </footer>
+    </main>
+
+    <div class="lightbox"></div>
+    <script src="js/manual.js"></script>
+</body>
+</html>

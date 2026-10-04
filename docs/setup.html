@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>インストール・初期設定 - SEO Poll マニュアル</title>
+    <title>導入と最初の設定 - SEO Poll マニュアル</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -11,111 +11,165 @@
     <nav class="sidebar">
         <div class="sidebar-header">
             <h2 style="color:#fff;">SEO Poll</h2>
-            <span class="version">v1.0.6</span>
+            <span class="version">v1.0.7</span>
             <img src="images/main-visual.png" alt="" style="width:100%;border-radius:4px;margin-top:8px;">
         </div>
         <ul>
             <li><a href="index.html">概要</a></li>
-            <li><a href="setup.html">インストール・初期設定</a></li>
-            <li><a href="create-poll.html">アンケートの作成</a></li>
-            <li><a href="settings.html">基本設定ガイド</a></li>
-            <li><a href="voting.html">表示と投票のしくみ</a></li>
-            <li><a href="chart.html">グラフ機能</a></li>
-            <li><a href="datasets.html">データセット公開</a></li>
-            <li><a href="seo.html">SEO・構造化データ</a></li>
+            <li><a href="setup.html">導入と最初の設定</a></li>
+            <li><a href="admin-menu.html">管理メニューとタブ</a></li>
+            <li><a href="poll-list.html">データセット一覧</a></li>
+            <li><a href="create-poll.html">データセットの作成</a></li>
+            <li><a href="vote-counts.html">投票数の確認と編集</a></li>
+            <li><a href="dataset-info.html">データセット情報</a></li>
+            <li><a href="embed.html">ショートコードと掲載ページ</a></li>
+            <li><a href="lock.html">投票の受付と締め切り</a></li>
+            <li><a href="voting.html">記事での表示と投票</a></li>
+            <li><a href="chart.html">グラフとダウンロード</a></li>
+            <li><a href="datasets.html">データセットページ</a></li>
+            <li><a href="settings.html">基本設定</a></li>
+            <li><a href="maintenance.html">メンテナンス</a></li>
+            <li><a href="seo.html">構造化データとSEO</a></li>
+            <li><a href="auto-tasks.html">自動処理と権限</a></li>
+            <li><a href="faq.html">よくある質問</a></li>
             <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+            <li><a href="glossary.html">用語集</a></li>
         </ul>
     </nav>
 
     <main class="content">
-        <h1>インストール・初期設定</h1>
-        <p class="lead">プラグインのインストールから、はじめてのアンケートを公開するまでを、順を追って解説します。特別な準備は不要で、5分ほどで最初のアンケートを設置できます。</p>
+        <h1>導入と最初の設定</h1>
+        <p class="lead">プラグインをインストールしてから、最初の投票を記事に載せるまでの手順です。5つのステップで、来訪者が投票できる状態になります。</p>
+
+        <figure class="infographic">
+            <img src="images/infographics/setup-flow.png" alt="インストール、有効化、基本設定の確認、データセットの作成、記事に貼るの5ステップ">
+            <figcaption>図: 導入から最初の投票を載せるまでの5ステップ</figcaption>
+        </figure>
 
         <section>
-            <h2>インストール方法</h2>
+            <h2>ステップ1: インストール</h2>
             <div class="step">
                 <div class="step-number">1</div>
                 <div class="step-content">
-                    <h3>プラグインをアップロード</h3>
-                    <p>プラグインフォルダ一式を <code>/wp-content/plugins/</code> にアップロードします。ZIP ファイルの場合は、管理画面の「プラグイン」→「新規プラグインを追加」→「プラグインのアップロード」からアップロードできます。</p>
+                    <h3>ZIP ファイルを用意する</h3>
+                    <p>GitHub のリポジトリ（このページ下部のリンク）から ZIP ファイルをダウンロードします。</p>
                 </div>
             </div>
             <div class="step">
                 <div class="step-number">2</div>
                 <div class="step-content">
-                    <h3>プラグインを有効化</h3>
-                    <p>WordPress 管理画面の「プラグイン」一覧で「Kashiwazaki SEO Poll」を探し、「有効化」をクリックします。</p>
+                    <h3>アップロードする</h3>
+                    <p>管理画面の「プラグイン」→「新規プラグインを追加」→「プラグインのアップロード」で ZIP ファイルを選び、「今すぐインストール」を押します。FTP などでプラグイン用のフォルダに直接置いてもかまいません。</p>
                 </div>
-            </div>
-            <div class="step">
-                <div class="step-number">3</div>
-                <div class="step-content">
-                    <h3>メニューを確認</h3>
-                    <p>有効化すると、左メニューに <strong>「データセット」</strong>（アンケートの作成・管理）と <strong>「Kashiwazaki SEO Poll」</strong>（基本設定）の2つが追加されます。</p>
-                </div>
-            </div>
-            <figure class="screenshot">
-                <img src="images/screenshots/00-menu-location.png" alt="管理画面の左メニューに追加された「データセット」と「Kashiwazaki SEO Poll」" class="lightbox-trigger">
-                <figcaption>図: 左メニューに追加される2つの項目（赤枠）。「データセット」でアンケートを作成し、「Kashiwazaki SEO Poll」で全体設定を行います</figcaption>
-            </figure>
-            <div class="callout callout-note">
-                <p class="callout-title">パーマリンクについて</p>
-                <p>このプラグインは <code>/datasets/</code> という専用 URL を使います。有効化後にデータセットページが表示されない場合は、「設定」→「パーマリンク」を開いて（何も変更せず）「変更を保存」を押すと、URL ルールが更新されて解決します。</p>
             </div>
         </section>
 
         <section>
-            <h2>最初のアンケートを作る（クイックスタート）</h2>
-            <p>インストールが終わったら、さっそく1つ目のアンケートを作ってみましょう。詳しい各項目の説明は「<a href="create-poll.html">アンケートの作成</a>」ページにありますが、まずは最短手順を示します。</p>
+            <h2>ステップ2: 有効化</h2>
+            <p>プラグイン一覧で「Kashiwazaki SEO Poll」の「有効化」を押します。有効化すると次のことが自動で行われます。</p>
+            <ul>
+                <li>データファイル（CSV・XML・YAML・JSON・SVG）を保存するフォルダを、メディアのアップロード用フォルダの中に作ります。</li>
+                <li>基本設定がまだ無ければ、既定値で保存します（組織の名前はサイト名、組織の URL はサイトのアドレス、メールアドレスは空。メールアドレスを構造化データに出す設定は OFF）。</li>
+                <li><code>/datasets/</code> 以下のページの URL が使えるように準備します。</li>
+            </ul>
+            <figure class="screenshot">
+                <img src="images/screenshots/09-plugin-settings-link.png" alt="プラグイン一覧の Kashiwazaki SEO Poll の行。設定と無効化のリンクがある" class="lightbox-trigger">
+                <figcaption>図: 有効化後のプラグイン一覧。「設定」リンクから基本設定を開けます</figcaption>
+            </figure>
+            <div class="callout callout-warning">
+                <p class="callout-title">パーマリンク設定を確認してください</p>
+                <p>「設定」→「パーマリンク」が「基本」になっていると、<code>/datasets/</code> 以下のページが表示されません。「投稿名」など「基本」以外を選んでください。設定を変えた後に <code>/datasets/</code> が表示されないときは、パーマリンク設定画面で何も変えずに「変更を保存」を押すと直ることがあります。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>ステップ3: 基本設定を確認する</h2>
+            <p>左メニュー「Kashiwazaki SEO Poll」を開き、上部のタブ「基本設定」を押します。最初に確認したい項目は次のとおりです。各項目の詳しい説明は <a href="settings.html">基本設定</a> を参照してください。</p>
+            <table>
+                <thead><tr><th>項目</th><th>確認すること</th><th>既定値</th></tr></thead>
+                <tbody>
+                    <tr><td>作成者（Creator）</td><td>データの作成者として、組織・個人・両方のどれを出すか</td><td>組織（Organization）のみ</td></tr>
+                    <tr><td>組織の情報</td><td>名前・URL・メールアドレス</td><td>サイト名・サイトのアドレス・空</td></tr>
+                    <tr><td>連絡先メールアドレス</td><td>組織のメールアドレスを構造化データに出すか（出すと誰でも見られます）</td><td>OFF（出さない）</td></tr>
+                    <tr><td>一覧ページのタイトル</td><td><code>/datasets/</code> の見出し</td><td>集計データ一覧</td></tr>
+                    <tr><td>カラーテーマ</td><td>データセットページの色合い</td><td>ミニマル（白ベース）</td></tr>
+                    <tr><td>地理的範囲</td><td>調査の対象地域</td><td>日本</td></tr>
+                </tbody>
+            </table>
+            <div class="callout callout-tip">
+                <p class="callout-title">おすすめ</p>
+                <p>メールアドレスは、「連絡先メールアドレス」を ON にしたときだけ構造化データに出力され、公開されます。ON にする場合は、問い合わせ用の公開してよいアドレスを「組織の情報」に入力してください。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>ステップ4: データセットを作る</h2>
             <div class="step">
                 <div class="step-number">1</div>
                 <div class="step-content">
-                    <h3>「データセット」→「新規追加」を開く</h3>
-                    <p>左メニューの「データセット」から「新規追加」を選びます。タイトル欄には、アンケートの<strong>質問文</strong>をそのまま入力します（例：「相互リンクについてどのくらい知っていますか？」）。</p>
+                    <h3>新規追加画面を開く</h3>
+                    <p>データセット一覧の「新しいデータセットを追加」を押します。</p>
                 </div>
             </div>
             <div class="step">
                 <div class="step-number">2</div>
                 <div class="step-content">
-                    <h3>選択肢を入力する</h3>
-                    <p>「投票設定」欄で、投票形式（単一選択／複数選択）を選び、選択肢を1行に1つずつ入力します。</p>
+                    <h3>設問と選択肢を入力する</h3>
+                    <p>タイトル欄に設問（例: 好きな季節はどれですか？）を、「選択肢」に1行に1つずつ選択肢を入力し、「投票形式」で複数選択か単一選択かを選びます。</p>
                 </div>
             </div>
             <div class="step">
                 <div class="step-number">3</div>
                 <div class="step-content">
                     <h3>公開する</h3>
-                    <p>右上の「公開」ボタンで保存します。公開すると、投票設定欄にショートコード <code>[tk_poll id="123"]</code>（123 の部分は自動で採番された ID）が表示されます。</p>
+                    <p>右上の「公開」を押します。下書きのままでは記事に投票フォームが表示されません。</p>
                 </div>
             </div>
-            <div class="step">
-                <div class="step-number">4</div>
-                <div class="step-content">
-                    <h3>記事に貼り付ける</h3>
-                    <p>表示された「コピー」ボタンでショートコードをコピーし、アンケートを表示したい記事や固定ページの本文に貼り付けます。これで投票フォームが表示されます。</p>
-                </div>
-            </div>
-            <div class="callout callout-tip">
-                <p>アンケートページ（<code>/datasets/detail-123/</code>）はプラグインが自動で生成するため、記事に貼らなくても単体ページとして閲覧できます。ショートコードは「既存の記事の中にアンケートを埋め込みたい」ときに使います。</p>
-            </div>
+            <figure class="screenshot">
+                <img src="images/screenshots/17-new-filled.png" alt="新規追加画面にタイトルと選択肢を入力した状態" class="lightbox-trigger">
+                <figcaption>図: 設問・投票形式・選択肢を入力した新規追加画面</figcaption>
+            </figure>
+            <p>詳しくは <a href="create-poll.html">データセットの作成</a> を参照してください。</p>
         </section>
 
         <section>
-            <h2>次のステップ</h2>
+            <h2>ステップ5: 記事に貼る</h2>
+            <p>編集画面の「ショートコードと掲載ページ」にある「コピー」を押し、投票を載せたい投稿や固定ページの本文に貼り付けて保存します。記事を開くと投票フォームが表示されます。</p>
+            <figure class="screenshot">
+                <img src="images/screenshots/40-front-open.png" alt="記事に表示された投票フォーム。設問、小さなグラフ、選択肢、投票するボタン" class="lightbox-trigger">
+                <figcaption>図: 記事に表示された投票フォーム</figcaption>
+            </figure>
+            <p>詳しくは <a href="embed.html">ショートコードと掲載ページ</a> と <a href="voting.html">記事での表示と投票</a> を参照してください。</p>
+        </section>
+
+        <section>
+            <h2>導入後にしておきたいこと</h2>
             <ul>
-                <li>選択肢の設定・ライセンス・見出しレベルなど作成画面の全項目 → <a href="create-poll.html">アンケートの作成</a></li>
-                <li>作者情報・カラーテーマ・データ一括生成などの全体設定 → <a href="settings.html">基本設定ガイド</a></li>
+                <li><strong>サイトマップを検索エンジンに登録する</strong>: 基本設定の「メンテナンス」に表示される「サイトマップURL」を、Google Search Console などに登録します（<a href="maintenance.html">メンテナンス</a>）。</li>
+                <li><strong>ページキャッシュの設定を見直す</strong>: キャッシュ系のプラグインや CDN を使っている場合、投票フォームを置いたページをキャッシュの対象から外すと、投票時のエラーを防げます（<a href="troubleshooting.html">トラブルシューティング</a>）。</li>
+                <li><strong>旧版から更新した場合</strong>: 1.0.5 以前から初めて更新したときは、データファイルが1回だけ自動で作り直されます。データセットページのダウンロードが表示されないときは、メンテナンスの「データファイルを一括生成する」を押してください。</li>
             </ul>
+        </section>
+
+        <section>
+            <h2>停止・削除したとき</h2>
+            <table>
+                <thead><tr><th>操作</th><th>起きること</th></tr></thead>
+                <tbody>
+                    <tr><td>停止（無効化）</td><td><code>/datasets/</code> 以下のページが表示されなくなります。記事のショートコードは文字のまま表示されます。投票データ・設定・データファイル・サイトマップのファイルは残ります。</td></tr>
+                    <tr><td>削除</td><td>専用の削除処理はありません。投票データ・設定・データファイル・サイトマップのファイルはサイトに残ります。</td></tr>
+                </tbody>
+            </table>
         </section>
 
         <nav class="page-nav">
             <a href="index.html" class="prev">&laquo; 概要</a>
-            <a href="create-poll.html" class="next">アンケートの作成 &raquo;</a>
+            <a href="admin-menu.html" class="next">管理メニューとタブ &raquo;</a>
         </nav>
 
         <footer class="manual-footer">
             <p>作者: <a href="https://www.tsuyoshikashiwazaki.jp/" target="_blank" rel="noopener">柏崎剛</a></p>
-            <p>プラグイン: Kashiwazaki SEO Poll v1.0.6 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
+            <p>プラグイン: Kashiwazaki SEO Poll v1.0.7 | <a href="https://github.com/TsuyoshiKashiwazaki/wp-plugin-kashiwazaki-seo-poll" target="_blank" rel="noopener">GitHub</a></p>
         </footer>
     </main>
 
